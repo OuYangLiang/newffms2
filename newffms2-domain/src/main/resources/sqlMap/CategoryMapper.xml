@@ -7,7 +7,7 @@
 		<result column="MONTHLY_BUDGET" property="monthlyBudget" jdbcType="DECIMAL" />
 		<result column="CATEGORY_LEVEL" property="categoryLevel" jdbcType="DECIMAL" />
 		<result column="IS_LEAF" property="isLeaf" jdbcType="BIT" />
-        <result column="PARENT_OID" property="parentOid" jdbcType="DECIMAL" />
+        <result column="PARENT_OID" property="parentKey.categoryOid" jdbcType="DECIMAL" />
         <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
         <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
@@ -40,8 +40,8 @@
             <if test="isLeaf != null">
                 AND IS_LEAF = #{isLeaf,jdbcType=DECIMAL}
             </if>
-			<if test="parentOid != null">
-				AND PARENT_OID = #{parentOid,jdbcType=DECIMAL}
+			<if test="parentKey != null and parentKey.categoryOid != null">
+				AND PARENT_OID = #{parentKey.categoryOid,jdbcType=DECIMAL}
 			</if>
 			<if test="createTime != null">
                 AND CREATE_TIME = #{createTime,jdbcType=TIMESTAMP}
@@ -73,9 +73,27 @@
     
     
     <insert id="insert" parameterType="com.personal.oyl.newffms.category.domain.Category" useGeneratedKeys="true" keyProperty="key.categoryOid">
-        INSERT INTO CATEGORY(CATEGORY_DESC, MONTHLY_BUDGET, CATEGORY_LEVEL, IS_LEAF, PARENT_OID, CREATE_TIME, CREATE_BY)
-        VALUES (#{categoryDesc,jdbcType=NVARCHAR}, #{monthlyBudget,jdbcType=DECIMAL}, #{categoryLevel,jdbcType=DECIMAL}, #{isLeaf,jdbcType=BIT}, #{parentOid,jdbcType=DECIMAL},
-        #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=NVARCHAR})
+        INSERT INTO CATEGORY(
+            CATEGORY_DESC, 
+            MONTHLY_BUDGET, 
+            CATEGORY_LEVEL, 
+            IS_LEAF, 
+            PARENT_OID, 
+            CREATE_TIME, 
+            CREATE_BY) 
+        VALUES (
+            #{categoryDesc,jdbcType=NVARCHAR}, 
+            #{monthlyBudget,jdbcType=DECIMAL}, 
+            #{categoryLevel,jdbcType=DECIMAL}, 
+            #{isLeaf,jdbcType=BIT}, 
+            <if test="parentKey != null and parentKey.categoryOid != null">
+                #{parentKey.categoryOid,jdbcType=DECIMAL},
+            </if>
+            <if test="parentKey == null or parentKey.categoryOid == null">
+                null,
+            </if>
+            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createBy,jdbcType=NVARCHAR})
     </insert>
     
     
@@ -95,8 +113,8 @@
             <if test="isLeaf != null">
                 IS_LEAF = #{isLeaf,jdbcType=DECIMAL},
             </if>
-            <if test="parentOid != null">
-                PARENT_OID = #{parentOid,jdbcType=DECIMAL},
+            <if test="parentKey != null and parentKey.categoryOid != null">
+                PARENT_OID = #{parentKey.categoryOid,jdbcType=DECIMAL},
             </if>
             <if test="createTime != null">
                 CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},

@@ -19,7 +19,7 @@ public class Category implements Serializable {
 	private BigDecimal monthlyBudget;
 	private Integer categoryLevel;
 	private Boolean isLeaf;
-	private BigDecimal parentOid;
+	private CategoryKey parentKey;
 	
 	private Date createTime;
 	private Date updateTime;
@@ -76,12 +76,12 @@ public class Category implements Serializable {
 		this.isLeaf = isLeaf;
 	}
 
-	public BigDecimal getParentOid() {
-		return parentOid;
+	public CategoryKey getParentKey() {
+		return parentKey;
 	}
 
-	public void setParentOid(BigDecimal parentOid) {
-		this.parentOid = parentOid;
+	public void setParentKey(CategoryKey parentKey) {
+		this.parentKey = parentKey;
 	}
 
 	public Date getCreateTime() {
@@ -156,7 +156,7 @@ public class Category implements Serializable {
 		target.setMonthlyBudget(budget);
 		target.setCategoryLevel(this.getCategoryLevel() + 1);
 		target.setIsLeaf(true);
-		target.setParentOid(this.getKey().getCategoryOid());
+		target.setParentKey(new CategoryKey(this.getKey().getCategoryOid()));
 		target.setCreateBy(operator);
 		target.setCreateTime(new Date());
 		
@@ -206,8 +206,8 @@ public class Category implements Serializable {
 		
 		this.setSeqNo(this.getSeqNo() + 1);
 		
-		if (null != this.getParentOid()) {
-			Category parent = repos.categoryOfId(new CategoryKey(this.getParentOid()));
+		if (null != this.getParentKey()) {
+			Category parent = repos.categoryOfId(this.getParentKey());
 			if (null == parent) {
 				throw new IllegalStateException();
 			}

@@ -1,6 +1,5 @@
 package com.personal.oyl.newffms.category.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -56,10 +55,10 @@ public class CategoryReposImpl implements CategoryRepos {
 		
 		mapper.delete(key);
 		
-		BigDecimal parentOid = obj.getParentOid();
+		CategoryKey parentKey = obj.getParentKey();
 		
-		while (null != parentOid) {
-			Category parent = this.categoryOfId(new CategoryKey(obj.getParentOid()));
+		while (null != parentKey) {
+			Category parent = this.categoryOfId(parentKey);
 			
 			if (null == parent) {
 				throw new IllegalStateException();
@@ -73,7 +72,7 @@ public class CategoryReposImpl implements CategoryRepos {
 				parent.changeBudget(parent.getMonthlyBudget().subtract(obj.getMonthlyBudget()), null, operator);
 			}
 			
-			parentOid = parent.getParentOid();
+			parentKey = parent.getParentKey();
 		}
 		
 	}
@@ -85,7 +84,7 @@ public class CategoryReposImpl implements CategoryRepos {
 		}
 		
 		Category param = new Category();
-		param.setParentOid(parentKey.getCategoryOid());
+		param.setParentKey(parentKey);
 		
 		List<Category> list = mapper.select(param);
 		

@@ -38,7 +38,7 @@ public class CategoryTest extends TestCase {
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
 		bean.setCategoryLevel(Integer.valueOf(1));
-		bean.setIsLeaf(true);
+		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
 		repos.add(bean, "欧阳亮");
@@ -53,7 +53,7 @@ public class CategoryTest extends TestCase {
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
 		bean.setCategoryLevel(Integer.valueOf(1));
-		bean.setIsLeaf(true);
+		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
 		repos.add(bean, "欧阳亮");
@@ -78,7 +78,7 @@ public class CategoryTest extends TestCase {
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
 		bean.setCategoryLevel(Integer.valueOf(1));
-		bean.setIsLeaf(true);
+		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
 		repos.add(bean, "欧阳亮");
@@ -97,7 +97,7 @@ public class CategoryTest extends TestCase {
 		assertTrue(0 == BigDecimal.valueOf(200).compareTo(bean.getMonthlyBudget()));
 		assertTrue(2 == bean2.getSeqNo());
 		assertNull(bean2.getParentKey());
-		assertTrue(bean2.getIsLeaf());
+		assertTrue(bean2.isLeaf());
 	}
 	
 	public void testAddingAndRemovingChild() {
@@ -106,7 +106,7 @@ public class CategoryTest extends TestCase {
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
 		bean.setCategoryLevel(Integer.valueOf(1));
-		bean.setIsLeaf(true);
+		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(1000));
 		
 		repos.add(bean, "欧阳亮");
@@ -120,7 +120,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("伙食", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(1, child.getSeqNo().intValue());
@@ -131,7 +131,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(2, bean.getSeqNo().intValue());
@@ -142,7 +142,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(1, child.getSeqNo().intValue());
@@ -153,7 +153,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(800).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(3, bean.getSeqNo().intValue());
@@ -164,7 +164,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(4, bean.getSeqNo().intValue());
@@ -178,7 +178,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(1, child.getSeqNo().intValue());
@@ -189,7 +189,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(0).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertTrue(bean.getIsLeaf());
+		assertTrue(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(5, bean.getSeqNo().intValue());
@@ -202,7 +202,7 @@ public class CategoryTest extends TestCase {
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
 		bean.setCategoryLevel(Integer.valueOf(1));
-		bean.setIsLeaf(true);
+		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(1000));
 		
 		repos.add(bean, "欧阳亮");
@@ -216,7 +216,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("伙食", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(1, child.getSeqNo().intValue());
@@ -227,7 +227,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(2, bean.getSeqNo().intValue());
@@ -238,7 +238,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(1, child.getSeqNo().intValue());
@@ -251,7 +251,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(850).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(4, bean.getSeqNo().intValue());
@@ -262,7 +262,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(350).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertFalse(bean.getIsLeaf());
+		assertFalse(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(5, bean.getSeqNo().intValue());
@@ -276,7 +276,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(350).compareTo(child.getMonthlyBudget()));
 		assertEquals(2, child.getCategoryLevel().intValue());
-		assertTrue(child.getIsLeaf());
+		assertTrue(child.isLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
 		assertEquals(2, child.getSeqNo().intValue());
@@ -287,7 +287,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(0).compareTo(bean.getMonthlyBudget()));
 		assertEquals(1, bean.getCategoryLevel().intValue());
-		assertTrue(bean.getIsLeaf());
+		assertTrue(bean.isLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
 		assertEquals(6, bean.getSeqNo().intValue());

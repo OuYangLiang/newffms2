@@ -18,7 +18,7 @@ public class Category implements Serializable {
 	private String categoryDesc;
 	private BigDecimal monthlyBudget;
 	private Integer categoryLevel;
-	private Boolean isLeaf;
+	private boolean leaf;
 	private CategoryKey parentKey;
 	
 	private Date createTime;
@@ -68,12 +68,12 @@ public class Category implements Serializable {
 		this.categoryLevel = categoryLevel;
 	}
 
-	public Boolean getIsLeaf() {
-		return isLeaf;
+	public boolean isLeaf() {
+		return leaf;
 	}
 
-	public void setIsLeaf(Boolean isLeaf) {
-		this.isLeaf = isLeaf;
+	public void setLeaf(boolean leaf) {
+		this.leaf = leaf;
 	}
 
 	public CategoryKey getParentKey() {
@@ -124,6 +124,12 @@ public class Category implements Serializable {
 		this.seqNo = seqNo;
 	}
 
+	/**
+	 * 变更当前类别名称
+	 * 
+	 * @param newDesc 新的名称
+	 * @param operator 操作人
+	 */
 	public void changeCategoryDesc(String newDesc, String operator) {
 		if (null == newDesc || newDesc.trim().isEmpty()) {
 			throw new IllegalArgumentException();
@@ -146,8 +152,16 @@ public class Category implements Serializable {
 		this.setSeqNo(this.getSeqNo() + 1);
 	}
 	
+	/**
+	 * 创建当前类别的子类别
+	 * 
+	 * @param desc 子类别名称
+	 * @param budget 月度预算	
+	 * @param operator 操作人
+	 * @return
+	 */
 	public Category addChild(String desc, BigDecimal budget, String operator) {
-		if (this.getIsLeaf()) {
+		if (this.isLeaf()) {
 			// check if current category has been used already.
 		}
 		
@@ -155,7 +169,7 @@ public class Category implements Serializable {
 		target.setCategoryDesc(desc);
 		target.setMonthlyBudget(budget);
 		target.setCategoryLevel(this.getCategoryLevel() + 1);
-		target.setIsLeaf(true);
+		target.setLeaf(true);
 		target.setParentKey(new CategoryKey(this.getKey().getCategoryOid()));
 		target.setCreateBy(operator);
 		target.setCreateTime(new Date());
@@ -163,7 +177,7 @@ public class Category implements Serializable {
 		mapper.insert(target);
 		target.setSeqNo(1);
 		
-		if (this.getIsLeaf()) {
+		if (this.isLeaf()) {
 			this.changeBudget(budget, false, operator);
 		} else {
 			this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
@@ -172,8 +186,14 @@ public class Category implements Serializable {
 		return target;
 	}
 	
+	/**
+	 * 变更当前类别的月度预算（当前类别必须为叶子类别）
+	 * 
+	 * @param newBudget 新的预算
+	 * @param operator 操作人
+	 */
 	public void changeBudget(BigDecimal newBudget, String operator) {
-		if (!this.getIsLeaf()) {
+		if (!this.isLeaf()) {
 			throw new IllegalStateException();
 		}
 		

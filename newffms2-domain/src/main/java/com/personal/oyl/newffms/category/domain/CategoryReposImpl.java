@@ -32,6 +32,14 @@ public class CategoryReposImpl implements CategoryRepos {
 
 	@Override
 	public void add(Category bean, String operator) {
+		if (null == bean || !bean.isLeaf() || bean.getCategoryLevel() != 1) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
 		bean.setCreateBy(operator);
 		bean.setCreateTime(new Date());
 		
@@ -45,10 +53,18 @@ public class CategoryReposImpl implements CategoryRepos {
 			throw new IllegalArgumentException();
 		}
 		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
 		Category obj = this.categoryOfId(key);
 		
-		if (null == obj || !obj.getIsLeaf()) {
-			throw new IllegalStateException();
+		if (null == obj) {
+			throw new IllegalStateException("类别不存在。");
+		}
+		
+		if (!obj.isLeaf()) {
+			throw new IllegalStateException("类型不是叶子类别，不能删除。");
 		}
 		
 		// check if current category has been used already.

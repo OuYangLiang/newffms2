@@ -111,4 +111,18 @@ public class CategoryReposImpl implements CategoryRepos {
 		return list;
 	}
 
+	@Override
+	public List<Category> rootCategories() {
+		Category param = new Category();
+		param.setCategoryLevel(Integer.valueOf(1));
+		
+		List<Category> list = mapper.select(param);
+		
+		if (null == list || list.isEmpty()) {
+			return null;
+		}
+		
+		return list;
+	}
+
 }

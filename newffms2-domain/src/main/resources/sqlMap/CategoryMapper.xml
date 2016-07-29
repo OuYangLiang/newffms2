@@ -34,6 +34,9 @@
 			<if test="parentKey != null and parentKey.categoryOid != null">
 				AND PARENT_OID = #{parentKey.categoryOid,jdbcType=DECIMAL}
 			</if>
+			<if test="categoryLevel != null ">
+                AND CATEGORY_LEVEL = #{categoryLevel,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -85,8 +88,8 @@
         UPDATE CATEGORY SET
             SEQ_NO = SEQ_NO + 1,
             MONTHLY_BUDGET = #{monthlyBudget,jdbcType=DECIMAL},
-            <if test="isLeaf != null">
-                IS_LEAF = #{isLeaf,jdbcType=BOOLEAN},
+            <if test="leaf != null">
+                IS_LEAF = #{leaf,jdbcType=BOOLEAN},
             </if>
             UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
             UPDATE_TIME = current_timestamp

@@ -135,8 +135,6 @@ public class Category implements Serializable {
 			throw new IllegalArgumentException();
 		}
 		
-		this.setCategoryDesc(newDesc);
-		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("seqNo", this.getSeqNo());
 		param.put("categoryOid", this.getKey().getCategoryOid());
@@ -150,6 +148,8 @@ public class Category implements Serializable {
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);
+		this.setCategoryDesc(newDesc);
+		this.setUpdateBy(operator);
 	}
 	
 	/**
@@ -200,22 +200,20 @@ public class Category implements Serializable {
 		this.changeBudget(newBudget, null, operator);
 	}
 	
-	protected void changeBudget(BigDecimal newBudget, Boolean isLeaf, String operator) {
+	protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) {
 		if (null == newBudget || newBudget.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException();
 		}
 		
 		BigDecimal oldBudget = this.getMonthlyBudget();
 		
-		this.setMonthlyBudget(newBudget);
-		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("seqNo", this.getSeqNo());
 		param.put("categoryOid", this.getKey().getCategoryOid());
 		param.put("updateBy", operator);
 		param.put("monthlyBudget", newBudget);
-		if (null != isLeaf) {
-			param.put("isLeaf", isLeaf);
+		if (null != leaf) {
+			param.put("leaf", leaf);
 		}
 		
 		int n = mapper.changeBudget(param);
@@ -225,6 +223,11 @@ public class Category implements Serializable {
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);
+		this.setMonthlyBudget(newBudget);
+		this.setUpdateBy(operator);
+		if (null != leaf) {
+			this.setLeaf(leaf);
+		}
 		
 		if (null != this.getParentKey()) {
 			Category parent = repos.categoryOfId(this.getParentKey());

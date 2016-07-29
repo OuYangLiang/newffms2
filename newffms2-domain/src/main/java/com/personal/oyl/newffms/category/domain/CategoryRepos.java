@@ -34,4 +34,11 @@ public interface CategoryRepos {
 	 * @return 子类别集合（无排序）
 	 */
 	List<Category> categoriesOfParent(CategoryKey parentKey);
+	
+	/**
+	 * 查询所有根类别
+	 * 
+	 * @return 根类别集合（无排序）
+	 */
+	List<Category> rootCategories();
 }

@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class AccountAudit implements Serializable {
+public class AccountAuditVo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private BigDecimal key;
+	private BigDecimal adtOid;
 	private String adtDesc;
 	private AccountAuditType adtType;
 	private Date adtTime;
@@ -21,12 +21,12 @@ public class AccountAudit implements Serializable {
 	private Date createTime;
 	private String createBy;
 
-	public BigDecimal getKey() {
-		return key;
+	public BigDecimal getAdtOid() {
+		return adtOid;
 	}
 
-	public void setKey(BigDecimal key) {
-		this.key = key;
+	public void setAdtOid(BigDecimal adtOid) {
+		this.adtOid = adtOid;
 	}
 
 	public String getAdtDesc() {

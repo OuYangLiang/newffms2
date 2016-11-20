@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.AccountAudit">
-		<id column="ADT_OID" property="key.adtOid" jdbcType="DECIMAL" />
+	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.AccountAuditVo">
+		<id column="ADT_OID" property="adtOid" jdbcType="DECIMAL" />
 		<result column="ADT_DESC" property="adtDesc" jdbcType="NVARCHAR" />
 		<result column="ADT_TYPE" property="adtType" jdbcType="VARCHAR" />
 		<result column="ADT_TIME" property="adtTime" jdbcType="TIMESTAMP" />
@@ -22,11 +22,11 @@
 	</sql>
 
 
-    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit">
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo">
         SELECT <include refid="Base_Column_List" />
         FROM ACCOUNT_AUDIT
         <where>
-			<if test="key != null and key.adtOid != null">
+			<if test="adtOid != null">
 				ADT_OID = #{key.adtOid,jdbcType=DECIMAL}
 			</if>
 			<if test="adtTime != null">
@@ -47,7 +47,7 @@
         </where>
     </select>
 
-    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit" >
+    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo" >
         DELETE FROM ACCOUNT_AUDIT
         <where>
             <if test="adtOid != null">
@@ -65,7 +65,7 @@
         </where>
     </delete>
     
-    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit" useGeneratedKeys="true" keyProperty="key.adtOid">
+    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo" useGeneratedKeys="true" keyProperty="adtOid">
         INSERT INTO ACCOUNT_AUDIT(
             ADT_DESC,
             ADT_TYPE,

@@ -2,13 +2,13 @@ package com.personal.oyl.newffms.account.store.mapper;
 
 import java.util.List;
 
-import com.personal.oyl.newffms.account.domain.AccountAudit;
+import com.personal.oyl.newffms.account.domain.AccountAuditVo;
 
 public interface AccountAuditMapper {
-	List<AccountAudit> select(AccountAudit param);
+	List<AccountAuditVo> select(AccountAuditVo param);
 	
-	int insert(AccountAudit param);
+	int insert(AccountAuditVo param);
 	
-	int delete(AccountAudit param);
+	int delete(AccountAuditVo param);
 	
 }

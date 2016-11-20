@@ -6,13 +6,9 @@ import java.util.Date;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.personal.oyl.newffms.account.domain.Account;
-import com.personal.oyl.newffms.account.domain.AccountAudit;
+import com.personal.oyl.newffms.account.domain.AccountAuditVo;
 import com.personal.oyl.newffms.account.domain.AccountAuditType;
-import com.personal.oyl.newffms.account.domain.AccountRepos;
-import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
-import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 
 import junit.framework.TestCase;
 
@@ -38,7 +34,7 @@ public class AccountAuditMapperTest extends TestCase {
 	public void testCreation() {
 		AccountAuditMapper mapper = ctx.getBean(AccountAuditMapper.class);
 		
-		AccountAudit bean = new AccountAudit();
+		AccountAuditVo bean = new AccountAuditVo();
 		bean.setAdtDesc("desc");
 		bean.setAdtTime(new Date());
 		bean.setAdtType(AccountAuditType.Add);

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper">
+	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.AccountAudit">
+		<id column="ADT_OID" property="key.adtOid" jdbcType="DECIMAL" />
+		<result column="ADT_DESC" property="adtDesc" jdbcType="NVARCHAR" />
+		<result column="ADT_TYPE" property="adtType" jdbcType="VARCHAR" />
+		<result column="ADT_TIME" property="adtTime" jdbcType="TIMESTAMP" />
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+		<result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
+		<result column="ACNT_OID" property="acntOid" jdbcType="DECIMAL" />
+        <result column="REF_ACNT_OID" property="refAcntOid" jdbcType="DECIMAL" />
+        <result column="INCOMING_OID" property="incomingOid" jdbcType="DECIMAL" />
+        <result column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+        ADT_OID, ADT_DESC, ADT_TYPE, ADT_TIME, AMOUNT, CONFIRMED, ACNT_OID, REF_ACNT_OID, INCOMING_OID, CPN_OID, CREATE_TIME, CREATE_BY
+	</sql>
+
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit">
+        SELECT <include refid="Base_Column_List" />
+        FROM ACCOUNT_AUDIT
+        <where>
+			<if test="key != null and key.adtOid != null">
+				ADT_OID = #{key.adtOid,jdbcType=DECIMAL}
+			</if>
+			<if test="adtTime != null">
+                AND ADT_TIME = #{adtTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="acntOid != null">
+                AND ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            </if>
+			<if test="incomingOid != null">
+                AND INCOMING_OID = #{incomingOid,jdbcType=DECIMAL}
+            </if>
+			<if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+            <if test="baseObject != null and baseObject.createTime != null">
+                AND CREATE_TIME = #{baseObject.createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit" >
+        DELETE FROM ACCOUNT_AUDIT
+        <where>
+            <if test="adtOid != null">
+                ADT_OID = #{adtOid,jdbcType=DECIMAL}
+            </if>
+            <if test="acntOid != null">
+                AND ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            </if>
+            <if test="incomingOid != null">
+                AND INCOMING_OID = #{incomingOid,jdbcType=DECIMAL}
+            </if>
+            <if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+    
+    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.AccountAudit" useGeneratedKeys="true" keyProperty="key.adtOid">
+        INSERT INTO ACCOUNT_AUDIT(
+            ADT_DESC,
+            ADT_TYPE,
+            ADT_TIME, 
+            AMOUNT,
+            CONFIRMED,
+            ACNT_OID,
+            REF_ACNT_OID,
+            INCOMING_OID,
+            CPN_OID,
+            CREATE_TIME,
+            CREATE_BY)
+        VALUES (
+            #{adtDesc,jdbcType=NVARCHAR},
+            #{adtType,jdbcType=VARCHAR},
+            #{adtTime,jdbcType=TIMESTAMP},
+            #{amount,jdbcType=DECIMAL},
+            #{confirmed,jdbcType=BIT},
+            #{acntOid,jdbcType=DECIMAL},
+            #{refAcntOid,jdbcType=DECIMAL},
+            #{incomingOid,jdbcType=DECIMAL},
+            #{cpnOid,jdbcType=DECIMAL},
+            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createBy,jdbcType=NVARCHAR})
+    </insert>
+    
+</mapper>

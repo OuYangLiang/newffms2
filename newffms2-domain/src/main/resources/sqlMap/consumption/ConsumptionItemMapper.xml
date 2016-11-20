@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper">
+    <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo">
+		<id column="ITEM_OID" property="itemOid" jdbcType="DECIMAL" />
+		<result column="ITEM_DESC" property="itemDesc" jdbcType="NVARCHAR" />
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+		<result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
+        <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+        ITEM_OID, ITEM_DESC, AMOUNT, OWNER_OID, CPN_OID, CATEGORY_OID
+	</sql>
+
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo">
+        SELECT <include refid="Base_Column_List" />
+        FROM CONSUMPTION_ITEM
+        <where>
+			<if test="itemOid != null">
+				ITEM_OID = #{itemOid,jdbcType=DECIMAL}
+			</if>
+            <if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+
+
+    <delete id="delete" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo" >
+        DELETE FROM CONSUMPTION_ITEM
+        <where>
+            <if test="itemOid != null">
+                ITEM_OID = #{itemOid,jdbcType=DECIMAL}
+            </if>
+            <if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+    
+    
+    <insert id="insert" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo" useGeneratedKeys="true" keyProperty="itemOid">
+        INSERT INTO CONSUMPTION_ITEM(
+            ITEM_DESC,
+            AMOUNT,
+            OWNER_OID,
+            CPN_OID,
+            CATEGORY_OID)
+        VALUES (
+            #{itemDesc,jdbcType=NVARCHAR},
+            #{amount,jdbcType=DECIMAL},
+            #{ownerOid,jdbcType=DECIMAL},
+            #{cpnOid,jdbcType=DECIMAL},
+            #{categoryOid,jdbcType=DECIMAL})
+    </insert>
+    
+</mapper>

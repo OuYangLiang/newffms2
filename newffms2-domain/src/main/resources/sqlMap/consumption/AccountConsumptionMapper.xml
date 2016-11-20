@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.consumption.store.mapper.AccountConsumptionMapper">
+    <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo">
+        <id column="ACNT_OID" property="acntOid" jdbcType="DECIMAL" />
+        <id column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ACNT_OID, CPN_OID, AMOUNT
+    </sql>
+    
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo">
+        SELECT <include refid="Base_Column_List" />
+        FROM ACCOUNT_CONSUMPTION
+        <where>
+            <if test="acntOid != null">
+                ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            </if>
+            <if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo" >
+        DELETE FROM ACCOUNT_CONSUMPTION
+        <where>
+            <if test="acntOid != null">
+                ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            </if>
+            <if test="cpnOid != null">
+                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+    
+    <insert id="insert" parameterType="com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo">
+        INSERT INTO ACCOUNT_CONSUMPTION(
+            ACNT_OID,
+            CPN_OID,
+            AMOUNT)
+        VALUES (
+            #{acntOid,jdbcType=DECIMAL},
+            #{cpnOid,jdbcType=DECIMAL},
+            #{amount,jdbcType=DECIMAL})
+    </insert>
+    
+</mapper>

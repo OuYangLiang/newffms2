@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper">
+	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.Consumption">
+		<id column="CPN_OID" property="key.cpnOid" jdbcType="DECIMAL" />
+		<result column="CPN_TYPE" property="cpnType" jdbcType="VARCHAR" />
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+		<result column="CPN_TIME" property="cpnTime" jdbcType="TIMESTAMP" />
+		<result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+        CPN_OID, CPN_TYPE, AMOUNT, CPN_TIME, CONFIRMED, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
+	</sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.consumption.domain.Consumption">
+        SELECT <include refid="Base_Column_List" />
+        FROM CONSUMPTION
+        <where>
+			<if test="key != null and key.cpnOid != null">
+				CPN_OID = #{key.cpnOid,jdbcType=DECIMAL}
+			</if>
+        </where>
+    </select>
+
+    <delete id="delete" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionKey" >
+        DELETE FROM CONSUMPTION
+        <where>
+            <if test="cpnOid != null">
+                CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+    
+    <insert id="insert" parameterType="com.personal.oyl.newffms.consumption.domain.Consumption" useGeneratedKeys="true" keyProperty="cpnOid">
+        INSERT INTO CONSUMPTION(
+            CPN_TYPE,
+            AMOUNT,
+            CPN_TIME,
+            CONFIRMED,
+            CREATE_TIME,
+            CREATE_BY)
+        VALUES (
+            #{cpnType,jdbcType=VARCHAR},
+            #{amount,jdbcType=DECIMAL},
+            #{cpnTime,jdbcType=TIMESTAMP},
+            #{confirmed,jdbcType=BIT},
+            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createBy,jdbcType=NVARCHAR})
+    </insert>
+    
+</mapper>

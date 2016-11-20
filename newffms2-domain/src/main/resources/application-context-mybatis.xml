@@ -58,7 +58,7 @@
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.personal.oyl.newffms.category.store.mapper,com.personal.oyl.newffms.account.store.mapper" />
+        <property name="basePackage" value="com.personal.oyl.newffms.category.store.mapper,com.personal.oyl.newffms.account.store.mapper,com.personal.oyl.newffms.consumption.store.mapper" />
     </bean>
     
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

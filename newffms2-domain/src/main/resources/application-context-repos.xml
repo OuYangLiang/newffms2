@@ -11,4 +11,7 @@
     <bean id="categoryRepos"
         class="com.personal.oyl.newffms.category.domain.CategoryReposImpl" />
         
+    <bean id="accountRepos"
+        class="com.personal.oyl.newffms.account.domain.AccountReposImpl" />
+        
 </beans>

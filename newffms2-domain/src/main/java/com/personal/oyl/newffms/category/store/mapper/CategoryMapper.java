@@ -7,13 +7,13 @@ import com.personal.oyl.newffms.category.domain.Category;
 import com.personal.oyl.newffms.category.domain.CategoryKey;
 
 public interface CategoryMapper {
-	public List<Category> select(Category param);
+	List<Category> select(Category param);
 	
-	public int insert(Category param);
+	int insert(Category param);
 	
-	public int delete(CategoryKey key);
+	int delete(CategoryKey key);
 	
-	public int changeCategoryDesc(Map<String, Object> param);
+	int changeCategoryDesc(Map<String, Object> param);
 	
-	public int changeBudget(Map<String, Object> param);
+	int changeBudget(Map<String, Object> param);
 }

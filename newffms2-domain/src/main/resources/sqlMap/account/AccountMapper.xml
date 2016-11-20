@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.account.store.mapper.AccountMapper">
+	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.Account">
+        <id column="ACNT_OID" property="key.acntOid" jdbcType="DECIMAL" />
+        <result column="ACNT_DESC" property="acntDesc" jdbcType="NVARCHAR" />
+        <result column="ACNT_TYPE" property="acntType" jdbcType="VARCHAR" />
+        <result column="BALANCE" property="balance" jdbcType="DECIMAL" />
+        <result column="QUOTA" property="quota" jdbcType="DECIMAL" />
+        <result column="DEBT" property="debt" jdbcType="DECIMAL" />
+        <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+        ACNT_OID, ACNT_DESC, ACNT_TYPE, BALANCE, QUOTA, DEBT, OWNER_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
+	</sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.Account">
+        SELECT <include refid="Base_Column_List" />
+        FROM ACCOUNT
+        <where>
+            <if test="key != null and key.acntOid != null">
+                ACNT_OID = #{key.acntOid,jdbcType=DECIMAL}
+            </if>
+            <if test="acntType != null">
+                AND ACNT_TYPE = #{acntType,jdbcType=VARCHAR}
+            </if>
+            <if test="ownerOid != null">
+                AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+    
+    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountKey" >
+        DELETE FROM ACCOUNT
+        <where>
+            <if test="acntOid != null">
+                ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+
+    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.Account" useGeneratedKeys="true" keyProperty="key.acntOid">
+        INSERT INTO ACCOUNT(
+            ACNT_DESC,
+            ACNT_TYPE,
+            BALANCE,
+            QUOTA, DEBT,
+            OWNER_OID,
+            CREATE_TIME,
+            CREATE_BY)
+        VALUES (
+            #{acntDesc,jdbcType=NVARCHAR},
+            #{acntType,jdbcType=VARCHAR},
+            #{balance,jdbcType=DECIMAL},
+            #{quota,jdbcType=DECIMAL},
+            #{debt,jdbcType=DECIMAL},
+            #{ownerOid,jdbcType=DECIMAL},
+            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createBy,jdbcType=NVARCHAR})
+    </insert>
+    
+    <update id="changeAccountDesc" parameterType="java.util.Map">
+        UPDATE ACCOUNT SET
+            SEQ_NO = SEQ_NO + 1,
+            ACNT_DESC = #{acntDesc,jdbcType=NVARCHAR},
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = current_timestamp
+        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
+</mapper>

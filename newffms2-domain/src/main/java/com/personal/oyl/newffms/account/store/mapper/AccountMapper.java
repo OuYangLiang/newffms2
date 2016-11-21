@@ -14,4 +14,6 @@ public interface AccountMapper {
 	int delete(AccountKey key);
 	
 	int changeAccountDesc(Map<String, Object> param);
+	
+	int subtract(Map<String, Object> param);
 }

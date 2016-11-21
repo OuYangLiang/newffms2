@@ -54,4 +54,13 @@
             #{createBy,jdbcType=NVARCHAR})
     </insert>
     
+    <update id="confirm" parameterType="java.util.Map">
+        UPDATE CONSUMPTION SET
+            CONFIRMED = #{confirmed,jdbcType=BIT},
+            SEQ_NO = SEQ_NO + 1,
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
 </mapper>

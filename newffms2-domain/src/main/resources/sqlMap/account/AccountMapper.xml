@@ -75,4 +75,16 @@
         WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
     </update>
     
+    <update id="subtract" parameterType="java.util.Map">
+        UPDATE ACCOUNT SET
+            BALANCE = #{balance,jdbcType=DECIMAL},
+            <if test="debt != null">
+                DEBT = #{debt,jdbcType=DECIMAL},
+            </if>
+            SEQ_NO = SEQ_NO + 1,
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
 </mapper>

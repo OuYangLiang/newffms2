@@ -171,11 +171,11 @@ public class Account implements Serializable {
 	 * 
 	 * @param amount 扣减金额
 	 * @param desc 描述
-	 * @param realSubtractTime 扣减发生时间
+	 * @param eventTime 事件发生时间
 	 * @param cpnOid 消费id
 	 * @param operator 操作人
 	 */
-	public void subtract(BigDecimal amount, String desc, Date realSubtractTime, BigDecimal cpnOid, String operator) {
+	public void subtract(BigDecimal amount, String desc, Date eventTime, BigDecimal cpnOid, String operator) {
 		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -200,7 +200,7 @@ public class Account implements Serializable {
 			param.put("debt", this.getDebt().add(amount));
 		}
 		
-		int n = mapper.subtract(param);
+		int n = mapper.updateBalance(param);
 		
 		if (1 != n) {
 			throw new IllegalStateException();
@@ -208,7 +208,7 @@ public class Account implements Serializable {
 		
 		AccountAuditVo audit = new AccountAuditVo();
 		audit.setAdtDesc(desc);
-		audit.setAdtTime(realSubtractTime);
+		audit.setAdtTime(eventTime);
 		audit.setAdtType(AccountAuditType.Subtract);
 		audit.setAmount(amount);
 		audit.setConfirmed(true);
@@ -231,6 +231,74 @@ public class Account implements Serializable {
 		this.setBalance(this.getBalance().subtract(amount));
 		if (AccountType.Creditcard.equals(this.getAcntType())) {
 			this.setDebt(this.debt.add(amount));
+		}
+	}
+	
+	/**
+	 * 账户增加
+	 * 
+	 * @param amount 增加金额
+	 * @param desc 描述
+	 * @param eventTime 事件发生时间
+	 * @param incomingOid 收入id
+	 * @param operator 操作人
+	 */
+	public void increase(BigDecimal amount, String desc, Date eventTime, BigDecimal incomingOid, String operator) {
+		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (null == desc || desc.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("acntOid", this.getKey().getAcntOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("balance", this.getBalance().add(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			param.put("debt", this.getDebt().subtract(amount));
+		}
+		
+		int n = mapper.updateBalance(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountAuditVo audit = new AccountAuditVo();
+		audit.setAdtDesc(desc);
+		audit.setAdtTime(eventTime);
+		audit.setAdtType(AccountAuditType.Add);
+		audit.setAmount(amount);
+		audit.setConfirmed(true);
+		audit.setAcntOid(this.getKey().getAcntOid());
+		audit.setRefAcntOid(null);
+		audit.setIncomingOid(incomingOid);
+		audit.setCpnOid(null);
+		audit.setCreateBy(operator);
+		audit.setCreateTime(now);
+		
+		n = auditMapper.insert(audit);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setBalance(this.getBalance().add(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			this.setDebt(this.debt.subtract(amount));
 		}
 	}
 }

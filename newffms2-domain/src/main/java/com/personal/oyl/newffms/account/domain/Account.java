@@ -301,4 +301,118 @@ public class Account implements Serializable {
 			this.setDebt(this.debt.subtract(amount));
 		}
 	}
+		
+	/**
+	 * 账户转账
+	 * 
+	 * @param target 目标账户
+	 * @param amount 增加金额
+	 * @param operator 操作人
+	 */
+	public void transfer(Account target, BigDecimal amount, String operator) {
+		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+			throw new IllegalArgumentException();
+		}
+
+		if (this.getBalance().compareTo(amount) < 0) {
+			throw new IllegalArgumentException();
+		}
+
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+
+		param.put("seqNo", this.getSeqNo());
+		param.put("acntOid", this.getKey().getAcntOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("balance", this.getBalance().subtract(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			param.put("debt", this.getDebt().add(amount));
+		}
+
+		int n = mapper.updateBalance(param);
+
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+
+		AccountAuditVo audit = new AccountAuditVo();
+		audit.setAdtDesc("转账至：" + target.getAcntDesc());// TODO
+		audit.setAdtTime(now);
+		audit.setAdtType(AccountAuditType.Subtract);
+		audit.setAmount(amount);
+		audit.setConfirmed(true);
+		audit.setAcntOid(this.getKey().getAcntOid());
+		audit.setRefAcntOid(target.getKey().getAcntOid());
+		audit.setIncomingOid(null);
+		audit.setCpnOid(null);
+		audit.setCreateBy(operator);
+		audit.setCreateTime(now);
+
+		n = auditMapper.insert(audit);
+
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		target.transFrom(this, amount, operator, now);
+
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setBalance(this.getBalance().subtract(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			this.setDebt(this.debt.add(amount));
+		}
+	}
+	
+	private void transFrom(Account srcObj, BigDecimal amount, String operator, Date eventTime) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("acntOid", this.getKey().getAcntOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", eventTime);
+		param.put("balance", this.getBalance().add(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			param.put("debt", this.getDebt().subtract(amount));
+		}
+		
+		int n = mapper.updateBalance(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountAuditVo audit = new AccountAuditVo();
+		audit.setAdtDesc("进账自：" + srcObj.getAcntDesc());// TODO
+		audit.setAdtTime(eventTime);
+		audit.setAdtType(AccountAuditType.Add);
+		audit.setAmount(amount);
+		audit.setConfirmed(true);
+		audit.setAcntOid(this.getKey().getAcntOid());
+		audit.setRefAcntOid(srcObj.getKey().getAcntOid());
+		audit.setIncomingOid(null);
+		audit.setCpnOid(null);
+		audit.setCreateBy(operator);
+		audit.setCreateTime(eventTime);
+		
+		n = auditMapper.insert(audit);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(eventTime);
+		this.setBalance(this.getBalance().add(amount));
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			this.setDebt(this.debt.subtract(amount));
+		}
+	}
 }

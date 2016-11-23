@@ -132,4 +132,39 @@ public class AccountTest extends TestCase {
 		mapper2.delete(null);
 	}
 	
+	
+	public void testTransfer() {
+		AccountRepos repos = ctx.getBean(AccountRepos.class);
+		
+		Account bean = new Account();
+		bean.setAcntDesc("招商银行1");
+		bean.setAcntType(AccountType.Bankcard);
+		bean.setBalance(BigDecimal.valueOf(100));
+		bean.setOwnerOid(BigDecimal.ONE);
+		repos.add(bean, "欧阳亮");
+		
+		Account bean2 = new Account();
+		bean2.setAcntDesc("招商银行2");
+		bean2.setAcntType(AccountType.Bankcard);
+		bean2.setBalance(BigDecimal.valueOf(100));
+		bean2.setOwnerOid(BigDecimal.ONE);
+		repos.add(bean2, "喻敏");
+		
+		bean.transfer(bean2, BigDecimal.valueOf(30), "欧");
+		
+		assertTrue(BigDecimal.valueOf(70).compareTo(bean.getBalance()) == 0);
+		assertTrue(BigDecimal.valueOf(130).compareTo(bean2.getBalance()) == 0);
+		
+		bean = repos.accountOfId(bean.getKey());
+		bean2 = repos.accountOfId(bean2.getKey());
+		
+		assertTrue(BigDecimal.valueOf(70).compareTo(bean.getBalance()) == 0);
+		assertTrue(BigDecimal.valueOf(130).compareTo(bean2.getBalance()) == 0);
+		
+		AccountMapper mapper = ctx.getBean(AccountMapper.class);
+		AccountAuditMapper mapper2 = ctx.getBean(AccountAuditMapper.class);
+		mapper.delete(null);
+		mapper2.delete(null);
+	}
+	
 }

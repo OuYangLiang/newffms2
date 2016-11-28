@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -169,14 +170,18 @@ public class Account implements Serializable {
 	/**
 	 * 消费扣减
 	 * 
-	 * @param amount 扣减金额
+	 * @param amount 扣减金额，正数表示
 	 * @param desc 描述
+	 * @param batchNum 流水号
 	 * @param eventTime 事件发生时间
-	 * @param cpnOid 消费id
 	 * @param operator 操作人
 	 */
-	public void subtract(BigDecimal amount, String desc, Date eventTime, BigDecimal cpnOid, String operator) {
+	public void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator) {
 		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (this.getBalance().compareTo(amount) < 0) {
 			throw new IllegalArgumentException();
 		}
 		
@@ -210,12 +215,10 @@ public class Account implements Serializable {
 		audit.setAdtDesc(desc);
 		audit.setAdtTime(eventTime);
 		audit.setAdtType(AccountAuditType.Subtract);
-		audit.setAmount(amount);
-		audit.setConfirmed(true);
+		audit.setBalanceAfter(this.getBalance().subtract(amount));
+		audit.setChgAmt(amount.negate());
 		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setRefAcntOid(null);
-		audit.setIncomingOid(null);
-		audit.setCpnOid(cpnOid);
+		audit.setBatchNum(batchNum);
 		audit.setCreateBy(operator);
 		audit.setCreateTime(now);
 		
@@ -239,11 +242,11 @@ public class Account implements Serializable {
 	 * 
 	 * @param amount 增加金额
 	 * @param desc 描述
+	 * @param batchNum 流水号
 	 * @param eventTime 事件发生时间
-	 * @param incomingOid 收入id
 	 * @param operator 操作人
 	 */
-	public void increase(BigDecimal amount, String desc, Date eventTime, BigDecimal incomingOid, String operator) {
+	public void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator) {
 		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -278,12 +281,10 @@ public class Account implements Serializable {
 		audit.setAdtDesc(desc);
 		audit.setAdtTime(eventTime);
 		audit.setAdtType(AccountAuditType.Add);
-		audit.setAmount(amount);
-		audit.setConfirmed(true);
+		audit.setBalanceAfter(this.getBalance().add(amount));
+		audit.setChgAmt(amount);
 		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setRefAcntOid(null);
-		audit.setIncomingOid(incomingOid);
-		audit.setCpnOid(null);
+		audit.setBatchNum(batchNum);
 		audit.setCreateBy(operator);
 		audit.setCreateTime(now);
 		
@@ -339,17 +340,17 @@ public class Account implements Serializable {
 		if (1 != n) {
 			throw new IllegalStateException();
 		}
+		
+		String batchNum = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
 
 		AccountAuditVo audit = new AccountAuditVo();
 		audit.setAdtDesc("转账至：" + target.getAcntDesc());// TODO
 		audit.setAdtTime(now);
-		audit.setAdtType(AccountAuditType.Subtract);
-		audit.setAmount(amount);
-		audit.setConfirmed(true);
+		audit.setAdtType(AccountAuditType.Trans_subtract);
+		audit.setBalanceAfter(this.getBalance().subtract(amount));
+		audit.setChgAmt(amount.negate());
 		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setRefAcntOid(target.getKey().getAcntOid());
-		audit.setIncomingOid(null);
-		audit.setCpnOid(null);
+		audit.setBatchNum(batchNum);
 		audit.setCreateBy(operator);
 		audit.setCreateTime(now);
 
@@ -359,7 +360,7 @@ public class Account implements Serializable {
 			throw new IllegalStateException();
 		}
 		
-		target.transFrom(this, amount, operator, now);
+		target.transFrom(this, amount, batchNum, now, operator);
 
 		this.setSeqNo(this.getSeqNo() + 1);
 		this.setUpdateBy(operator);
@@ -370,7 +371,7 @@ public class Account implements Serializable {
 		}
 	}
 	
-	private void transFrom(Account srcObj, BigDecimal amount, String operator, Date eventTime) {
+	private void transFrom(Account srcObj, BigDecimal amount, String batchNum, Date eventTime, String operator) {
 		Map<String, Object> param = new HashMap<String, Object>();
 		
 		param.put("seqNo", this.getSeqNo());
@@ -391,13 +392,11 @@ public class Account implements Serializable {
 		AccountAuditVo audit = new AccountAuditVo();
 		audit.setAdtDesc("进账自：" + srcObj.getAcntDesc());// TODO
 		audit.setAdtTime(eventTime);
-		audit.setAdtType(AccountAuditType.Add);
-		audit.setAmount(amount);
-		audit.setConfirmed(true);
+		audit.setAdtType(AccountAuditType.Trans_add);
+		audit.setBalanceAfter(this.getBalance().add(amount));
+		audit.setChgAmt(amount);
 		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setRefAcntOid(srcObj.getKey().getAcntOid());
-		audit.setIncomingOid(null);
-		audit.setCpnOid(null);
+		audit.setBatchNum(batchNum);
 		audit.setCreateBy(operator);
 		audit.setCreateTime(eventTime);
 		

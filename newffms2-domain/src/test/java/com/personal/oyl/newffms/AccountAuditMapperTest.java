@@ -2,6 +2,7 @@ package com.personal.oyl.newffms;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,12 +39,10 @@ public class AccountAuditMapperTest extends TestCase {
 		bean.setAdtDesc("desc");
 		bean.setAdtTime(new Date());
 		bean.setAdtType(AccountAuditType.Add);
-		bean.setAmount(BigDecimal.valueOf(100));
-		bean.setConfirmed(true);
+		bean.setBalanceAfter(BigDecimal.valueOf(100));
+		bean.setChgAmt(BigDecimal.valueOf(100));
 		bean.setAcntOid(BigDecimal.ONE);
-		bean.setRefAcntOid(BigDecimal.ONE);
-		bean.setIncomingOid(BigDecimal.TEN);
-		bean.setCpnOid(BigDecimal.ZERO);
+		bean.setBatchNum(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
 		bean.setCreateBy("OYL");
 		bean.setCreateTime(new Date());
 		

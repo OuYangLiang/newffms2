@@ -6,18 +6,15 @@ import java.util.Date;
 
 public class AccountAuditVo implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	private BigDecimal adtOid;
 	private String adtDesc;
 	private AccountAuditType adtType;
 	private Date adtTime;
-	private BigDecimal amount;
-	private Boolean confirmed;
+	private BigDecimal balanceAfter;
+	private BigDecimal chgAmt;
 	private BigDecimal acntOid;
-	private BigDecimal refAcntOid;
-	private BigDecimal incomingOid;
-	private BigDecimal cpnOid;
-
+	private String batchNum;
 	private Date createTime;
 	private String createBy;
 
@@ -53,20 +50,20 @@ public class AccountAuditVo implements Serializable {
 		this.adtTime = adtTime;
 	}
 
-	public BigDecimal getAmount() {
-		return amount;
+	public BigDecimal getBalanceAfter() {
+		return balanceAfter;
 	}
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
+	public void setBalanceAfter(BigDecimal balanceAfter) {
+		this.balanceAfter = balanceAfter;
 	}
 
-	public Boolean getConfirmed() {
-		return confirmed;
+	public BigDecimal getChgAmt() {
+		return chgAmt;
 	}
 
-	public void setConfirmed(Boolean confirmed) {
-		this.confirmed = confirmed;
+	public void setChgAmt(BigDecimal chgAmt) {
+		this.chgAmt = chgAmt;
 	}
 
 	public BigDecimal getAcntOid() {
@@ -77,28 +74,12 @@ public class AccountAuditVo implements Serializable {
 		this.acntOid = acntOid;
 	}
 
-	public BigDecimal getRefAcntOid() {
-		return refAcntOid;
+	public String getBatchNum() {
+		return batchNum;
 	}
 
-	public void setRefAcntOid(BigDecimal refAcntOid) {
-		this.refAcntOid = refAcntOid;
-	}
-
-	public BigDecimal getIncomingOid() {
-		return incomingOid;
-	}
-
-	public void setIncomingOid(BigDecimal incomingOid) {
-		this.incomingOid = incomingOid;
-	}
-
-	public BigDecimal getCpnOid() {
-		return cpnOid;
-	}
-
-	public void setCpnOid(BigDecimal cpnOid) {
-		this.cpnOid = cpnOid;
+	public void setBatchNum(String batchNum) {
+		this.batchNum = batchNum;
 	}
 
 	public Date getCreateTime() {

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -156,7 +157,7 @@ public class Consumption implements Serializable {
 		
 		for (AccountConsumptionVo payment: this.getPayments()) {
 			Account acnt = acntRepos.accountOfId(new AccountKey(payment.getAcntOid()));
-			acnt.subtract(payment.getAmount(), null, this.getCpnTime(), this.getKey().getCpnOid(), operator);
+			acnt.subtract(payment.getAmount(), null, UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(), this.getCpnTime(), operator);// TODO
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);

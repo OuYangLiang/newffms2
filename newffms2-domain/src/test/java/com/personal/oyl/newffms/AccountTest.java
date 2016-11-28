@@ -2,6 +2,7 @@ package com.personal.oyl.newffms;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -78,7 +79,7 @@ public class AccountTest extends TestCase {
 		assertNotNull(bean.getKey());
 		assertNotNull(bean.getKey().getAcntOid());
 		
-		bean.subtract(BigDecimal.valueOf(55), "扣钱了", new Date(), null, "喻敏");
+		bean.subtract(BigDecimal.valueOf(55), "扣钱了", UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(),new Date(), "喻敏");
 		
 		Account bean2 = repos.accountOfId(bean.getKey());
 		
@@ -112,7 +113,7 @@ public class AccountTest extends TestCase {
 		assertNotNull(bean.getKey());
 		assertNotNull(bean.getKey().getAcntOid());
 		
-		bean.increase(BigDecimal.valueOf(55), "加钱了", new Date(), null, "喻敏");
+		bean.increase(BigDecimal.valueOf(55), "加钱了", UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(), new Date(), "喻敏");
 		
 		Account bean2 = repos.accountOfId(bean.getKey());
 		

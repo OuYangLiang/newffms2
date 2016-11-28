@@ -6,7 +6,9 @@ import java.util.Map;
 public enum AccountAuditType {
     Add("增加"),
     Subtract("扣减"),
-    Change("更新");
+    Change("更新"),
+	Trans_add("转账增加"),
+	Trans_subtract("转账扣减");
     
     private String desc;
 

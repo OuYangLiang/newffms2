@@ -14,4 +14,7 @@
     <bean id="accountRepos"
         class="com.personal.oyl.newffms.account.domain.AccountReposImpl" />
         
+    <bean id="consumptionRepos"
+        class="com.personal.oyl.newffms.consumption.domain.ConsumptionReposImpl" />
+        
 </beans>

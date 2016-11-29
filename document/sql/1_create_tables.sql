@@ -50,6 +50,7 @@ CREATE TABLE CONSUMPTION(
     CPN_TYPE                    ENUM('Supermarket', 'Online', 'Store', 'Other')     NOT NULL,
     AMOUNT                      NUMERIC(15,2)   NOT NULL,
     CPN_TIME                    DATETIME        NOT NULL,
+    BATCH_NUM                   CHAR(32)        NOT NULL,
     CONFIRMED                   BOOLEAN         NOT NULL,
     CREATE_TIME                 DATETIME        NOT NULL,
     UPDATE_TIME                 DATETIME,

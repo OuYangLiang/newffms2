@@ -2,11 +2,11 @@ package com.personal.oyl.newffms.consumption.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +23,7 @@ public class Consumption implements Serializable {
 	private ConsumptionType cpnType;
 	private BigDecimal amount;
 	private Date cpnTime;
+	private String batchNum;
 	private Boolean confirmed;
 
 	private Date createTime;
@@ -73,6 +74,14 @@ public class Consumption implements Serializable {
 
 	public void setCpnTime(Date cpnTime) {
 		this.cpnTime = cpnTime;
+	}
+
+	public String getBatchNum() {
+		return batchNum;
+	}
+
+	public void setBatchNum(String batchNum) {
+		this.batchNum = batchNum;
 	}
 
 	public Boolean getConfirmed() {
@@ -130,6 +139,14 @@ public class Consumption implements Serializable {
 	public void setItems(List<ConsumptionItemVo> items) {
 		this.items = items;
 	}
+	
+	public void addItem(ConsumptionItemVo item) {
+		if (null == items) {
+			items = new ArrayList<ConsumptionItemVo>();
+		}
+		
+		items.add(item);
+	}
 
 	public List<AccountConsumptionVo> getPayments() {
 		return payments;
@@ -137,6 +154,14 @@ public class Consumption implements Serializable {
 
 	public void setPayments(List<AccountConsumptionVo> payments) {
 		this.payments = payments;
+	}
+	
+	public void addPayment(AccountConsumptionVo payment) {
+		if (null == payments) {
+			payments = new ArrayList<AccountConsumptionVo>();
+		}
+		
+		payments.add(payment);
 	}
 
 	public void confirm(String operator) {
@@ -157,7 +182,7 @@ public class Consumption implements Serializable {
 		
 		for (AccountConsumptionVo payment: this.getPayments()) {
 			Account acnt = acntRepos.accountOfId(new AccountKey(payment.getAcntOid()));
-			acnt.subtract(payment.getAmount(), null, UUID.randomUUID().toString().replaceAll("-", "").toUpperCase(), this.getCpnTime(), operator);// TODO
+			acnt.subtract(payment.getAmount(), "desc", this.getBatchNum(), this.getCpnTime(), operator);// TODO
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);

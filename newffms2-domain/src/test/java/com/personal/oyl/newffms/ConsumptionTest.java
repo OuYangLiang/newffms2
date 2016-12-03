@@ -9,6 +9,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
@@ -44,11 +45,11 @@ public class ConsumptionTest extends TestCase {
 		ConsumptionMapper mapper4 = ctx.getBean(ConsumptionMapper.class);
 		AccountConsumptionMapper mapper5 = ctx.getBean(AccountConsumptionMapper.class);
 		
-//		mapper.delete(null);
-//		mapper2.delete(null);
-//		mapper3.delete(null);
-//		mapper4.delete(null);
-//		mapper5.delete(null);
+		mapper.delete(null);
+		mapper2.delete(null);
+		mapper3.delete(null);
+		mapper4.delete(null);
+		mapper5.delete(null);
 	}
 
 	public void testCreation() {
@@ -107,6 +108,9 @@ public class ConsumptionTest extends TestCase {
 		
 		bean = consumptionRepos.consumptionOfId(bean.getKey());
 		bean.confirm("喻敏");
+		
+		AccountService service = ctx.getBean(AccountService.class);
+		service.rollback(bean.getBatchNum(), "XXX");
 	}
 	
 }

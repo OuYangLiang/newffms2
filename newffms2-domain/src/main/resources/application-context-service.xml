@@ -8,13 +8,7 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="categoryRepos"
-        class="com.personal.oyl.newffms.category.domain.CategoryReposImpl" />
+    <bean id="accountService"
+        class="com.personal.oyl.newffms.account.domain.AccountServiceImpl" />
         
-    <bean id="accountRepos"
-        class="com.personal.oyl.newffms.account.domain.AccountReposImpl" />
-        
-    <bean id="consumptionRepos"
-        class="com.personal.oyl.newffms.consumption.domain.ConsumptionReposImpl" />
-
 </beans>

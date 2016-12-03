@@ -1,5 +1,7 @@
 package com.personal.oyl.newffms.account.domain;
 
+import java.util.List;
+
 public interface AccountRepos {
 
 	/**
@@ -17,4 +19,12 @@ public interface AccountRepos {
 	 * @param operator 操作人
 	 */
 	void add(Account bean, String operator);
+	
+	/**
+	 * 根据流水号查询账户明细
+	 * 
+	 * @param batchNum 流水号
+	 * @return 账户明细
+	 */
+	List<AccountAuditVo> auditsOfBatchNum(String batchNum);
 }

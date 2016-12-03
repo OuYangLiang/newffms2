@@ -302,6 +302,41 @@ public class Account implements Serializable {
 			this.setDebt(this.debt.subtract(amount));
 		}
 	}
+	
+	void rollback(BigDecimal chgAmt, String operator) {
+		Date now = new Date();
+		
+		BigDecimal newBalance = this.getBalance().add(chgAmt);
+		
+		if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+			throw new IllegalStateException();
+		}
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("acntOid", this.getKey().getAcntOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("balance", newBalance);
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			param.put("debt", this.getDebt().subtract(chgAmt));
+		}
+		
+		int n = mapper.updateBalance(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setBalance(newBalance);
+		if (AccountType.Creditcard.equals(this.getAcntType())) {
+			this.setDebt(this.debt.subtract(chgAmt));
+		}
+	}
 		
 	/**
 	 * 账户转账

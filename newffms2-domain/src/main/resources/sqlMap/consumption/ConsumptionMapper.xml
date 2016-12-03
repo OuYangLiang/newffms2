@@ -57,7 +57,7 @@
             #{createBy,jdbcType=NVARCHAR})
     </insert>
     
-    <update id="confirm" parameterType="java.util.Map">
+    <update id="updateStatus" parameterType="java.util.Map">
         UPDATE CONSUMPTION SET
             CONFIRMED = #{confirmed,jdbcType=BIT},
             SEQ_NO = SEQ_NO + 1,

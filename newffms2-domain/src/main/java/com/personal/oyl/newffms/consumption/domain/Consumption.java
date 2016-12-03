@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
 
@@ -39,6 +40,8 @@ public class Consumption implements Serializable {
 	private ConsumptionMapper mapper;
 	@Autowired
 	private AccountRepos acntRepos;
+	@Autowired
+	private AccountService acntService;
 
 	public Consumption() {
 		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
@@ -164,6 +167,11 @@ public class Consumption implements Serializable {
 		payments.add(payment);
 	}
 
+	/**
+	 * 确认消费
+	 * 
+	 * @param operator 操作者
+	 */
 	public void confirm(String operator) {
 		Date now = new Date();
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -174,7 +182,7 @@ public class Consumption implements Serializable {
 		param.put("updateTime", now);
 		param.put("confirmed", true);
 		
-		int n = mapper.confirm(param);
+		int n = mapper.updateStatus(param);
 		
 		if (1 != n) {
 			throw new IllegalStateException();
@@ -189,5 +197,34 @@ public class Consumption implements Serializable {
 		this.setUpdateBy(operator);
 		this.setUpdateTime(now);
 		this.setConfirmed(true);
+	}
+	
+	/**
+	 * 取消确认
+	 * 
+	 * @param operator 操作者
+	 */
+	public void unconfirm(String operator) {
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("cpnOid", this.getKey().getCpnOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("confirmed", false);
+		
+		int n = mapper.updateStatus(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		acntService.rollback(this.getBatchNum(), operator);
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setConfirmed(false);
 	}
 }

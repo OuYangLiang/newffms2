@@ -9,7 +9,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
-import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
@@ -109,8 +108,7 @@ public class ConsumptionTest extends TestCase {
 		bean = consumptionRepos.consumptionOfId(bean.getKey());
 		bean.confirm("喻敏");
 		
-		AccountService service = ctx.getBean(AccountService.class);
-		service.rollback(bean.getBatchNum(), "XXX");
+		bean.unconfirm("XXX");
 	}
 	
 }

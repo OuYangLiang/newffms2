@@ -13,5 +13,5 @@ public interface ConsumptionMapper {
 	
 	int delete(ConsumptionKey key);
 	
-	int confirm(Map<String, Object> param);
+	int updateStatus(Map<String, Object> param);
 }

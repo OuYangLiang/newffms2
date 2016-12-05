@@ -15,6 +15,8 @@ import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.consumption.store.mapper.AccountConsumptionMapper;
+import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
 
 public class Consumption implements Serializable {
@@ -42,6 +44,10 @@ public class Consumption implements Serializable {
 	private AccountRepos acntRepos;
 	@Autowired
 	private AccountService acntService;
+	@Autowired
+	private ConsumptionItemMapper itemMapper;
+	@Autowired
+	private AccountConsumptionMapper paymentMapper;
 
 	public Consumption() {
 		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
@@ -141,14 +147,23 @@ public class Consumption implements Serializable {
 
 	public void setItems(List<ConsumptionItemVo> items) {
 		this.items = items;
+		this.setAmount(BigDecimal.ZERO);
+		
+		if (null != items) {
+			for (ConsumptionItemVo item : items) {
+				this.setAmount(this.getAmount().add(item.getAmount()));
+			}
+		}
 	}
 	
 	public void addItem(ConsumptionItemVo item) {
 		if (null == items) {
 			items = new ArrayList<ConsumptionItemVo>();
+			this.setAmount(BigDecimal.ZERO);
 		}
 		
 		items.add(item);
+		this.setAmount(this.getAmount().add(item.getAmount()));
 	}
 
 	public List<AccountConsumptionVo> getPayments() {
@@ -173,6 +188,15 @@ public class Consumption implements Serializable {
 	 * @param operator 操作者
 	 */
 	public void confirm(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
 		Date now = new Date();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
@@ -205,6 +229,15 @@ public class Consumption implements Serializable {
 	 * @param operator 操作者
 	 */
 	public void unconfirm(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (!this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
 		Date now = new Date();
 		Map<String, Object> param = new HashMap<String, Object>();
 		
@@ -227,4 +260,56 @@ public class Consumption implements Serializable {
 		this.setUpdateTime(now);
 		this.setConfirmed(false);
 	}
+	
+	/**
+	 * 更新消费信息
+	 * 
+	 * @param operator 操作人
+	 */
+	public void updateAll(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("cpnOid", this.getKey().getCpnOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("cpnType", this.getCpnType());
+		param.put("amount", this.getAmount());
+		param.put("cpnTime", this.getCpnTime());
+		
+		int n = mapper.updateInfo(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		ConsumptionItemVo itemParam = new ConsumptionItemVo();
+		itemParam.setCpnOid(this.getKey().getCpnOid());
+		itemMapper.delete(itemParam);
+		
+		AccountConsumptionVo paymentParam = new AccountConsumptionVo();
+		paymentParam.setCpnOid(this.getKey().getCpnOid());
+		paymentMapper.delete(paymentParam);
+		
+		for (ConsumptionItemVo item : this.getItems()) {
+			item.setCpnOid(this.getKey().getCpnOid());
+			itemMapper.insert(item);
+		}
+		
+		for (AccountConsumptionVo payment : this.getPayments()) {
+			payment.setCpnOid(this.getKey().getCpnOid());
+			paymentMapper.insert(payment);
+		}
+	}
+	
 }

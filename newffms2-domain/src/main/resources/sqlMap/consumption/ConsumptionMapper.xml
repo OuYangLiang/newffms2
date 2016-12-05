@@ -66,4 +66,15 @@
         WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
     </update>
     
+    <update id="updateInfo" parameterType="java.util.Map">
+        UPDATE CONSUMPTION SET
+            CPN_TYPE = #{cpnType, jdbcType=VARCHAR},
+            AMOUNT = #{amount, jdbcType=DECIMAL},
+            CPN_TIME = #{cpnTime, jdbcType=TIMESTAMP},
+            SEQ_NO = SEQ_NO + 1,
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
 </mapper>

@@ -16,5 +16,8 @@
         
     <bean id="consumptionRepos"
         class="com.personal.oyl.newffms.consumption.domain.ConsumptionReposImpl" />
+       
+    <bean id="incomingRepos"
+        class="com.personal.oyl.newffms.incoming.domain.IncomingReposImpl" />
 
 </beans>

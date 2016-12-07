@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper">
+	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.incoming.domain.Incoming">
+        <id column="INCOMING_OID" property="key.incomingOid" jdbcType="DECIMAL" />
+        <result column="INCOMING_DESC" property="incomingDesc" jdbcType="NVARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+        <result column="INCOMING_TYPE" property="incomingType" jdbcType="VARCHAR" />
+        <result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
+        <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="INCOMING_DATE" property="incomingDate" jdbcType="TIMESTAMP" />
+        <result column="BATCH_NUM" property="batchNum" jdbcType="VARCHAR" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+        INCOMING_OID, INCOMING_DESC, AMOUNT, INCOMING_TYPE, CONFIRMED, OWNER_OID, INCOMING_DATE, BATCH_NUM, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
+	</sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.incoming.domain.Incoming">
+        SELECT <include refid="Base_Column_List" />
+        FROM INCOMING
+        <where>
+            <if test="key != null and key.incomingOid != null">
+                INCOMING_OID = #{key.incomingOid,jdbcType=DECIMAL}
+            </if>
+            <if test="ownerOid != null">
+                AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+            </if>
+            <if test="incomingType != null">
+                AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    
+    <delete id="delete" parameterType="com.personal.oyl.newffms.incoming.domain.IncomingKey" >
+        DELETE FROM INCOMING
+        <where>
+            <if test="incomingOid != null">
+                INCOMING_OID = #{incomingOid,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </delete>
+
+    <insert id="insert" parameterType="com.personal.oyl.newffms.incoming.domain.Incoming" useGeneratedKeys="true" keyProperty="key.incomingOid">
+        INSERT INTO INCOMING(
+            INCOMING_DESC,
+            AMOUNT,
+            INCOMING_TYPE,
+            CONFIRMED,
+            OWNER_OID,
+            INCOMING_DATE,
+            BATCH_NUM,
+            CREATE_TIME,
+            CREATE_BY)
+        VALUES (
+            #{incomingDesc,jdbcType=VARCHAR},
+            #{amount,jdbcType=DECIMAL},
+            #{incomingType,jdbcType=VARCHAR},
+            #{confirmed,jdbcType=BIT},
+            #{ownerOid,jdbcType=DECIMAL},
+            #{incomingDate,jdbcType=TIMESTAMP},
+            #{batchNum,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createBy,jdbcType=NVARCHAR})
+    </insert>
+    
+</mapper>

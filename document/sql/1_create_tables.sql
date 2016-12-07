@@ -108,3 +108,39 @@ CREATE TABLE ACCOUNT_AUDIT(
     CREATE_BY                   NVARCHAR(6)     NOT NULL,
     PRIMARY KEY (ADT_OID)
 )ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: INCOMING
+--
+
+CREATE TABLE INCOMING(
+    INCOMING_OID                BIGINT          NOT NULL        AUTO_INCREMENT,
+    INCOMING_DESC               NVARCHAR(30)    NOT NULL,
+    AMOUNT                      NUMERIC(15,2)   NOT NULL,
+    INCOMING_TYPE               ENUM('Salary', 'Bonus', 'Cash', 'Investment', 'Accumulation', 'Other')    NOT NULL,
+    CONFIRMED                   BOOLEAN         NOT NULL,
+    OWNER_OID                   BIGINT          NOT NULL,
+    INCOMING_DATE               DATE            NOT NULL,
+    BATCH_NUM                   CHAR(32)        NOT NULL,
+    CREATE_TIME                 DATETIME        NOT NULL,
+    UPDATE_TIME                 DATETIME,
+    CREATE_BY                   NVARCHAR(6)     NOT NULL,
+    UPDATE_BY                   NVARCHAR(6),
+    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
+    PRIMARY KEY (INCOMING_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: ACCOUNT_INCOMING
+--
+
+CREATE TABLE ACCOUNT_INCOMING(
+    ACNT_OID                    BIGINT          NOT NULL,
+    INCOMING_OID                BIGINT          NOT NULL,
+    PRIMARY KEY (ACNT_OID, INCOMING_OID)
+)ENGINE=INNODB;
+

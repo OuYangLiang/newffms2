@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 public class IncomingKey {
 	private BigDecimal incomingOid;
 	
+	public IncomingKey() {
+		
+	}
+	
 	public IncomingKey(BigDecimal incomingOid) {
 		super();
 		this.setIncomingOid(incomingOid);

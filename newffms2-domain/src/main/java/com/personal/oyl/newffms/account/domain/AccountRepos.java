@@ -15,7 +15,7 @@ public interface AccountRepos {
 	/**
 	 * 创建新的账户
 	 * 
-	 * @param bean 账户标识
+	 * @param bean 账户实体
 	 * @param operator 操作人
 	 */
 	void add(Account bean, String operator);

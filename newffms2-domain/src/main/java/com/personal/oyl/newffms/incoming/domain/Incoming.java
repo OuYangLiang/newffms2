@@ -3,8 +3,17 @@ package com.personal.oyl.newffms.incoming.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountKey;
+import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper;
 
 public class Incoming implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -25,6 +34,13 @@ public class Incoming implements Serializable {
 	private Integer seqNo;
 	
 	private AccountIncomingVo acntRel;
+	
+	@Autowired
+	private IncomingMapper mapper;
+	@Autowired
+	private AccountRepos acntRepos;
+	@Autowired
+	private AccountService acntService;
 	
 	public Incoming() {
 		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
@@ -140,6 +156,83 @@ public class Incoming implements Serializable {
 
 	public void setAcntRel(AccountIncomingVo acntRel) {
 		this.acntRel = acntRel;
+	}
+	
+	/**
+	 * 确认收入
+	 * 
+	 * @param operator 操作者
+	 */
+	public void confirm(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("incomingOid", this.getKey().getIncomingOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("confirmed", true);
+		
+		int n = mapper.updateStatus(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		Account acnt = acntRepos.accountOfId(new AccountKey(this.getAcntRel().getAcntOid()));
+		acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), now, operator);
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setConfirmed(true);
+	}
+	
+	/**
+	 * 取消确认
+	 * 
+	 * @param operator 操作者
+	 */
+	public void unconfirm(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (!this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("incomingOid", this.getKey().getIncomingOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("confirmed", false);
+		
+		int n = mapper.updateStatus(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		acntService.rollback(this.getBatchNum(), operator);
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
+		this.setConfirmed(false);
 	}
 
 }

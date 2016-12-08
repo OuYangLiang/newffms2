@@ -70,4 +70,13 @@
             #{createBy,jdbcType=NVARCHAR})
     </insert>
     
+    <update id="updateStatus" parameterType="java.util.Map">
+        UPDATE INCOMING SET
+            CONFIRMED = #{confirmed,jdbcType=BIT},
+            SEQ_NO = SEQ_NO + 1,
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE INCOMING_OID = #{incomingOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
 </mapper>

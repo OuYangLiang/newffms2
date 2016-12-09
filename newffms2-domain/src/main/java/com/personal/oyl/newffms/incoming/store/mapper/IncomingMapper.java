@@ -15,4 +15,6 @@ public interface IncomingMapper {
 	
 	int updateStatus(Map<String, Object> param);
 	
+	int updateInfo(Map<String, Object> param);
+	
 }

@@ -153,4 +153,57 @@ public class IncomingTest extends TestCase {
 		assertEquals("XXX", bean.getUpdateBy());
 		assertNotNull(bean.getUpdateTime());
 	}
+	
+	public void testUpdateInfo() {
+		
+		IncomingRepos repos = ctx.getBean(IncomingRepos.class);
+		
+		String uuid = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+		Date now = new Date();
+		
+		Incoming bean = new Incoming();
+		bean.setIncomingDesc("desc");
+		bean.setAmount(BigDecimal.valueOf(100));
+		bean.setBatchNum(uuid);
+		bean.setIncomingType(IncomingType.Salary);
+		bean.setOwnerOid(BigDecimal.ONE);
+		bean.setConfirmed(false);
+		bean.setIncomingDate(now);
+		
+		AccountIncomingVo acntRel = new AccountIncomingVo();
+		acntRel.setAcntOid(BigDecimal.valueOf(10));
+		bean.setAcntRel(acntRel);
+		repos.add(bean, "欧阳亮");
+		
+		bean.setIncomingDesc("desc1");
+		bean.setAmount(BigDecimal.valueOf(150));
+		bean.setIncomingType(IncomingType.Bonus);
+		bean.setOwnerOid(BigDecimal.TEN);
+		
+		bean.updateAll("XXX");
+		
+		assertFalse(bean.getConfirmed());
+		assertEquals("XXX", bean.getUpdateBy());
+		assertNotNull(bean.getUpdateTime());
+		
+		bean = repos.incomingOfId(bean.getKey());
+		
+		assertNotNull(bean.getKey());
+		assertNotNull(bean.getKey().getIncomingOid());
+		assertEquals("desc1", bean.getIncomingDesc());
+		assertTrue(BigDecimal.valueOf(150).compareTo(bean.getAmount()) == 0);
+		assertEquals(uuid, bean.getBatchNum());
+		assertEquals(IncomingType.Bonus, bean.getIncomingType());
+		assertNotNull(bean.getIncomingDate().getTime());
+		assertFalse(bean.getConfirmed());
+		assertEquals("欧阳亮", bean.getCreateBy());
+		assertNotNull(bean.getCreateTime());
+		assertEquals("XXX", bean.getUpdateBy());
+		assertNotNull(bean.getUpdateTime());
+		
+		assertNotNull(bean.getAcntRel());
+		assertNotNull(bean.getAcntRel().getIncomingOid());
+		assertTrue(BigDecimal.TEN.compareTo(bean.getAcntRel().getAcntOid()) == 0);
+		assertTrue(bean.getKey().getIncomingOid().compareTo(bean.getAcntRel().getIncomingOid()) == 0);
+	}
 }

@@ -310,6 +310,10 @@ public class Consumption implements Serializable {
 			payment.setCpnOid(this.getKey().getCpnOid());
 			paymentMapper.insert(payment);
 		}
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
 	}
 	
 }

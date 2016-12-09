@@ -13,6 +13,7 @@ import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.incoming.store.mapper.AccountIncomingMapper;
 import com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper;
 
 public class Incoming implements Serializable {
@@ -37,6 +38,8 @@ public class Incoming implements Serializable {
 	
 	@Autowired
 	private IncomingMapper mapper;
+	@Autowired
+	private AccountIncomingMapper itemMapper;
 	@Autowired
 	private AccountRepos acntRepos;
 	@Autowired
@@ -233,6 +236,50 @@ public class Incoming implements Serializable {
 		this.setUpdateBy(operator);
 		this.setUpdateTime(now);
 		this.setConfirmed(false);
+	}
+	
+	/**
+	 * 更新收入信息
+	 * 
+	 * @param operator 操作人
+	 */
+	public void updateAll(String operator) {
+		
+		if (null == operator || operator.trim().isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		
+		if (this.getConfirmed()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Date now = new Date();
+		Map<String, Object> param = new HashMap<String, Object>();
+		
+		param.put("seqNo", this.getSeqNo());
+		param.put("incomingOid", this.getKey().getIncomingOid());
+		param.put("updateBy", operator);
+		param.put("updateTime", now);
+		param.put("incomingDesc", this.getIncomingDesc());
+		param.put("amount", this.getAmount());
+		param.put("incomingType", this.getIncomingType());
+		param.put("ownerOid", this.getOwnerOid());
+		param.put("incomingDate", this.getIncomingDate());
+		
+		int n = mapper.updateInfo(param);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountIncomingVo itemParam = new AccountIncomingVo();
+		itemParam.setIncomingOid(this.getKey().getIncomingOid());
+		itemMapper.delete(itemParam);
+		itemMapper.insert(this.getAcntRel());
+		
+		this.setSeqNo(this.getSeqNo() + 1);
+		this.setUpdateBy(operator);
+		this.setUpdateTime(now);
 	}
 
 }

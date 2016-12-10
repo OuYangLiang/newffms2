@@ -77,4 +77,43 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
 		return bean;
 	}
 
+	@Override
+	public void remove(ConsumptionKey key) {
+		if (null == key || null == key.getCpnOid()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Consumption obj = this.consumptionOfId(key);
+		
+		if (null == obj) {
+			throw new IllegalStateException("消费不存在。");
+		}
+		
+		if (obj.getConfirmed()) {
+			throw new IllegalStateException();
+		}
+		
+		int n = mapper.delete(key);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		ConsumptionItemVo itemParam = new ConsumptionItemVo();
+		itemParam.setCpnOid(key.getCpnOid());
+		n = itemMapper.delete(itemParam);
+		
+		if (obj.getItems().size() != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountConsumptionVo paymentParam = new AccountConsumptionVo();
+		paymentParam.setCpnOid(key.getCpnOid());
+		n = paymentMapper.delete(paymentParam);
+		
+		if (obj.getPayments().size() != n) {
+			throw new IllegalStateException();
+		}
+	}
+
 }

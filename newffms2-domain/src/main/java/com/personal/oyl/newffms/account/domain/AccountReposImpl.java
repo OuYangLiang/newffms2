@@ -68,5 +68,31 @@ public class AccountReposImpl implements AccountRepos {
 		
 		return list;
 	}
+	
+	@Override
+	public void remove(AccountKey key) {
+		if (null == key || null == key.getAcntOid()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Account obj = this.accountOfId(key);
+		
+		// TODO check if this account could be removed.
+		
+		if (null == obj) {
+			throw new IllegalStateException("收入不存在。");
+		}
+		
+		int n = mapper.delete(key);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountAuditVo detailParam = new AccountAuditVo();
+		detailParam.setAcntOid(key.getAcntOid());
+		auditMapper.delete(detailParam);
+		
+	}
 
 }

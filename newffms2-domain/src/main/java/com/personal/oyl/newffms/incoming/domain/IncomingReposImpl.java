@@ -75,5 +75,37 @@ public class IncomingReposImpl implements IncomingRepos {
 		
 		bean.setSeqNo(1);
 	}
+	
+	@Override
+	public void remove(IncomingKey key) {
+		if (null == key || null == key.getIncomingOid()) {
+			throw new IllegalArgumentException();
+		}
+		
+		Incoming obj = this.incomingOfId(key);
+		
+		if (null == obj) {
+			throw new IllegalStateException("收入不存在。");
+		}
+		
+		if (obj.getConfirmed()) {
+			throw new IllegalStateException();
+		}
+		
+		int n = mapper.delete(key);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+		AccountIncomingVo itemParam = new AccountIncomingVo();
+		itemParam.setIncomingOid(key.getIncomingOid());
+		n = acntIncomingMapper.delete(itemParam);
+		
+		if (1 != n) {
+			throw new IllegalStateException();
+		}
+		
+	}
 
 }

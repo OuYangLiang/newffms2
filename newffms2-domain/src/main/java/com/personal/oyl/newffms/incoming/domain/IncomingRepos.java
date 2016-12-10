@@ -1,6 +1,5 @@
 package com.personal.oyl.newffms.incoming.domain;
 
-
 public interface IncomingRepos {
 	/**
 	 * 根据收入标识查询收入
@@ -17,4 +16,11 @@ public interface IncomingRepos {
 	 * @param operator 操作人
 	 */
 	void add(Incoming bean, String operator);
+	
+	/**
+	 * 删除收入
+	 * 
+	 * @param key 待删除收入标识
+	 */
+	void remove(IncomingKey key);
 }

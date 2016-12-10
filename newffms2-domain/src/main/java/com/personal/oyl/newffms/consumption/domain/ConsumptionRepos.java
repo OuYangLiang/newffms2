@@ -16,4 +16,11 @@ public interface ConsumptionRepos {
 	 * @return 消费实体
 	 */
 	Consumption consumptionOfId(ConsumptionKey key);
+	
+	/**
+	 * 删除消费
+	 * 
+	 * @param key 待删除消费标识
+	 */
+	void remove(ConsumptionKey key);
 }

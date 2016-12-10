@@ -27,4 +27,11 @@ public interface AccountRepos {
 	 * @return 账户明细
 	 */
 	List<AccountAuditVo> auditsOfBatchNum(String batchNum);
+	
+	/**
+	 * 删除账户
+	 * 
+	 * @param key 待删除账户标识
+	 */
+	void remove(AccountKey key);
 }

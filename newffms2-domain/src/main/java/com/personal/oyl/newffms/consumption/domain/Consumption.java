@@ -11,10 +11,17 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 import com.personal.oyl.newffms.consumption.store.mapper.AccountConsumptionMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
@@ -186,11 +193,16 @@ public class Consumption implements Serializable {
 	 * 确认消费
 	 * 
 	 * @param operator 操作者
+	 * @throws NoOperatorException 
+	 * @throws AccountOperationDescException 
+	 * @throws AccountBalanceInsufficiencyException 
+	 * @throws AccountAmountInvalidException 
+	 * @throws AccountKeyEmptyException 
 	 */
-	public void confirm(String operator) {
+	public void confirm(String operator) throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException {
 		
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		if (this.getConfirmed()) {
@@ -227,8 +239,12 @@ public class Consumption implements Serializable {
 	 * 取消确认
 	 * 
 	 * @param operator 操作者
+	 * @throws AccountKeyEmptyException 
+	 * @throws AccountBatchNumInvalidException 
+	 * @throws AccountBatchNumEmptyException 
+	 * @throws NoOperatorException 
 	 */
-	public void unconfirm(String operator) {
+	public void unconfirm(String operator) throws AccountKeyEmptyException, AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {
 		
 		if (null == operator || operator.trim().isEmpty()) {
 			throw new IllegalArgumentException();

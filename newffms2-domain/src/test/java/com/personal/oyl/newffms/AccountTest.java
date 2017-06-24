@@ -8,10 +8,26 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtPlusBalanceNeqQuotaException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 import junit.framework.TestCase;
 
@@ -36,7 +52,7 @@ public class AccountTest extends TestCase {
 		mapper2.delete(null);
 	}
 
-	public void testCreation() {
+	public void testCreation() throws AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, NoOperatorException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException {
 		AccountRepos repos = ctx.getBean(AccountRepos.class);
 		
 		Account bean = new Account();
@@ -65,7 +81,7 @@ public class AccountTest extends TestCase {
 		mapper.delete(null);
 	}
 	
-	public void testSubtract() {
+	public void testSubtract() throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException {
 		AccountRepos repos = ctx.getBean(AccountRepos.class);
 		
 		Account bean = new Account();
@@ -99,7 +115,7 @@ public class AccountTest extends TestCase {
 		mapper2.delete(null);
 	}
 	
-	public void testIncrease() {
+	public void testIncrease() throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException {
 		AccountRepos repos = ctx.getBean(AccountRepos.class);
 		
 		Account bean = new Account();
@@ -134,7 +150,7 @@ public class AccountTest extends TestCase {
 	}
 	
 	
-	public void testTransfer() {
+	public void testTransfer() throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException {
 		AccountRepos repos = ctx.getBean(AccountRepos.class);
 		
 		Account bean = new Account();

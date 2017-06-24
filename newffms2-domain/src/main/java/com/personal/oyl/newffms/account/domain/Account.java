@@ -9,14 +9,20 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
 
-public class Account implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Account implements AccountOperation, Serializable {
 
-	private AccountKey key;
+    private static final long serialVersionUID = 1100828800834047867L;
+    private AccountKey key;
 	private String acntDesc;
 	private AccountType acntType;
 	private BigDecimal balance;
@@ -135,110 +141,91 @@ public class Account implements Serializable {
 		this.seqNo = seqNo;
 	}
 	
-	/**
-	 * 变更账户描述
-	 * 
-	 * @param newDesc
-	 * @param operator
-	 */
-	public void changeDesc(String newDesc, String operator) {
-		if (null == newDesc || newDesc.trim().isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("seqNo", this.getSeqNo());
-		param.put("acntOid", this.getKey().getAcntOid());
-		param.put("updateBy", operator);
-		param.put("acntDesc", newDesc);
-		
-		int n = mapper.changeAccountDesc(param);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setAcntDesc(newDesc);
-		this.setUpdateBy(operator);
-	}
+    @Override
+    public void changeDesc(String newDesc, String operator) throws AccountDescEmptyException, NoOperatorException, AccountDescTooLongException {
+        if (null == newDesc || newDesc.trim().isEmpty()) {
+            throw new AccountDescEmptyException();
+        }
+        
+        if (newDesc.trim().length() > 30) {
+            throw new AccountDescTooLongException();
+        }
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("seqNo", this.getSeqNo());
+        param.put("acntOid", this.getKey().getAcntOid());
+        param.put("updateBy", operator);
+        param.put("acntDesc", newDesc);
+
+        int n = mapper.changeAccountDesc(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setAcntDesc(newDesc);
+        this.setUpdateBy(operator);
+    }
 	
-	/**
-	 * 消费扣减
-	 * 
-	 * @param amount 扣减金额，正数表示
-	 * @param desc 描述
-	 * @param batchNum 流水号
-	 * @param eventTime 事件发生时间
-	 * @param operator 操作人
-	 */
-	public void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator) {
-		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new IllegalArgumentException();
+	@Override
+    public void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
+            throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException,
+            NoOperatorException {
+        if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+			throw new AccountAmountInvalidException();
 		}
 		
 		if (this.getBalance().compareTo(amount) < 0) {
-			throw new IllegalArgumentException();
+			throw new AccountBalanceInsufficiencyException();
 		}
 		
 		if (null == desc || desc.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new AccountException.AccountOperationDescException();
 		}
 		
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+		    throw new NoOperatorException();
 		}
 		
 		this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Subtract);
 	}
 	
-	/**
-	 * 账户增加
-	 * 
-	 * @param amount 增加金额
-	 * @param desc 描述
-	 * @param batchNum 流水号
-	 * @param eventTime 事件发生时间
-	 * @param operator 操作人
-	 */
-	public void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator) {
+	@Override
+    public void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
+            throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException {
 		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new IllegalArgumentException();
+			throw new AccountAmountInvalidException();
 		}
 		
 		if (null == desc || desc.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new AccountOperationDescException();
 		}
 		
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Add);
 	}
 	
-	/**
-	 * 账户转账
-	 * 
-	 * @param target 目标账户
-	 * @param amount 增加金额
-	 * @param operator 操作人
-	 */
-	public void transfer(Account target, BigDecimal amount, String operator) {
-		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new IllegalArgumentException();
+	@Override
+    public void transfer(Account target, BigDecimal amount, String operator)
+            throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException {
+    	if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+			throw new AccountAmountInvalidException();
 		}
 
 		if (this.getBalance().compareTo(amount) < 0) {
-			throw new IllegalArgumentException();
+			throw new AccountBalanceInsufficiencyException();
 		}
 
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		Date now = new Date();

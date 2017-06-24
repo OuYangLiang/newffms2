@@ -8,10 +8,28 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtPlusBalanceNeqQuotaException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 import com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo;
 import com.personal.oyl.newffms.consumption.domain.Consumption;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo;
@@ -51,7 +69,7 @@ public class ConsumptionTest extends TestCase {
 		mapper5.delete(null);
 	}
 
-	public void testCreation() {
+	public void testCreation() throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException, AccountBatchNumEmptyException, AccountBatchNumInvalidException {
 		
 		AccountRepos acntRepos = ctx.getBean(AccountRepos.class);
 		ConsumptionRepos consumptionRepos = ctx.getBean(ConsumptionRepos.class);

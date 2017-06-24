@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public class AccountServiceImpl implements AccountService {
 	
@@ -14,24 +18,29 @@ public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private AccountAuditMapper auditMapper;
 
-	@Override
-	public void rollback(String batchNum, String operator) {
-		if (null == batchNum || batchNum.trim().isEmpty() || 32 != batchNum.length()) {
-			throw new IllegalArgumentException();
-		}
+    @Override
+    public void rollback(String batchNum, String operator) throws AccountKeyEmptyException,
+            AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {
+    	if (null == batchNum || batchNum.trim().isEmpty()) {
+            throw new AccountBatchNumEmptyException();
+        }
+        
+        if (32 != batchNum.length()) {
+            throw new AccountBatchNumInvalidException();
+        }
 		
 		if (null == operator || operator.trim().isEmpty()) {
 			throw new IllegalArgumentException();
 		}
 		
-		List<AccountAuditVo> audits = repos.auditsOfBatchNum(batchNum);
+        List<AccountAuditVo> audits = repos.auditsOfBatchNum(batchNum);
 		
 		if (null == audits || audits.isEmpty()) {
 			throw new IllegalArgumentException();
 		}
 		
 		if (2 < audits.size()) {
-			throw new IllegalStateException();
+		    throw new NoOperatorException();
 		}
 		
 		for (AccountAuditVo audit : audits) {

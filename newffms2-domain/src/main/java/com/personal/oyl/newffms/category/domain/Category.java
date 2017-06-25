@@ -26,7 +26,7 @@ public class Category implements CategoryOperation, Serializable {
 	private String categoryDesc;
 	private BigDecimal monthlyBudget;
 	private Integer categoryLevel;
-	private boolean leaf;
+	private Boolean leaf;
 	private CategoryKey parentKey;
 	
 	private Date createTime;
@@ -76,15 +76,15 @@ public class Category implements CategoryOperation, Serializable {
 		this.categoryLevel = categoryLevel;
 	}
 
-	public boolean isLeaf() {
-		return leaf;
-	}
+	public Boolean getLeaf() {
+        return leaf;
+    }
 
-	public void setLeaf(boolean leaf) {
-		this.leaf = leaf;
-	}
+    public void setLeaf(Boolean leaf) {
+        this.leaf = leaf;
+    }
 
-	public CategoryKey getParentKey() {
+    public CategoryKey getParentKey() {
 		return parentKey;
 	}
 
@@ -188,8 +188,12 @@ public class Category implements CategoryOperation, Serializable {
         if (null == operator || operator.trim().isEmpty()) {
             throw new NoOperatorException();
         }
+        
+        if (null == this.getLeaf()) {
+            throw new NewffmsSystemException();
+        }
 	    
-		if (this.isLeaf()) {
+		if (this.getLeaf()) {
 		    // TODO check if current category has been used already.
 		}
 		
@@ -206,7 +210,7 @@ public class Category implements CategoryOperation, Serializable {
 		target.setSeqNo(1);
 		
 		try {
-		    if (this.isLeaf()) {
+		    if (this.getLeaf()) {
 	            this.changeBudget(budget, false, operator);
 	        } else {
 	            this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
@@ -221,7 +225,11 @@ public class Category implements CategoryOperation, Serializable {
 	@Override
     public void changeBudget(BigDecimal newBudget, String operator)
             throws CategoryNotLeafException, NoOperatorException, NewffmsSystemException {
-		if (!this.isLeaf()) {
+	    if (null == this.getLeaf()) {
+            throw new NewffmsSystemException();
+        }
+	    
+		if (!this.getLeaf()) {
 			throw new CategoryNotLeafException();
 		}
 		
@@ -236,7 +244,7 @@ public class Category implements CategoryOperation, Serializable {
         }
 	}
 	
-    protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) throws CategoryKeyEmptyException {
+    protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) throws CategoryKeyEmptyException, NewffmsSystemException {
 		if (null == newBudget || newBudget.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException();
 		}
@@ -255,7 +263,7 @@ public class Category implements CategoryOperation, Serializable {
 		int n = mapper.changeBudget(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);

@@ -10,6 +10,7 @@ import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmp
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotExistException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotLeafException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotRootException;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public interface CategoryRepos {
@@ -33,9 +34,11 @@ public interface CategoryRepos {
      * @throws CategoryNotRootException
      * @throws CategoryBudgetEmptyException
      * @throws CategoryBudgetInvalidException
+     * @throws NewffmsSystemException
      */
     void add(Category bean, String operator) throws CategoryDescEmptyException, CategoryDescTooLongException,
-            NoOperatorException, CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException;
+            NoOperatorException, CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException,
+            NewffmsSystemException;
 
 	/**
 	 * 删除类别（必须为叶子类别）
@@ -46,9 +49,10 @@ public interface CategoryRepos {
      * @throws NoOperatorException
      * @throws CategoryNotLeafException
      * @throws CategoryNotExistException
+     * @throws NewffmsSystemException
      */
-    void remove(CategoryKey key, String operator)
-            throws CategoryKeyEmptyException, NoOperatorException, CategoryNotLeafException, CategoryNotExistException;
+    void remove(CategoryKey key, String operator) throws CategoryKeyEmptyException, NoOperatorException,
+            CategoryNotLeafException, CategoryNotExistException, NewffmsSystemException;
 	
 	/**
 	 * 根据父类别标识查询子类别

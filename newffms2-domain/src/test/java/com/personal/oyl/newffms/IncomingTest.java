@@ -8,27 +8,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.account.domain.Account;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtPlusBalanceNeqQuotaException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
-import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.incoming.domain.AccountIncomingVo;
 import com.personal.oyl.newffms.incoming.domain.Incoming;
 import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
@@ -64,7 +48,7 @@ public class IncomingTest extends TestCase {
 		mapper4.delete(null);
 	}
 	
-	public void testCreation() {
+	public void testCreation() throws NewffmsDomainException {
 		IncomingRepos repos = ctx.getBean(IncomingRepos.class);
 		
 		String uuid = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
@@ -112,7 +96,7 @@ public class IncomingTest extends TestCase {
 		assertTrue(bean.getKey().getIncomingOid().compareTo(bean.getAcntRel().getIncomingOid()) == 0);
 	}
 	
-	public void testConfirm() throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException, AccountBatchNumEmptyException, AccountBatchNumInvalidException {
+	public void testConfirm() throws NewffmsDomainException {
 		
 		AccountRepos acntRepos = ctx.getBean(AccountRepos.class);
 		IncomingRepos repos = ctx.getBean(IncomingRepos.class);
@@ -171,7 +155,7 @@ public class IncomingTest extends TestCase {
 		assertNotNull(bean.getUpdateTime());
 	}
 	
-	public void testUpdateInfo() {
+	public void testUpdateInfo() throws NewffmsDomainException {
 		
 		IncomingRepos repos = ctx.getBean(IncomingRepos.class);
 		

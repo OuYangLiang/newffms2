@@ -15,6 +15,7 @@ import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotExi
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotLeafException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotRootException;
 import com.personal.oyl.newffms.category.store.mapper.CategoryMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public class CategoryReposImpl implements CategoryRepos {
@@ -40,10 +41,10 @@ public class CategoryReposImpl implements CategoryRepos {
 		return list.get(0);
 	}
 
-	@Override
-    public void add(Category bean, String operator)
-            throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
-            CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException {
+    @Override
+    public void add(Category bean, String operator) throws CategoryDescEmptyException, CategoryDescTooLongException,
+            NoOperatorException, CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException,
+            NewffmsSystemException {
  
 	    if (null == bean || null == bean.getCategoryDesc() || bean.getCategoryDesc().trim().isEmpty()) {
             throw new CategoryDescEmptyException();
@@ -53,7 +54,15 @@ public class CategoryReposImpl implements CategoryRepos {
             throw new CategoryDescTooLongException();
         }
         
-        if (!bean.isLeaf() || (null != bean.getCategoryLevel() && bean.getCategoryLevel() != 1) ) {
+        if (null == bean.getLeaf()) {
+            bean.setLeaf(true);
+        }
+        
+        if (null == bean.getCategoryLevel()) {
+            bean.setCategoryLevel(Integer.valueOf(1));
+        }
+        
+        if (!bean.getLeaf() || bean.getCategoryLevel() != 1 ) {
             throw new CategoryNotRootException();
         }
         
@@ -69,18 +78,22 @@ public class CategoryReposImpl implements CategoryRepos {
 			throw new NoOperatorException();
 		}
 		
-		bean.setCategoryLevel(Integer.valueOf(1));
 		bean.setCreateBy(operator);
 		bean.setCreateTime(new Date());
 		
-		mapper.insert(bean);
+		int n = mapper.insert(bean);
+		
+		if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+		
 		bean.setSeqNo(1);
 	}
 
     @Override
-    public void remove(CategoryKey key, String operator)
-            throws CategoryKeyEmptyException, NoOperatorException, CategoryNotLeafException, CategoryNotExistException {
-    	if (null == key || null == key.getCategoryOid()) {
+    public void remove(CategoryKey key, String operator) throws CategoryKeyEmptyException, NoOperatorException,
+            CategoryNotLeafException, CategoryNotExistException, NewffmsSystemException {
+        if (null == key || null == key.getCategoryOid()) {
 			throw new CategoryKeyEmptyException();
 		}
 		
@@ -91,16 +104,20 @@ public class CategoryReposImpl implements CategoryRepos {
 		Category obj = this.categoryOfId(key);
 		
 		if (null == obj) {
-			throw new CategoryException.CategoryNotExistException();
+			throw new CategoryNotExistException();
 		}
 		
-		if (!obj.isLeaf()) {
+		if (!obj.getLeaf()) {
 			throw new CategoryNotLeafException();
 		}
 		
 		//TODO check if current category has been used already.
 		
-		mapper.delete(key);
+		int n = mapper.delete(key);
+		
+		if (1 != n) {
+            throw new NewffmsSystemException();
+        }
 		
 		CategoryKey parentKey = obj.getParentKey();
 		

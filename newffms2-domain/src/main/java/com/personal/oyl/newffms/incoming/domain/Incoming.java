@@ -9,20 +9,22 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.personal.oyl.newffms.account.domain.Account;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAlreadyConfirmedException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountInvalidException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingNotConfirmedException;
 import com.personal.oyl.newffms.incoming.store.mapper.AccountIncomingMapper;
 import com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper;
 
-public class Incoming implements Serializable {
+public class Incoming implements IncomingOperation, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private IncomingKey key;
@@ -167,23 +169,16 @@ public class Incoming implements Serializable {
 		this.acntRel = acntRel;
 	}
 	
-	/**
-	 * 确认收入
-	 * 
-	 * @param operator 操作者
-	 * @throws NoOperatorException 
-	 * @throws AccountOperationDescException 
-	 * @throws AccountAmountInvalidException 
-	 * @throws AccountKeyEmptyException 
-	 */
-	public void confirm(String operator) throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException {
-		
+	@Override
+    public void confirm(String operator)
+            throws NoOperatorException, IncomingAlreadyConfirmedException, NewffmsSystemException {
+	
 		if (null == operator || operator.trim().isEmpty()) {
 			throw new NoOperatorException();
 		}
 		
 		if (this.getConfirmed()) {
-			throw new IllegalArgumentException();
+			throw new IncomingAlreadyConfirmedException();
 		}
 		
 		Date now = new Date();
@@ -198,11 +193,26 @@ public class Incoming implements Serializable {
 		int n = mapper.updateStatus(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
-		Account acnt = acntRepos.accountOfId(new AccountKey(this.getAcntRel().getAcntOid()));
-		acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), now, operator);
+		Account acnt = null;
+		
+        try {
+            acnt = acntRepos.accountOfId(new AccountKey(this.getAcntRel().getAcntOid()));
+        } catch (AccountKeyEmptyException e) {
+            throw new NewffmsSystemException();
+        }
+        
+        if (null == acnt) {
+            throw new NewffmsSystemException();
+        }
+        
+		try {
+            acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), now, operator);
+        } catch (NewffmsDomainException e) {
+            throw new NewffmsSystemException();
+        } 
 		
 		this.setSeqNo(this.getSeqNo() + 1);
 		this.setUpdateBy(operator);
@@ -210,23 +220,16 @@ public class Incoming implements Serializable {
 		this.setConfirmed(true);
 	}
 	
-	/**
-	 * 取消确认
-	 * 
-	 * @param operator 操作者
-	 * @throws AccountKeyEmptyException 
-	 * @throws AccountBatchNumInvalidException 
-	 * @throws AccountBatchNumEmptyException 
-	 * @throws NoOperatorException 
-	 */
-	public void unconfirm(String operator) throws AccountKeyEmptyException, AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {
+	@Override
+    public void unconfirm(String operator)
+            throws NoOperatorException, IncomingNotConfirmedException, NewffmsSystemException {
 		
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		if (!this.getConfirmed()) {
-			throw new IllegalArgumentException();
+			throw new IncomingNotConfirmedException();
 		}
 		
 		Date now = new Date();
@@ -241,10 +244,14 @@ public class Incoming implements Serializable {
 		int n = mapper.updateStatus(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
-		acntService.rollback(this.getBatchNum(), operator);
+		try {
+            acntService.rollback(this.getBatchNum(), operator);
+        } catch (NewffmsDomainException e) {
+            throw new NewffmsSystemException();
+        }
 		
 		this.setSeqNo(this.getSeqNo() + 1);
 		this.setUpdateBy(operator);
@@ -252,20 +259,26 @@ public class Incoming implements Serializable {
 		this.setConfirmed(false);
 	}
 	
-	/**
-	 * 更新收入信息
-	 * 
-	 * @param operator 操作人
-	 */
-	public void updateAll(String operator) {
-		
+    @Override
+    public void updateAll(String operator) throws NoOperatorException, IncomingAlreadyConfirmedException,
+            NewffmsSystemException, IncomingDescInvalidException, IncomingAmountInvalidException {
+        
+        if (null != this.getIncomingDesc() && this.getIncomingDesc().trim().length() > 30) {
+            throw new IncomingDescInvalidException();
+        }
+        
+        if (null != this.getAmount() && BigDecimal.ZERO.compareTo(this.getAmount()) >= 0) {
+            throw new IncomingAmountInvalidException();
+        }
+        
+        if (this.getConfirmed()) {
+            throw new IncomingAlreadyConfirmedException();
+        }
+        
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
-		if (this.getConfirmed()) {
-			throw new IllegalArgumentException();
-		}
 		
 		Date now = new Date();
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -283,13 +296,24 @@ public class Incoming implements Serializable {
 		int n = mapper.updateInfo(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
-		AccountIncomingVo itemParam = new AccountIncomingVo();
-		itemParam.setIncomingOid(this.getKey().getIncomingOid());
-		itemMapper.delete(itemParam);
-		itemMapper.insert(this.getAcntRel());
+		if (null != this.getAcntRel() && null != this.getAcntRel().getAcntOid()) {
+		    AccountIncomingVo itemParam = new AccountIncomingVo();
+	        itemParam.setIncomingOid(this.getKey().getIncomingOid());
+	        n = itemMapper.delete(itemParam);
+	        
+	        if (1 != n) {
+	            throw new NewffmsSystemException();
+	        }
+	        
+	        n = itemMapper.insert(this.getAcntRel());
+	        
+	        if (1 != n) {
+	            throw new NewffmsSystemException();
+	        }
+		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);
 		this.setUpdateBy(operator);

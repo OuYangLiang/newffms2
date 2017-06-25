@@ -8,10 +8,18 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryDescEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryDescTooLongException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotLeafException;
 import com.personal.oyl.newffms.category.store.mapper.CategoryMapper;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
-public class Category implements Serializable {
+public class Category implements CategoryOperation, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private CategoryKey key;
@@ -124,17 +132,21 @@ public class Category implements Serializable {
 		this.seqNo = seqNo;
 	}
 
-	/**
-	 * 变更当前类别名称
-	 * 
-	 * @param newDesc 新的名称
-	 * @param operator 操作人
-	 */
-	public void changeCategoryDesc(String newDesc, String operator) {
-		if (null == newDesc || newDesc.trim().isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		
+    @Override
+    public void changeCategoryDesc(String newDesc, String operator)
+            throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException {
+        if (null == newDesc || newDesc.trim().isEmpty()) {
+            throw new CategoryDescEmptyException();
+        }
+
+        if (newDesc.trim().length() > 10) {
+            throw new CategoryDescTooLongException();
+        }
+        
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("seqNo", this.getSeqNo());
 		param.put("categoryOid", this.getKey().getCategoryOid());
@@ -152,17 +164,33 @@ public class Category implements Serializable {
 		this.setUpdateBy(operator);
 	}
 	
-	/**
-	 * 创建当前类别的子类别
-	 * 
-	 * @param desc 子类别名称
-	 * @param budget 月度预算	
-	 * @param operator 操作人
-	 * @return
-	 */
-	public Category addChild(String desc, BigDecimal budget, String operator) {
+    @Override
+    public Category addChild(String desc, BigDecimal budget, String operator)
+            throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
+            CategoryBudgetEmptyException, CategoryBudgetInvalidException, NewffmsSystemException {
+
+	    if (null == desc || desc.trim().isEmpty()) {
+            throw new CategoryDescEmptyException();
+        }
+
+        if (desc.trim().length() > 10) {
+            throw new CategoryDescTooLongException();
+        }
+        
+        if (null == budget) {
+            throw new CategoryBudgetEmptyException();
+        }
+        
+        if (budget.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CategoryBudgetInvalidException();
+        }
+        
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+	    
 		if (this.isLeaf()) {
-			// check if current category has been used already.
+		    // TODO check if current category has been used already.
 		}
 		
 		Category target = new Category();
@@ -177,30 +205,38 @@ public class Category implements Serializable {
 		mapper.insert(target);
 		target.setSeqNo(1);
 		
-		if (this.isLeaf()) {
-			this.changeBudget(budget, false, operator);
-		} else {
-			this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
-		}
+		try {
+		    if (this.isLeaf()) {
+	            this.changeBudget(budget, false, operator);
+	        } else {
+	            this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
+	        }
+        } catch (CategoryKeyEmptyException e) {
+            throw new NewffmsSystemException();
+        }
 		
 		return target;
 	}
 	
-	/**
-	 * 变更当前类别的月度预算（当前类别必须为叶子类别）
-	 * 
-	 * @param newBudget 新的预算
-	 * @param operator 操作人
-	 */
-	public void changeBudget(BigDecimal newBudget, String operator) {
+	@Override
+    public void changeBudget(BigDecimal newBudget, String operator)
+            throws CategoryNotLeafException, NoOperatorException, NewffmsSystemException {
 		if (!this.isLeaf()) {
-			throw new IllegalStateException();
+			throw new CategoryNotLeafException();
 		}
 		
-		this.changeBudget(newBudget, null, operator);
+		if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+		
+		try {
+            this.changeBudget(newBudget, null, operator);
+        } catch (CategoryKeyEmptyException e) {
+            throw new NewffmsSystemException();
+        }
 	}
 	
-	protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) {
+    protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) throws CategoryKeyEmptyException {
 		if (null == newBudget || newBudget.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException();
 		}

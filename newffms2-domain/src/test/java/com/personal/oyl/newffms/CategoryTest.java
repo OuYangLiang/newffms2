@@ -10,6 +10,7 @@ import com.personal.oyl.newffms.category.domain.Category;
 import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
 import com.personal.oyl.newffms.category.store.mapper.CategoryMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
 
 import junit.framework.TestCase;
 
@@ -32,7 +33,7 @@ public class CategoryTest extends TestCase {
 		mapper.delete(null);
 	}
 
-	public void testCreation() {
+	public void testCreation() throws NewffmsDomainException {
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		
 		Category bean = new Category();
@@ -47,7 +48,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 	}
 	
-	public void testChangingDesc() {
+	public void testChangingDesc() throws NewffmsDomainException {
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		
 		Category bean = new Category();
@@ -72,7 +73,7 @@ public class CategoryTest extends TestCase {
 		assertEquals("欧阳亮", bean2.getCreateBy());
 	}
 	
-	public void testChangingBudget() {
+	public void testChangingBudget() throws NewffmsDomainException {
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		
 		Category bean = new Category();
@@ -100,7 +101,7 @@ public class CategoryTest extends TestCase {
 		assertTrue(bean2.isLeaf());
 	}
 	
-	public void testAddingAndRemovingChild() {
+	public void testAddingAndRemovingChild() throws NewffmsDomainException{
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		
 		Category bean = new Category();
@@ -196,7 +197,7 @@ public class CategoryTest extends TestCase {
 		
 	}
 	
-	public void testChangingChildBudget() {
+	public void testChangingChildBudget() throws NewffmsDomainException{
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		
 		Category bean = new Category();
@@ -294,7 +295,7 @@ public class CategoryTest extends TestCase {
 		
 	}
 	
-	public void testQueryRootCategories() {
+	public void testQueryRootCategories() throws NewffmsDomainException{
 		CategoryMapper mapper = ctx.getBean(CategoryMapper.class);
 		CategoryRepos repos = ctx.getBean(CategoryRepos.class);
 		mapper.delete(null);

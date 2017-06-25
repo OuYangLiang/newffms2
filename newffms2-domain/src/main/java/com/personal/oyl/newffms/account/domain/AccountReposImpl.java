@@ -16,6 +16,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtPlusB
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountNotExistException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
@@ -139,7 +140,7 @@ public class AccountReposImpl implements AccountRepos {
 	}
 	
 	@Override
-	public void remove(AccountKey key) throws AccountKeyEmptyException {
+	public void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException {
 		if (null == key || null == key.getAcntOid()) {
 			throw new AccountKeyEmptyException();
 		}
@@ -149,7 +150,7 @@ public class AccountReposImpl implements AccountRepos {
 		// TODO check if this account could be removed.
 		
 		if (null == obj) {
-			throw new IllegalStateException("收入不存在。");
+			throw new AccountNotExistException();
 		}
 		
 		int n = mapper.delete(key);

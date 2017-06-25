@@ -113,4 +113,10 @@ public class AccountException {
         }
     }
     
+    public static class AccountNotExistException extends NewffmsDomainException {
+        public AccountNotExistException() {
+            super("EFFMS119", "账户不存在。");
+        }
+    }
+    
 }

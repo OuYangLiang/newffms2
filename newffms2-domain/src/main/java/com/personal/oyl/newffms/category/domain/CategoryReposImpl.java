@@ -1,11 +1,21 @@
 package com.personal.oyl.newffms.category.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryDescEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryDescTooLongException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotExistException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotLeafException;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryNotRootException;
 import com.personal.oyl.newffms.category.store.mapper.CategoryMapper;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public class CategoryReposImpl implements CategoryRepos {
 	
@@ -13,9 +23,9 @@ public class CategoryReposImpl implements CategoryRepos {
 	private CategoryMapper mapper;
 
 	@Override
-	public Category categoryOfId(CategoryKey key) {
+	public Category categoryOfId(CategoryKey key) throws CategoryKeyEmptyException {
 		if (null == key || null == key.getCategoryOid()) {
-			throw new IllegalArgumentException();
+			throw new CategoryKeyEmptyException();
 		}
 		
 		Category param = new Category();
@@ -31,15 +41,35 @@ public class CategoryReposImpl implements CategoryRepos {
 	}
 
 	@Override
-	public void add(Category bean, String operator) {
-		if (null == bean || !bean.isLeaf() || bean.getCategoryLevel() != 1) {
-			throw new IllegalArgumentException();
-		}
-		
+    public void add(Category bean, String operator)
+            throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
+            CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException {
+ 
+	    if (null == bean || null == bean.getCategoryDesc() || bean.getCategoryDesc().trim().isEmpty()) {
+            throw new CategoryDescEmptyException();
+        }
+
+        if (bean.getCategoryDesc().trim().length() > 10) {
+            throw new CategoryDescTooLongException();
+        }
+        
+        if (!bean.isLeaf() || (null != bean.getCategoryLevel() && bean.getCategoryLevel() != 1) ) {
+            throw new CategoryNotRootException();
+        }
+        
+        if (null == bean.getMonthlyBudget()) {
+            throw new CategoryBudgetEmptyException();
+        }
+        
+        if (bean.getMonthlyBudget().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CategoryBudgetInvalidException();
+        }
+	    
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
+		bean.setCategoryLevel(Integer.valueOf(1));
 		bean.setCreateBy(operator);
 		bean.setCreateTime(new Date());
 		
@@ -47,27 +77,28 @@ public class CategoryReposImpl implements CategoryRepos {
 		bean.setSeqNo(1);
 	}
 
-	@Override
-	public void remove(CategoryKey key, String operator) {
-		if (null == key || null == key.getCategoryOid()) {
-			throw new IllegalArgumentException();
+    @Override
+    public void remove(CategoryKey key, String operator)
+            throws CategoryKeyEmptyException, NoOperatorException, CategoryNotLeafException, CategoryNotExistException {
+    	if (null == key || null == key.getCategoryOid()) {
+			throw new CategoryKeyEmptyException();
 		}
 		
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		Category obj = this.categoryOfId(key);
 		
 		if (null == obj) {
-			throw new IllegalStateException("类别不存在。");
+			throw new CategoryException.CategoryNotExistException();
 		}
 		
 		if (!obj.isLeaf()) {
-			throw new IllegalStateException("类型不是叶子类别，不能删除。");
+			throw new CategoryNotLeafException();
 		}
 		
-		// check if current category has been used already.
+		//TODO check if current category has been used already.
 		
 		mapper.delete(key);
 		
@@ -94,9 +125,9 @@ public class CategoryReposImpl implements CategoryRepos {
 	}
 
 	@Override
-	public List<Category> categoriesOfParent(CategoryKey parentKey) {
+	public List<Category> categoriesOfParent(CategoryKey parentKey) throws CategoryKeyEmptyException {
 		if (null == parentKey || null == parentKey.getCategoryOid()) {
-			throw new IllegalArgumentException();
+			throw new CategoryKeyEmptyException();
 		}
 		
 		Category param = new Category();

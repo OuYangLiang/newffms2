@@ -12,6 +12,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountDebtPlusB
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountNotExistException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
@@ -66,6 +67,7 @@ public interface AccountRepos {
 	 * 
 	 * @param key 待删除账户标识
 	 * @throws AccountKeyEmptyException
+	 * @throws AccountNotExistException
 	 */
-	void remove(AccountKey key) throws AccountKeyEmptyException;
+	void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException;
 }

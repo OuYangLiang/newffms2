@@ -6,6 +6,7 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAccoun
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAlreadyConfirmedException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountInvalidException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingBatchNumEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDateEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
@@ -29,8 +30,6 @@ public interface IncomingRepos {
      * 
      * @param bean 收入实体
      * @param operator 操作人
-     * @param bean
-     * @param operator
      * @throws IncomingDescEmptyException
      * @throws NoOperatorException
      * @throws IncomingDescInvalidException
@@ -42,11 +41,12 @@ public interface IncomingRepos {
      * @throws IncomingDateEmptyException
      * @throws NewffmsSystemException
      * @throws IncomingAccountEmptyException
+     * @throws IncomingBatchNumEmptyException
      */
     void add(Incoming bean, String operator) throws IncomingDescEmptyException, NoOperatorException,
             IncomingDescInvalidException, IncomingAmountEmptyException, IncomingAmountInvalidException,
             IncomingTypeEmptyException, IncomingAlreadyConfirmedException, IncomingOwnerEmptyException,
-            IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException;
+            IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException, IncomingBatchNumEmptyException;
 	
 	/**
 	 * 删除收入

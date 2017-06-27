@@ -25,7 +25,7 @@ public class AccountException {
     
     public static class AccountBalanceInsufficiencyException extends NewffmsDomainException {
         public AccountBalanceInsufficiencyException() {
-            super("EFFMS104", "余额不足。");
+            super("EFFMS104", "账户余额不足。");
         }
     }
     

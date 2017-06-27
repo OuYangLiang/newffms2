@@ -1,5 +1,9 @@
 package com.personal.oyl.newffms.consumption.domain;
 
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
@@ -11,8 +15,7 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionException.Consumpt
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemDescEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemOwnerEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemsEmptyException;
-import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionKeyEmptyException;
-import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionNotExistException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionNotConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAccountEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAmountEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAmountInvalidException;
@@ -20,12 +23,36 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionException.Consumpt
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionTimeEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionTypeEmptyException;
 
-public interface ConsumptionRepos {
-	/**
-	 * 创建新的消费
-	 * 
-	 * @param param 消费实体
-	 * @param operator 操作人
+public interface ConsumptionOperation {
+    /**
+     * 确认消费
+     * 
+     * @param operator 操作者
+     * @throws NoOperatorException
+     * @throws ConsumptionAlreadyConfirmedException
+     * @throws AccountBalanceInsufficiencyException
+     * @throws NewffmsSystemException
+     */
+    public void confirm(String operator) throws NoOperatorException, ConsumptionAlreadyConfirmedException,
+            AccountBalanceInsufficiencyException, NewffmsSystemException;
+    
+    /**
+     * 取消确认
+     * 
+     * @param operator 操作者
+     * @throws AccountKeyEmptyException 
+     * @throws AccountBatchNumInvalidException 
+     * @throws AccountBatchNumEmptyException 
+     * @throws NoOperatorException 
+     * @throws ConsumptionNotConfirmedException 
+     */
+    public void unconfirm(String operator)
+            throws NoOperatorException, NewffmsSystemException, ConsumptionNotConfirmedException;
+    
+    /**
+     * 更新消费信息
+     * 
+     * @param operator 操作人
      * @throws ConsumptionTypeEmptyException
      * @throws ConsumptionBatchNumEmptyException
      * @throws ConsumptionTimeEmptyException
@@ -42,33 +69,14 @@ public interface ConsumptionRepos {
      * @throws ConsumptionPaymentAccountEmptyException
      * @throws ConsumptionAmountNotMatchException
      * @throws NoOperatorException
-     */
-    void add(Consumption bean, String operator) throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException,
-            ConsumptionTimeEmptyException, ConsumptionAlreadyConfirmedException, ConsumptionItemsEmptyException,
-            ConsumptionItemDescEmptyException, ConsumptionItemAmountEmptyException,
-            ConsumptionItemAmountInvalidException, ConsumptionItemOwnerEmptyException,
-            ConsumptionItemCategoryEmptyException, ConsumptionPaymentsEmptyException,
-            ConsumptionPaymentAmountEmptyException, ConsumptionPaymentAmountInvalidException,
-            ConsumptionPaymentAccountEmptyException, ConsumptionAmountNotMatchException, NoOperatorException;
-	
-	/**
-	 * 根据消费标识查询消费
-	 * 
-	 * @param key 消费标识
-	 * @return 消费实体
-     * @throws ConsumptionKeyEmptyException
-     */
-    Consumption consumptionOfId(ConsumptionKey key) throws ConsumptionKeyEmptyException;
-
-	/**
-	 * 删除消费
-	 * 
-	 * @param key 待删除消费标识
-     * @throws ConsumptionKeyEmptyException
-     * @throws ConsumptionNotExistException
-     * @throws ConsumptionAlreadyConfirmedException
      * @throws NewffmsSystemException
      */
-    void remove(ConsumptionKey key) throws ConsumptionKeyEmptyException, ConsumptionNotExistException,
-            ConsumptionAlreadyConfirmedException, NewffmsSystemException;
+    public void updateAll(String operator)
+            throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException,
+            ConsumptionAlreadyConfirmedException, ConsumptionItemsEmptyException, ConsumptionItemDescEmptyException,
+            ConsumptionItemAmountEmptyException, ConsumptionItemAmountInvalidException,
+            ConsumptionItemOwnerEmptyException, ConsumptionItemCategoryEmptyException,
+            ConsumptionPaymentsEmptyException, ConsumptionPaymentAmountEmptyException,
+            ConsumptionPaymentAmountInvalidException, ConsumptionPaymentAccountEmptyException,
+            ConsumptionAmountNotMatchException, NoOperatorException, NewffmsSystemException;
 }

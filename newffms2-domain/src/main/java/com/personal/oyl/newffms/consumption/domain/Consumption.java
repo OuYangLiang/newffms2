@@ -11,22 +11,36 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.personal.oyl.newffms.account.domain.Account;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountBatchNumInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
-import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountService;
 import com.personal.oyl.newffms.common.AppContext;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAmountNotMatchException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionBatchNumEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemAmountEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemAmountInvalidException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemCategoryEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemDescEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemOwnerEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionItemsEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionNotConfirmedException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAccountEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAmountEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentAmountInvalidException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionPaymentsEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionTimeEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionTypeEmptyException;
 import com.personal.oyl.newffms.consumption.store.mapper.AccountConsumptionMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
 
-public class Consumption implements Serializable {
+public class Consumption implements ConsumptionOperation, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private ConsumptionKey key;
@@ -189,24 +203,16 @@ public class Consumption implements Serializable {
 		payments.add(payment);
 	}
 
-	/**
-	 * 确认消费
-	 * 
-	 * @param operator 操作者
-	 * @throws NoOperatorException 
-	 * @throws AccountOperationDescException 
-	 * @throws AccountBalanceInsufficiencyException 
-	 * @throws AccountAmountInvalidException 
-	 * @throws AccountKeyEmptyException 
-	 */
-	public void confirm(String operator) throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException, NoOperatorException, AccountKeyEmptyException {
-		
+	@Override
+    public void confirm(String operator) throws NoOperatorException, ConsumptionAlreadyConfirmedException,
+            AccountBalanceInsufficiencyException, NewffmsSystemException {
+	
 		if (null == operator || operator.trim().isEmpty()) {
 			throw new NoOperatorException();
 		}
 		
 		if (this.getConfirmed()) {
-			throw new IllegalArgumentException();
+			throw new ConsumptionException.ConsumptionAlreadyConfirmedException();
 		}
 		
 		Date now = new Date();
@@ -221,12 +227,24 @@ public class Consumption implements Serializable {
 		int n = mapper.updateStatus(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsDomainException.NewffmsSystemException();
 		}
 		
 		for (AccountConsumptionVo payment: this.getPayments()) {
-			Account acnt = acntRepos.accountOfId(new AccountKey(payment.getAcntOid()));
-			acnt.subtract(payment.getAmount(), "desc", this.getBatchNum(), this.getCpnTime(), operator);// TODO
+			Account acnt = null;
+            try {
+                acnt = acntRepos.accountOfId(new AccountKey(payment.getAcntOid()));
+            } catch (AccountKeyEmptyException e) {
+                throw new NewffmsDomainException.NewffmsSystemException();
+            }
+            
+			try {
+                acnt.subtract(payment.getAmount(), "desc", this.getBatchNum(), this.getCpnTime(), operator);
+            } catch (AccountBalanceInsufficiencyException e) {
+                throw e;
+            } catch (NewffmsDomainException e) {
+                throw new NewffmsDomainException.NewffmsSystemException();
+            }
 		}
 		
 		this.setSeqNo(this.getSeqNo() + 1);
@@ -235,23 +253,16 @@ public class Consumption implements Serializable {
 		this.setConfirmed(true);
 	}
 	
-	/**
-	 * 取消确认
-	 * 
-	 * @param operator 操作者
-	 * @throws AccountKeyEmptyException 
-	 * @throws AccountBatchNumInvalidException 
-	 * @throws AccountBatchNumEmptyException 
-	 * @throws NoOperatorException 
-	 */
-	public void unconfirm(String operator) throws AccountKeyEmptyException, AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {
-		
+	@Override
+    public void unconfirm(String operator)
+            throws NoOperatorException, NewffmsSystemException, ConsumptionNotConfirmedException {
+	
 		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
+			throw new NoOperatorException();
 		}
 		
 		if (!this.getConfirmed()) {
-			throw new IllegalArgumentException();
+			throw new ConsumptionException.ConsumptionNotConfirmedException();
 		}
 		
 		Date now = new Date();
@@ -266,10 +277,14 @@ public class Consumption implements Serializable {
 		int n = mapper.updateStatus(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
-		acntService.rollback(this.getBatchNum(), operator);
+		try {
+            acntService.rollback(this.getBatchNum(), operator);
+        } catch (NewffmsDomainException e) {
+            throw new NewffmsDomainException.NewffmsSystemException();
+        }
 		
 		this.setSeqNo(this.getSeqNo() + 1);
 		this.setUpdateBy(operator);
@@ -277,20 +292,89 @@ public class Consumption implements Serializable {
 		this.setConfirmed(false);
 	}
 	
-	/**
-	 * 更新消费信息
-	 * 
-	 * @param operator 操作人
-	 */
-	public void updateAll(String operator) {
-		
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		
-		if (this.getConfirmed()) {
-			throw new IllegalArgumentException();
-		}
+	@Override
+    public void updateAll(String operator)
+            throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException,
+            ConsumptionAlreadyConfirmedException, ConsumptionItemsEmptyException, ConsumptionItemDescEmptyException,
+            ConsumptionItemAmountEmptyException, ConsumptionItemAmountInvalidException,
+            ConsumptionItemOwnerEmptyException, ConsumptionItemCategoryEmptyException,
+            ConsumptionPaymentsEmptyException, ConsumptionPaymentAmountEmptyException,
+            ConsumptionPaymentAmountInvalidException, ConsumptionPaymentAccountEmptyException,
+            ConsumptionAmountNotMatchException, NoOperatorException, NewffmsSystemException {
+	
+	    if (null == this.getCpnType()) {
+            throw new ConsumptionTypeEmptyException();
+        }
+        
+        if (null == this.getBatchNum() || this.getBatchNum().trim().isEmpty()) {
+            throw new ConsumptionBatchNumEmptyException();
+        }
+        
+        if (null == this.getCpnTime()) {
+            throw new ConsumptionTimeEmptyException();
+        }
+        
+        if (this.getConfirmed()) {
+            throw new ConsumptionAlreadyConfirmedException();
+        }
+        
+        if (null == this.getItems() || this.getItems().isEmpty()) {
+            throw new ConsumptionItemsEmptyException();
+        }
+        
+        this.setAmount(BigDecimal.ZERO);
+        for (ConsumptionItemVo item : this.getItems()) {
+            if (null == item || null == item.getItemDesc() || item.getItemDesc().trim().isEmpty()) {
+                throw new ConsumptionItemDescEmptyException();
+            }
+            
+            if (null == item.getAmount()) {
+                throw new ConsumptionItemAmountEmptyException();
+            }
+            
+            if (BigDecimal.ZERO.compareTo(item.getAmount()) >= 0) {
+                throw new ConsumptionItemAmountInvalidException();
+            }
+            
+            if (null == item.getOwnerOid()) {
+                throw new ConsumptionItemOwnerEmptyException();
+            }
+            
+            if (null == item.getCategoryOid()) {
+                throw new ConsumptionItemCategoryEmptyException();
+            }
+            
+            this.setAmount(this.getAmount().add(item.getAmount()));
+        }
+        
+        if (null == this.getPayments() || this.getPayments().isEmpty()) {
+            throw new ConsumptionPaymentsEmptyException();
+        }
+        
+        BigDecimal paymentTotal = BigDecimal.ZERO;
+        for (AccountConsumptionVo payment : this.getPayments()) {
+            if (null == payment || null == payment.getAmount()) {
+                throw new ConsumptionPaymentAmountEmptyException();
+            }
+            
+            if (BigDecimal.ZERO.compareTo(payment.getAmount()) >= 0) {
+                throw new ConsumptionPaymentAmountInvalidException();
+            }
+            
+            if (null == payment.getAcntOid()) {
+                throw new ConsumptionPaymentAccountEmptyException();
+            }
+            
+            paymentTotal = paymentTotal.add(payment.getAmount());
+        }
+        
+        if (paymentTotal.compareTo(this.getAmount()) != 0) {
+            throw new ConsumptionAmountNotMatchException();
+        }
+        
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
 		
 		Date now = new Date();
 		Map<String, Object> param = new HashMap<String, Object>();
@@ -306,7 +390,7 @@ public class Consumption implements Serializable {
 		int n = mapper.updateInfo(param);
 		
 		if (1 != n) {
-			throw new IllegalStateException();
+			throw new NewffmsSystemException();
 		}
 		
 		ConsumptionItemVo itemParam = new ConsumptionItemVo();

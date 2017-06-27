@@ -77,4 +77,10 @@ public class IncomingException {
         }
     }
     
+    public static class IncomingBatchNumEmptyException extends NewffmsDomainException {
+        public IncomingBatchNumEmptyException() {
+            super("EFFMS413", "收入批次号不能为空。");
+        }
+    }
+    
 }

@@ -12,6 +12,7 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAccoun
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAlreadyConfirmedException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountInvalidException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingBatchNumEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDateEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
@@ -59,7 +60,7 @@ public class IncomingReposImpl implements IncomingRepos {
     public void add(Incoming bean, String operator) throws IncomingDescEmptyException, NoOperatorException,
             IncomingDescInvalidException, IncomingAmountEmptyException, IncomingAmountInvalidException,
             IncomingTypeEmptyException, IncomingAlreadyConfirmedException, IncomingOwnerEmptyException,
-            IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException {
+            IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException, IncomingBatchNumEmptyException {
     	if (null == bean || null == bean.getIncomingDesc() || bean.getIncomingDesc().trim().isEmpty()) {
 			throw new IncomingDescEmptyException();
 		}
@@ -94,6 +95,10 @@ public class IncomingReposImpl implements IncomingRepos {
 		
 		if (null == bean.getIncomingDate()) {
 		    throw new IncomingDateEmptyException();
+		}
+		
+		if (null == bean.getBatchNum() || bean.getBatchNum().trim().isEmpty()) {
+		    throw new IncomingBatchNumEmptyException();
 		}
 		
 		if (null == bean.getAcntRel() || null == bean.getAcntRel().getAcntOid()) {

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- <mvc:annotation-driven validator="validator" /> -->
+    <!-- <mvc:default-servlet-handler /> -->
+	<context:component-scan base-package="com.personal.oyl.newffms.web" />
+	
+    <!-- <bean id="validator"   
+        class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">  
+        <property name="providerClass"  value="org.hibernate.validator.HibernateValidator"/>
+    </bean> -->
+    
+    <bean id="customObjectMapper" class="com.personal.oyl.newffms.util.CustomObjectMapper" />
+    <bean id="exceptionHanlder" class="com.personal.oyl.newffms.web.ExceptionHandler" />
+	
+	<bean id="mappingJacksonHttpMessageConverter"
+        class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="objectMapper" ref="customObjectMapper"></property>
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+    </bean>
+
+	<bean id="handlerAdapter"
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="webBindingInitializer">
+            <bean class="com.personal.oyl.newffms.util.CustomDataBinding" />
+        </property>
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/pages/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<!-- <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/login" />
+            <mvc:exclude-mapping path="/css/**" />
+            <mvc:exclude-mapping path="/js/**" />
+            <mvc:exclude-mapping path="/bootstrap-3.3.5-dist/**" />
+        	<bean class="com.personal.oyl.newffms.interceptor.TestInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors> -->
+    
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/bootstrap-3.3.5-dist/" mapping="/bootstrap-3.3.5-dist/**"/>
+    <mvc:resources location="/bootstrap-table-1.10.1/" mapping="/bootstrap-table-1.10.1/**"/>
+    <mvc:resources location="/AdminLTE2/" mapping="/AdminLTE2/**"/>
+    <mvc:resources location="/font-awesome-4.6.3/" mapping="/font-awesome-4.6.3/**"/>
+    <mvc:resources location="/bootstrap-datetimepicker/" mapping="/bootstrap-datetimepicker/**"/>
+    <mvc:resources location="/resources/" mapping="/resources/**"/>
+
+</beans>

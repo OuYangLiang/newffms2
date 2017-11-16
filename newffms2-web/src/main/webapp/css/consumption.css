@@ -1,0 +1,49 @@
+fieldset {
+    font-size: 80%;
+    width: 90%;
+    
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+
+fieldset .label {
+    float: left;
+    
+    padding-top: 5px;
+}
+
+fieldset .input {
+    float: left;
+    margin-left: 10px;
+    margin-right: 25px;
+    //background-color: yellow;
+}
+
+fieldset .input .inputbox{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+    padding-left: 5px;
+    background-color: #F5F5F5;
+    width: 100px;
+}
+
+fieldset .input .selectbox{
+    width: 100px;
+}
+
+fieldset .input .ui-selectmenu-button{
+    margin-top: 1px;
+    padding-bottom: 1px;
+}
+
+fieldset .input .link{
+    float: left;
+    padding-top: 5px;
+}
+
+fieldset .input .confirmed-text{
+    float: left;
+    padding-top: 5px;
+    font-style:italic;
+}

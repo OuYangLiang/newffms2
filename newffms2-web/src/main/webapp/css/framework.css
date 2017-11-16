@@ -1,0 +1,221 @@
+body {
+    background-color: #F5F5F5;
+    width: 1000px;
+    margin: 0 auto;
+    font-family: "Yuanti SC", "STSong", "Weibei SC", "Xingkai SC", "Heiti SC";
+}
+
+.pageHeader {
+    height: 65px;
+    background-color: #F5F5F5;
+}
+
+.pageHeader .headerTitle {
+    padding-top: 10px;
+    padding-left: 50px;
+    color: red;
+    font-size: 300%;
+    font-weight:bold;
+    //font-style:italic;
+    font-family: "Xingkai SC";
+}
+
+.pageMenu {
+    height: 70px;
+    background-color: #F5F5F5;
+}
+
+.button-area {
+    text-align: left;
+    font-size: 70%;
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.content-header {
+    border-radius: 8px 8px 0 0;
+    font-size: 120%;
+    font-weight:bold;
+    padding: 3px 0 3px 50px;
+}
+
+.contentWrapper {
+    min-height: 520px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.contentWrapper .content-title {
+    background-color: #F0E68C;
+    //border-radius: 8px 8px 8px 8px;
+    font-size: 120%;
+    font-weight:bold;
+    padding: 3px 0 3px 50px;
+}
+
+.contentWrapper .mainArea {
+    padding: 20px 20px 20px 20px;
+    font-size: 75%;
+}
+
+.contentWrapper .mainArea .newline-wrapper{
+    background-color: #F5F5F5;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    
+    width: 90%;
+}
+
+.contentWrapper .mainArea .newline-wrapper .label{
+    float: left;
+    //background-color: RED;
+    width: 30%;
+    
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .text{
+    float: left;
+    //background-color: YELLOW;
+    width: 65%;
+    
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input{
+    //background-color: YELLOW;
+    float: left;
+    width: 65%;
+    
+    margin-left: 10px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .confirmed-text{
+    //background-color: YELLOW;
+    float: left;
+    font-style: italic;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-right: 20px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .value{
+    //background-color: YELLOW;
+    float: left;
+    
+    width: 35px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-right: 20px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .slider{
+    background-color: YELLOW;
+    float: left;
+    width: 230px;
+    
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .inputbox{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+    padding-left: 5px;
+    
+    width: 50%;
+    background-color: #F5F5F5;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .selectbox{
+    width: 200px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .ui-selectmenu-button{
+    margin-top: 8px;
+    margin-bottom: 2px;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .link{
+    margin-top: 10px;
+    margin-bottom: 5px;
+    
+    background: transparent;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .ratio{
+    margin-top: 12px;
+    margin-bottom: 3spx;
+}
+
+.contentWrapper .mainArea .newline-wrapper .input .checkbox{
+    margin-top: 12px;
+    margin-bottom: 3spx;
+}
+
+.ui-dialog {
+    font-size: 62.5%;
+}
+
+.ui-datepicker {
+    font-size: 62.5%;
+}
+
+.ui-menu-item {
+	font-size: 62.5%;
+}
+
+.ui-selectmenu-text {
+	font-size: 75%;
+}
+
+.ui-tooltip {
+	font-size: 75%;
+}
+
+A:link {
+    //color: #000000;
+    TEXT-DECORATION: none;
+    font-style:italic;
+}
+A:visited {
+    COLOR: #000000;
+    TEXT-DECORATION: none
+}
+A:hover {
+    COLOR: #ff7f24;
+    text-decoration: underline;
+}
+A:active {
+    COLOR: #ff7f24;  
+    text-decoration: underline;
+}
+.ui-jqgrid .ui-jqgrid-htable th {
+    height: 3em !important;
+}
+
+.ui-jqgrid tr.jqgrow td{
+    height: 2em !important;
+}
+
+.ui-jqgrid .ui-jqgrid-title{
+    font-size:15px;
+}
+    
+.ui-jqgrid-sortable {
+    font-size:15px;
+}
+
+.ui-jqgrid tr.jqgrow td {
+    font-size:15px;
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<http pattern="/js/**" security="none" />
+	<http pattern="/css/**" security="none" />
+	<http pattern="/login*" security="none" />
+	<http pattern="/bootstrap-3.3.5-dist/**" security="none" />
+	<http pattern="/bootstrap-table-1.10.1/**" security="none" />
+	<http pattern="/AdminLTE2/**" security="none" />
+	<http pattern="/font-awesome-4.6.3/**" security="none" />
+	<http pattern="/bootstrap-datetimepicker/**" security="none" />
+	<http pattern="/resources/**" security="none" />
+	
+	<http access-decision-manager-ref="accessDecisionManager" access-denied-page="/accessDeniedRouter?q=accessDenied">
+		
+		<intercept-url pattern="/**" access="valueBeAnything" />
+		
+		<!-- <form-login login-page="/login" default-target-url="/welcome"
+			always-use-default-target="true"
+			authentication-success-handler-ref="authenticationSuccessHandlerImpl" /> -->
+			
+		<form-login login-page="/login"
+            authentication-success-handler-ref="authenticationSuccessHandlerImpl" />
+            
+		<logout logout-success-url="/login" />
+	</http>
+	
+	<beans:bean id="authenticationSuccessHandlerImpl"
+	   class="com.personal.oyl.newffms.security.AuthenticationSuccessHandlerImpl" />
+
+	<beans:bean id="myUserService"
+		class="com.personal.oyl.newffms.security.MyUserDetailService" />
+
+	<beans:bean name="pwdEncoder"
+		class="com.personal.oyl.newffms.security.PwdEncoder">
+		<beans:property name="algorithm" value="SHA-512" />
+	</beans:bean>
+
+
+	<authentication-manager>
+		<authentication-provider user-service-ref="myUserService">
+			<password-encoder ref="pwdEncoder" />
+		</authentication-provider>
+	</authentication-manager>
+
+	<beans:bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:property name="decisionVoters">
+			<beans:list>
+				<beans:bean
+					class="com.personal.oyl.newffms.security.CustomAccessDecisionVoter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+</beans:beans>

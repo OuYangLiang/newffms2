@@ -19,5 +19,8 @@
        
     <bean id="incomingRepos"
         class="com.personal.oyl.newffms.incoming.domain.IncomingReposImpl" />
+        
+    <bean id="userProfileRepos"
+        class="com.personal.oyl.newffms.user.domain.UserReposImpl" />
 
 </beans>

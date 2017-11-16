@@ -144,3 +144,130 @@ CREATE TABLE ACCOUNT_INCOMING(
     PRIMARY KEY (ACNT_OID, INCOMING_OID)
 )ENGINE=INNODB;
 
+
+
+-- 
+-- TABLE: USER_PROFILE
+--
+
+CREATE TABLE USER_PROFILE(
+    USER_OID                    BIGINT          NOT NULL        AUTO_INCREMENT,
+    USER_NAME                   NVARCHAR(6)     NOT NULL,
+    USER_ALIAS                  NVARCHAR(10)    NOT NULL,
+    GENDER                      ENUM('Male', 'Female')  NOT NULL,
+    PHONE                       VARCHAR(11)     NOT NULL,
+    EMAIL                       VARCHAR(50)     NOT NULL,
+    ICON                        VARCHAR(50)     NOT NULL,
+    REMARKS                     VARCHAR(128)    NOT NULL,
+    LOGIN_ID                    VARCHAR(10)     NOT NULL,
+    LOGIN_PWD                   VARCHAR(128)    NOT NULL,
+    USER_TYPE_OID               BIGINT          NOT NULL,
+    CREATE_TIME                 DATETIME        NOT NULL,
+    UPDATE_TIME                 DATETIME,
+    CREATE_BY                   NVARCHAR(6)     NOT NULL,
+    UPDATE_BY                   NVARCHAR(6),
+    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
+    PRIMARY KEY (USER_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: USER_TYPE
+--
+
+CREATE TABLE USER_TYPE(
+    USER_TYPE_OID               BIGINT          NOT NULL,
+    USER_TYPE_DESC              NVARCHAR(10)    NOT NULL,
+    PRIMARY KEY (USER_TYPE_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: ROLE_PROFILE
+--
+
+CREATE TABLE ROLE_PROFILE(
+    ROLE_OID                    BIGINT          NOT NULL        AUTO_INCREMENT,
+    ROLE_DESC                   NVARCHAR(10)    NOT NULL,
+    USER_TYPE_OID               BIGINT          NOT NULL,
+    PRIMARY KEY (ROLE_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: USER_ROLE
+--
+
+CREATE TABLE USER_ROLE(
+    USER_OID                    BIGINT          NOT NULL,
+    ROLE_OID                    BIGINT          NOT NULL,
+    PRIMARY KEY (USER_OID, ROLE_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: MODULE
+--
+
+CREATE TABLE MODULE(
+    MODULE_OID                  BIGINT          NOT NULL,
+    MODULE_DESC                 NVARCHAR(10)    NOT NULL,
+    MODULE_LEVEL                SMALLINT        NOT NULL,
+    SHOW_ORDER                  SMALLINT        NOT NULL,
+    MODULE_LINK                 VARCHAR(50),
+    PARENT_OID                  BIGINT,
+    PRIMARY KEY (MODULE_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: OPERATION
+--
+
+CREATE TABLE OPERATION(
+    OPN_OID                     BIGINT          NOT NULL,
+    OPN_DESC                    NVARCHAR(10)    NOT NULL,
+    MODULE_OID                  BIGINT          NOT NULL,
+    PRIMARY KEY (OPN_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: OPERATION_URL
+--
+
+CREATE TABLE OPERATION_URL(
+    OPN_OID                     BIGINT          NOT NULL,
+    OPN_URL                     VARCHAR(50)     NOT NULL,
+    PRIMARY KEY (OPN_OID, OPN_URL)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: ROLE_OPERATION
+--
+
+CREATE TABLE ROLE_OPERATION(
+    ROLE_OID                    BIGINT          NOT NULL,
+    OPN_OID                     BIGINT          NOT NULL,
+    PRIMARY KEY (ROLE_OID, OPN_OID)
+)ENGINE=INNODB;
+
+
+
+-- 
+-- TABLE: USER_TYPE_OPERATION
+--
+
+CREATE TABLE USER_TYPE_OPERATION(
+    USER_TYPE_OID               BIGINT          NOT NULL,
+    OPN_OID                     BIGINT          NOT NULL,
+    PRIMARY KEY (USER_TYPE_OID, OPN_OID)
+)ENGINE=INNODB;

@@ -2,6 +2,7 @@ package com.personal.oyl.newffms;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,6 +42,7 @@ public class ConsumptionMapperTest extends TestCase {
 		bean.setAmount(BigDecimal.valueOf(1));
 		bean.setCreateTime(new Date());
 		bean.setCreateBy("OYL");
+		bean.setBatchNum(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());
 		
 		mapper.insert(bean);
 		

@@ -18,23 +18,33 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmpt
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.user.domain.UserKey;
 
 public interface AccountRepos {
 
-	/**
-	 * 根据账户标识查询账户
-	 * 
-	 * @param key 账户标识
-	 * @return 账户实体
-	 * @throws AccountKeyEmptyException
-	 */
-	Account accountOfId(AccountKey key) throws AccountKeyEmptyException;
+    /**
+     * 根据账户标识查询账户
+     * 
+     * @param key 账户标识
+     * @return 账户实体
+     * @throws AccountKeyEmptyException
+     */
+    Account accountOfId(AccountKey key) throws AccountKeyEmptyException;
+    
+    /**
+     * 根据用户标识查询账户集合
+     * 
+     * @param key 用户标识
+     * @return 账户实体集合
+     * @throws AccountOwnerEmptyException
+     */
+    List<Account> accountsOfUser(UserKey key) throws AccountOwnerEmptyException;
 	
-	/**
-	 * 创建新的账户
-	 * 
-	 * @param bean 账户实体
-	 * @param operator 操作人
+    /**
+     * 创建新的账户
+     * 
+     * @param bean 账户实体
+     * @param operator 操作人
      * @throws AccountDescEmptyException
      * @throws AccountTypeEmptyException
      * @throws NoOperatorException
@@ -53,21 +63,21 @@ public interface AccountRepos {
             AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException,
             AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException;
 
-	/**
-	 * 根据流水号查询账户明细
-	 * 
-	 * @param batchNum 流水号
-	 * @return 账户明细
-	 */
+    /**
+     * 根据流水号查询账户明细
+     * 
+     * @param batchNum 流水号
+     * @return 账户明细
+     */
     List<AccountAuditVo> auditsOfBatchNum(String batchNum)
             throws AccountBatchNumEmptyException, AccountBatchNumInvalidException;
 	
-	/**
-	 * 删除账户
-	 * 
-	 * @param key 待删除账户标识
-	 * @throws AccountKeyEmptyException
-	 * @throws AccountNotExistException
-	 */
-	void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException;
+    /**
+     * 删除账户
+     * 
+     * @param key 待删除账户标识
+     * @throws AccountKeyEmptyException
+     * @throws AccountNotExistException
+     */
+    void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException;
 }

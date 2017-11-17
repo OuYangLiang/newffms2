@@ -77,4 +77,15 @@ public class UserReposImpl implements UserRepos {
         return list;
     }
 
+    @Override
+    public List<User> queryAllUser() {
+        List<User> list = mapper.select(null);
+
+        if (null == list || list.isEmpty()) {
+            return null;
+        }
+
+        return list;
+    }
+
 }

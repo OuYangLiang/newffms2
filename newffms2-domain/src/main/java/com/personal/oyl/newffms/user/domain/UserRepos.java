@@ -27,6 +27,13 @@ public interface UserRepos {
     User userOfLoginId(String loginId) throws UserLoginIdEmptyException;
     
     /**
+     * 查询所有用户
+     * 
+     * @return 用户实体集合
+     */
+    List<User> queryAllUser();
+    
+    /**
      * 根据用户标识查询菜单
      * 
      * @param key 用户标识

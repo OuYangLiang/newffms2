@@ -126,6 +126,10 @@ public class UserProfileTest extends TestCase {
         }
         
         assertNull(user);
+        
+        List<User> users = repos.queryAllUser();
+        assertNotNull(users);
+        assertEquals(3, users.size());
     }
 
     public void testModule() {

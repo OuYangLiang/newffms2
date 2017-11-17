@@ -49,4 +49,32 @@ public class UserReposImpl implements UserRepos {
         return list.get(0);
     }
 
+    @Override
+    public List<Module> queryMenusByUser(UserKey key) throws UserKeyEmptyException {
+        if (null == key || null == key.getUserOid()) {
+            throw new UserKeyEmptyException();
+        }
+
+        List<Module> list = mapper.selectMenusByUser(key);
+        if (null == list || list.isEmpty()) {
+            return null;
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<String> queryUrlsByUser(UserKey key) throws UserKeyEmptyException {
+        if (null == key || null == key.getUserOid()) {
+            throw new UserKeyEmptyException();
+        }
+
+        List<String> list = mapper.selectUrlsByUser(key);
+        if (null == list || list.isEmpty()) {
+            return null;
+        }
+
+        return list;
+    }
+
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.user.store.mapper.UserMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.user.domain.User">
+	<resultMap id="UserResultMap" type="com.personal.oyl.newffms.user.domain.User">
 		<id column="USER_OID" property="key.userOid" jdbcType="DECIMAL" />
 		<result column="USER_NAME" property="userName" jdbcType="NVARCHAR" />
 		<result column="USER_ALIAS" property="userAlias" jdbcType="NVARCHAR" />
@@ -20,14 +20,8 @@
 		<result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
 	</resultMap>
 
-
-	<sql id="Base_Column_List">
-        USER_OID, USER_NAME, USER_ALIAS, GENDER, PHONE, EMAIL, ICON, REMARKS, LOGIN_ID, LOGIN_PWD, USER_TYPE_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-	</sql>
-
-
-    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.user.domain.User">
-        SELECT <include refid="Base_Column_List" />
+    <select id="select" resultMap="UserResultMap" parameterType="com.personal.oyl.newffms.user.domain.User">
+        SELECT USER_OID, USER_NAME, USER_ALIAS, GENDER, PHONE, EMAIL, ICON, REMARKS, LOGIN_ID, LOGIN_PWD, USER_TYPE_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
         FROM USER_PROFILE
         <where>
             <if test="key != null and key.userOid != null">
@@ -37,5 +31,36 @@
 				AND LOGIN_ID = #{loginId,jdbcType=VARCHAR}
 			</if>
         </where>
+    </select>
+    
+    <resultMap id="ModuleResultMap" type="com.personal.oyl.newffms.user.domain.Module">
+        <id column="MODULE_OID" property="key.moduleOid" jdbcType="DECIMAL" />
+        <result column="MODULE_DESC" property="moduleDesc" jdbcType="NVARCHAR" />
+        <result column="MODULE_LEVEL" property="moduleLevel" jdbcType="DECIMAL" />
+        <result column="SHOW_ORDER" property="showOrder" jdbcType="DECIMAL" />
+        <result column="MODULE_LINK" property="moduleLink" jdbcType="VARCHAR" />
+        <result column="PARENT_OID" property="parentOid" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <select id="selectMenusByUser" resultMap="ModuleResultMap" parameterType="com.personal.oyl.newffms.user.domain.UserKey">
+        SELECT MODULE_OID, MODULE_DESC, MODULE_LEVEL, SHOW_ORDER, MODULE_LINK, PARENT_OID
+        FROM MODULE
+        WHERE MODULE_OID IN (
+            SELECT MODULE_OID
+                FROM OPERATION OPN, ROLE_OPERATION RO, USER_ROLE UR
+                WHERE UR.USER_OID = #{userOid,jdbcType=DECIMAL}
+                AND UR.ROLE_OID = RO.ROLE_OID
+                AND RO.OPN_OID = OPN.OPN_OID
+        )
+        ORDER BY SHOW_ORDER
+    </select>
+    
+    <select id="selectUrlsByUser" resultType="java.lang.String" parameterType="com.personal.oyl.newffms.user.domain.UserKey">
+        SELECT OPN_URL 
+        FROM OPERATION_URL URL, OPERATION OPN, ROLE_OPERATION RO, USER_ROLE UR
+        WHERE UR.USER_OID = #{userOid,jdbcType=DECIMAL}
+        AND UR.ROLE_OID = RO.ROLE_OID
+        AND RO.OPN_OID = OPN.OPN_OID
+        AND OPN.OPN_OID = URL.OPN_OID
     </select>
 </mapper>

@@ -1,11 +1,13 @@
 package com.personal.oyl.newffms;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.personal.oyl.newffms.user.domain.Gender;
+import com.personal.oyl.newffms.user.domain.Module;
 import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserException.UserLoginIdEmptyException;
 import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
@@ -24,7 +26,7 @@ public class UserProfileTest extends TestCase {
         ctx = new ClassPathXmlApplicationContext("application-context.xml");
     }
 
-    public void test() {
+    public void testUser() {
 
         UserRepos repos = ctx.getBean(UserRepos.class);
         
@@ -126,4 +128,59 @@ public class UserProfileTest extends TestCase {
         assertNull(user);
     }
 
+    public void testModule() {
+        UserRepos repos = ctx.getBean(UserRepos.class);
+        
+        List<Module> modules = null;
+        
+        try {
+            modules = repos.queryMenusByUser(new UserKey(BigDecimal.ONE));
+        } catch (UserKeyEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        assertNotNull(modules);
+        assertEquals(7, modules.size());
+        assertEquals("首页", modules.get(0).getModuleDesc());
+        assertEquals(Integer.valueOf(2), modules.get(1).getShowOrder());
+        assertEquals("/report/consumption", modules.get(2).getModuleLink());
+        assertNull(modules.get(3).getParentOid());
+        
+        try {
+            modules = repos.queryMenusByUser(new UserKey(BigDecimal.valueOf(100)));
+        } catch (UserKeyEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        assertNull(modules);
+    }
+    
+    public void testOpnUrl() {
+        UserRepos repos = ctx.getBean(UserRepos.class);
+        
+        List<String> urls = null;
+        
+        try {
+            urls = repos.queryUrlsByUser(new UserKey(BigDecimal.ONE));
+        } catch (UserKeyEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        assertNotNull(urls);
+        assertEquals(63, urls.size());
+        assertTrue(urls.contains("/account/listOfItemSummary"));
+        assertFalse(urls.contains("/module/listall"));
+        
+        try {
+            urls = repos.queryUrlsByUser(new UserKey(BigDecimal.valueOf(100)));
+        } catch (UserKeyEmptyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        assertNull(urls);
+    }
 }

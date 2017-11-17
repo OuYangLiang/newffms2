@@ -13,7 +13,7 @@ import org.springframework.security.web.FilterInvocation;
 
 public class CustomAccessDecisionVoter implements AccessDecisionVoter<FilterInvocation> {
     private static final Logger log = LoggerFactory.getLogger(CustomAccessDecisionVoter.class);
-    
+
     @Override
     public boolean supports(ConfigAttribute attribute) {
         return true;
@@ -26,24 +26,19 @@ public class CustomAccessDecisionVoter implements AccessDecisionVoter<FilterInvo
 
     @Override
     public int vote(Authentication authentication, FilterInvocation object, Collection<ConfigAttribute> attributes) {
-        if (1 == 1)
-            return ACCESS_GRANTED;
-        
         String url = object.getRequestUrl().toString();
-        
-        Iterator<? extends GrantedAuthority> it = authentication.getAuthorities().iterator();  
-        
-        while (it.hasNext())  
-        {  
-            GrantedAuthority authority = it.next();  
-              
-            if (url.contains(authority.getAuthority()))  
-                return ACCESS_GRANTED;  
-        }  
-        
+
+        Iterator<? extends GrantedAuthority> it = authentication.getAuthorities().iterator();
+
+        while (it.hasNext()) {
+            GrantedAuthority authority = it.next();
+
+            if (url.contains(authority.getAuthority()))
+                return ACCESS_GRANTED;
+        }
+
         log.warn("Url [" + url + "] is not permitted.");
-        
-        return ACCESS_DENIED;  
+        return ACCESS_DENIED;
     }
 
 }

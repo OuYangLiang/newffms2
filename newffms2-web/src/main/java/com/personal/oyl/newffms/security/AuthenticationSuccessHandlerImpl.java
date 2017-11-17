@@ -16,33 +16,41 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.personal.oyl.newffms.user.domain.Module;
+import com.personal.oyl.newffms.user.domain.User;
+import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
+import com.personal.oyl.newffms.user.domain.UserException.UserLoginIdEmptyException;
+import com.personal.oyl.newffms.user.domain.UserRepos;
+import com.personal.oyl.newffms.util.Constants;
+
 
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationSuccessHandlerImpl.class);
     
-    /*@Autowired
-    private UserProfileService userProfileService;
     @Autowired
-    private ModuleService moduleService;*/
+    private UserRepos repos;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        /*try {
-            UserProfile user = userProfileService.selectByLoginId(authentication.getName());
-            
-            //如果以后涉及子菜单，这里就需要修改一下。
-            List<Module> menus = moduleService.selectMenusByUser(user.getUserOid());
-            
-            request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
-            request.getSession().setAttribute(Constants.SESSION_MENU_KEY, menus);
-            
-            RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-            redirectStrategy.sendRedirect(request, response, "/welcome");
-            
-        } catch (SQLException e) {
-            log.error(e.getMessage(), e);
-        }*/
+        User user = null;
+        try {
+            user = repos.userOfLoginId(authentication.getName());
+        } catch (UserLoginIdEmptyException e) {
+            log.error(e.getErrorCode(), e);
+        }
+        
+        //如果以后涉及子菜单，这里就需要修改一下。
+        List<Module> menus = null;
+        try {
+            menus = repos.queryMenusByUser(user.getKey());
+        } catch (UserKeyEmptyException e) {
+            log.error(e.getErrorCode(), e);
+        }
+        
+        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+        request.getSession().setAttribute(Constants.SESSION_MENU_KEY, menus);
+        
         RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
         redirectStrategy.sendRedirect(request, response, "/welcome");
     }

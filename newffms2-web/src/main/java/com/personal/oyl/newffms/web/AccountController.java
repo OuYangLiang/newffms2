@@ -2,41 +2,46 @@ package com.personal.oyl.newffms.web;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.personal.oyl.newffms.account.domain.Account;
-import com.personal.oyl.newffms.util.SessionUtil;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.account.domain.AccountType;
+import com.personal.oyl.newffms.user.domain.User;
+import com.personal.oyl.newffms.user.domain.UserRepos;
 
 @Controller
 @RequestMapping("/account")
 public class AccountController extends BaseController {
+    private static final Logger log = LoggerFactory.getLogger(AccountController.class);
+    //private static final String SESSION_KEY_SEARCH_PARAM_ACCOUNT = "SESSION_KEY_SEARCH_PARAM_ACCOUNT";
+    //private static final Map<String, String> colMapping;
 
-    private static final String SESSION_KEY_SEARCH_PARAM_ACCOUNT = "SESSION_KEY_SEARCH_PARAM_ACCOUNT";
-    private static final Map<String, String> colMapping;
-
-    static {
+    /*static {
         colMapping = new HashMap<String, String>();
         colMapping.put("owner.userName", "OWNER_OID");
         colMapping.put("acntType", "ACNT_TYPE");
-    }
+    }*/
+    
+    @Autowired
+    private AccountRepos acntRepos;
+    @Autowired
+    private UserRepos userRepos;
 
     /*@Autowired
     private AccountValidator accountValidator;*/
@@ -48,74 +53,8 @@ public class AccountController extends BaseController {
 
     @RequestMapping("summary")
     public String summary(HttpServletRequest request, Model model, HttpSession session) throws SQLException {
-        this.clearSearchParameter(request, session, SESSION_KEY_SEARCH_PARAM_ACCOUNT);
-
-        // 初始化查询条件。
-
-        /*model.addAttribute("users", userProfileService.selectAllUsers());
-        model.addAttribute("acntTypes", AccountType.toMapValue());*/
-
-        // 设置默认查询条件值，并放入session中
-
-        Account searchParam = (Account) session.getAttribute(SESSION_KEY_SEARCH_PARAM_ACCOUNT);
-
-        if (null == searchParam) {
-            searchParam = new Account();
-
-            /*searchParam.setRequestPage(1);
-            searchParam.setSizePerPage(10);
-            searchParam.setSortField("OWNER_OID");
-            searchParam.setSortDir("asc");*/
-
-            session.setAttribute(SESSION_KEY_SEARCH_PARAM_ACCOUNT, searchParam);
-        }
-
         return "account/summary";
     }
-
-    /*@RequestMapping("search")
-    @ResponseBody
-    public String search(@RequestParam("ownerOid") BigDecimal ownerOid, @RequestParam("acntType") AccountType acntType,
-            HttpSession session) {
-        // 从页面接受查询参数，并放入session中。
-        Account searchParam = new Account();
-        searchParam.setOwnerOid(ownerOid);
-        searchParam.setAcntType(acntType);
-
-        session.setAttribute(SESSION_KEY_SEARCH_PARAM_ACCOUNT, searchParam);
-
-        return "OK";
-    }*/
-
-    /*@RequestMapping("/listOfSummary")
-    @ResponseBody
-    public BootstrapTableJsonRlt<Account> listOfSummary(@RequestParam(value = "offset", required = true) int offset,
-            @RequestParam(value = "limit", required = true) int limit,
-            @RequestParam(value = "sort", required = true) String sort,
-            @RequestParam(value = "order", required = true) String order, HttpSession session) throws SQLException {
-
-        int sizePerPage = limit;
-        int requestPage = offset / limit + 1;
-        String sortField = colMapping.get(sort);
-        String sortDir = order;
-
-        // 从session中取出查询对象并查询
-
-        Account searchParam = (Account) session.getAttribute(SESSION_KEY_SEARCH_PARAM_ACCOUNT);
-
-        searchParam.setStart((requestPage - 1) * sizePerPage);
-        searchParam.setSizePerPage(sizePerPage);
-        searchParam.setRequestPage(requestPage);
-
-        if (sortField != null && !sortField.trim().isEmpty()) {
-            searchParam.setSortField(sortField);
-            searchParam.setSortDir(sortDir);
-        }
-
-        session.setAttribute(SESSION_KEY_SEARCH_PARAM_ACCOUNT, searchParam);
-
-        return this.initBootstrapPaging(accountService, searchParam);
-    }*/
 
    /* @RequestMapping("/initAdd")
     public String initAdd(@RequestParam(value = "back", required = false) Boolean back, Model model,
@@ -327,21 +266,49 @@ public class AccountController extends BaseController {
         }
 
         return this.initBootstrapPaging(accountAuditService, searchParam);
-    }
+    }*/
 
     @RequestMapping("/ajaxGetAllAccounts")
     @ResponseBody
-    public List<Account> alaxGetAllAccounts() {
-
-        try {
-            List<Account> rlt = accountService.queryAccounts();
-
-            return rlt;
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public List<Map<String, Object>> alaxGetAllAccounts() {
+        List<Map<String, Object>> rlt = new LinkedList<>();
+        
+        List<User> users = userRepos.queryAllUser();
+        if (null != users) {
+            for (User user : users) {
+                try {
+                    List<Account> accounts = acntRepos.accountsOfUser(user.getKey());
+                    Map<String, Object> item = new HashMap<>();
+                    
+                    item.put("user", user);
+                    item.put("accounts", accounts);
+                    
+                    
+                    BigDecimal totalBal = BigDecimal.ZERO;
+                    BigDecimal totalDept= BigDecimal.ZERO;
+                    Integer numOfAccounts = 0;
+                    
+                    if (null != accounts) {
+                        numOfAccounts = accounts.size();
+                        for (Account account : accounts) {
+                            if (AccountType.Creditcard.equals(account.getAcntType())) {
+                                totalDept = totalDept.add(account.getDebt());
+                            }
+                            totalBal = totalBal.add(account.getBalance());
+                        }
+                    }
+                    
+                    item.put("numOfAccount", numOfAccounts);
+                    item.put("totalBalance", totalBal);
+                    item.put("totalDept", totalDept);
+                    rlt.add(item);
+                } catch (AccountOwnerEmptyException e) {
+                    log.error(e.getErrorCode(), e);
+                }
+            }
         }
 
-        return null;
-    }*/
+        return rlt;
+    }
 
 }

@@ -2,150 +2,97 @@
 <%@ include file="/WEB-INF/pages/taglibs-include.jsp"%>
 <!doctype html>
 <html>
-    <head>
-        <link href="<c:url value='/bootstrap-table-1.10.1/bootstrap-table.min.css' />" rel="stylesheet">
-    </head>
+<body>
+  <section class="content-header">
+    <h1>
+      账户<small></small>
+    </h1>
+  </section>
 
-    <body>
-		<section class="content-header">
-			<h1>
-				账户<small>列表页</small>
-			</h1>
-		</section>
-	
-		<section class="content">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="box box-primary">
-                        <div class="box-body">
-                            <div id="search-toolbar" class="btn-group">
-							    <button type="button" class="btn btn-default" id="btn-add">
-							        <i class="glyphicon glyphicon-plus"></i>
-							    </button>
-						
-							    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#searchModal">
-							        <i class="glyphicon glyphicon-search"></i>
-							    </button>
-						    </div>
-							<table id="data-table" data-toggle="table"
-							    data-url="<c:url value='/account/listOfSummary' />"
-							    data-pagination="true"
-							    data-side-pagination="server"
-							    data-sort-name="<c:url value='${SESSION_KEY_SEARCH_PARAM_ACCOUNT.sortField}' />"
-							    data-sort-order="<c:url value='${SESSION_KEY_SEARCH_PARAM_ACCOUNT.sortDir}' />"
-							    data-page-size="<c:url value='${SESSION_KEY_SEARCH_PARAM_ACCOUNT.sizePerPage}' />"
-							    data-page-number="<c:url value='${SESSION_KEY_SEARCH_PARAM_ACCOUNT.requestPage}' />"
-							    data-show-toggle="true"
-							    data-show-columns="true"
-							    data-silent-sort="false"
-							    data-row-style="rowStyle"
-							    data-toolbar="#search-toolbar">
-							    <thead>
-							        <tr>
-							            <th data-field="owner.userName" data-sortable="true" >所有人</th>
-							            <th data-field="acntType" data-sortable="true" >账户类型</th>
-							            <th data-field="acntDesc">说明</th>
-							            <th data-field="balance" data-align="right" data-formatter="amtFormatter">可用额度</th>
-							            <th data-formatter="oprFormatter"></th>
-							        </tr>
-							    </thead>
-							</table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-		</section>
-		
-		<!-- Modal -->
-        <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="searchModalLabel">搜索 / 查询</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <form id="search-form" class="form-horizontal">
-                                <div class="form-group">
-                                    <label for="cpnUserInput" class="col-md-3 control-label">账户所有人</label>
-                                    <div class="col-md-4">
-                                        <select name="ownerOid" class="form-control" id="cpnUserInput">
-                                            <option value ="">全部</option>
-                                            <c:forEach var="user" items="${ users }" varStatus="status">
-                                                <option value ="${user.userOid}" <c:if test='${user.userOid == SESSION_KEY_SEARCH_PARAM_ACCOUNT.ownerOid }' >selected="selected"</c:if>>${user.userName}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="cpnStatusInput" class="col-md-3 control-label">账户类型</label>
-                                    <div class="col-md-4">
-                                        <select name="acntType" class="form-control" id="cpnStatusInput">
-                                            <option value ="">全部</option>
-                                            <c:forEach var="item" items="${ acntTypes }" varStatus="status">
-                                                <option value="${item.key }" <c:if test='${item.key == SESSION_KEY_SEARCH_PARAM_ACCOUNT.acntType }' >selected="selected"</c:if>>${item.value }</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        <button type="button" class="btn btn-default" id="btn-query" data-dismiss="modal">查询</button>
-                    </div>
-                </div>
-            </div>
+  <section class="content">
+    <div class="row">
+      <div class="col-sm-12">
+        <div style="padding-left: 20px; padding-bottom: 20px;">
+          <button type="button" class="btn btn-default" id="btn-add">
+            <i class="glyphicon glyphicon-plus"></i>
+          </button>
         </div>
+      </div>
+    </div>
 
-	    <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
-        <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
-        <script src="<c:url value='/bootstrap-table-1.10.1/bootstrap-table.min.js' />" charset="utf-8"></script>
-        <script src="<c:url value='/bootstrap-table-1.10.1/locale/bootstrap-table-zh-CN.min.js' />" charset="utf-8"></script>
-        <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
-        
-        <script>
-            function rowStyle(row, index) {
-                var classes = ['active', 'success', 'info', 'warning', 'danger'];
-                
-                if (index % 2 === 0 && index / 2 < classes.length) {
-                    return {
-                        classes: classes[index / 2]
-                    };
-                }
-                return {};
-            }
-            
-            function oprFormatter(val, row, idx) {
-                var url = '<c:url value='/account/view' />' + '?acntOid=' + row.acntOid;
-                var href = 'javascript:window.location.href="' + url + '"';
-                return "<a href='" + href + "'>查看</a>";
-            }
-            
-            function amtFormatter(value) {
-                return "¥" + parseFloat(value).toFixed(2);
-            }
-            
-            $( document ).ready(function() {
-                $ ("#btn-query").click(function(){
-                    $.ajax({
-                        cache: false,
-                        url: "<c:url value='/account/search' />",
-                        type: "POST",
-                        async: true,
-                        data: $('#search-form').serialize(),
-                        success: function() {
-                            $ ("#data-table").bootstrapTable('refresh');
-                        }
-                    });
-                });
-                
-                $ ("#btn-add").click(function(){
-                    window.location.href = "<c:url value='/account/initAdd' />";
-                });
-            });
-        </script>
-    </body>
+    <div class="row">
+      <div class="col-xs-10 col-xs-offset-1">
+        <div id="myCarousel" class="carousel slide" wrap="false">
+          <ol class="carousel-indicators" id="carouselSlide">
+          </ol>
+          <div class="carousel-inner" id="carouselInner"></div>
+          <a class="left carousel-control" href="#myCarousel"
+            role="button" data-slide="prev"> <span
+            class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a> <a class="right carousel-control" href="#myCarousel"
+            role="button" data-slide="next"> <span
+            class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
+
+  <script>
+      $( document ).ready(function() {
+      	var slideTemplate = "<li data-target=\"#myCarousel\" data-slide-to=\"\#{slideIdx}\"></li>";
+      	var innerTemplate = "<div class=\"item \#{activeness}\"><div class=\"box box-primary\"><div class=\"box-body box-profile\"><img class=\"profile-user-img img-responsive img-circle\" src=\"<c:url value='/resources/img/\#{icon}' />\" alt=\"User profile picture\"/><h3 class=\"profile-username text-center\">\#{username}</h3><p class=\"text-muted text-center\">\#{userRemark}</p></div><div class=\"box-footer\"><div class=\"row\"><div class=\"col-sm-4 border-right\"><div class=\"description-block\"> <h5 class=\"description-header\">\#{numOfAccount}</h5> <span class=\"description-text\">账户数</span></div></div><div class=\"col-sm-4 border-right\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalBalance}</h5><span class=\"description-text\">总余额</span></div></div><div class=\"col-sm-4\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalDept}</h5><span class=\"description-text\">欠额</span></div></div></div></div><div class=\"box-footer\"><div class=\"row\" id=\"\#{cardListId}\"></div></div></div></div>";
+      	var cardTemplate = "<div class=\"col-md-4 col-sm-6 col-xs-12\"><div class=\"info-box bg-yellow\"><span class=\"info-box-icon\"><i class=\"fa fa-credit-card\"></i></span><div class=\"info-box-content\"><span class=\"info-box-text\">\#{cardType}&nbsp;&nbsp;<a href=\"<c:url value='/account/view' />?acntOid=\#{itemOid}\" >More Info</a></span><span class=\"info-box-text\">\#{cardBalance}</span><div class=\"progress\"><div class=\"progress-bar\" style=\"width: 100%\"></div></div><span class=\"progress-description\">\#{itemInfo}</span></div></div></div>";
+      	
+      	$.ajax({
+              cache: false,
+              url: "<c:url value='/account/ajaxGetAllAccounts' />",
+              type: "POST",
+              async: true,
+              success: function(data) {
+                  $.each(data, function(idx, obj) {
+                  	$("#carouselSlide").append(slideTemplate.replace( /#\{slideIdx\}/g, idx ));
+                  	
+                  	$("#carouselInner").append(
+                  		innerTemplate.replace( /#\{icon\}/g, obj.user.icon )
+                  		             .replace( /#\{username\}/g, obj.user.userName )
+                  		             .replace( /#\{userRemark\}/g, obj.user.remarks )
+                  		             .replace( /#\{numOfAccount\}/g, obj.numOfAccount )
+                  		             .replace( /#\{totalBalance\}/g, amtFormatter(obj.totalBalance) )
+                  		             .replace( /#\{totalDept\}/g, amtFormatter(obj.totalDept) )
+                  		             .replace( /#\{cardListId\}/g, "cardList-" + obj.user.key.userOid )
+                  		             .replace( /#\{activeness\}/g, 0 == idx ? "active" : "" )
+                  	);
+                  	
+                  	if (obj.accounts) {
+                          $.each(obj.accounts, function(idx, item) {
+                              $ ( "#cardList-" + obj.user.key.userOid ).append(
+                              	cardTemplate.replace( /#\{cardType\}/g, item.acntType )
+                                            .replace( /#\{cardBalance\}/g, "余额: " + amtFormatter(item.balance) + ("信用卡" === item.acntType ? " 欠款: " + amtFormatter(item.debt) : "") )
+                                            .replace( /#\{itemOid\}/g, item.acntOid )
+                                            .replace( /#\{itemInfo\}/g, item.acntDesc )
+                              );
+                          })
+                      }
+                  })
+              }
+          });
+      	
+          function amtFormatter(value) {
+              return "¥" + parseFloat(value).toFixed(2);
+          }
+          
+          $ ("#btn-add").click(function(){
+              window.location.href = "<c:url value='/account/initAdd' />";
+          });
+          
+      });
+  </script>
+</body>
 </html>

@@ -8,7 +8,7 @@
         <result column="BALANCE" property="balance" jdbcType="DECIMAL" />
         <result column="QUOTA" property="quota" jdbcType="DECIMAL" />
         <result column="DEBT" property="debt" jdbcType="DECIMAL" />
-        <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="OWNER_OID" property="owner.userOid" jdbcType="DECIMAL" />
         <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
         <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
@@ -31,8 +31,8 @@
             <if test="acntType != null">
                 AND ACNT_TYPE = #{acntType,jdbcType=VARCHAR}
             </if>
-            <if test="ownerOid != null">
-                AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+            <if test="owner != null">
+                AND OWNER_OID = #{owner.userOid,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
@@ -61,7 +61,7 @@
             #{balance,jdbcType=DECIMAL},
             #{quota,jdbcType=DECIMAL},
             #{debt,jdbcType=DECIMAL},
-            #{ownerOid,jdbcType=DECIMAL},
+            #{owner.userOid,jdbcType=DECIMAL},
             #{createTime,jdbcType=TIMESTAMP}, 
             #{createBy,jdbcType=NVARCHAR})
     </insert>

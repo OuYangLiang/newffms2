@@ -79,7 +79,7 @@ public class AccountReposImpl implements AccountRepos {
 		    
 		}
 		
-		if (null == bean.getOwnerOid()) {
+		if (null == bean.getOwner()) {
 		    throw new AccountOwnerEmptyException();
 		}
 		

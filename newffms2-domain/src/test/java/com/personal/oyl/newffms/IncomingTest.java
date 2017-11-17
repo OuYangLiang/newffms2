@@ -19,6 +19,7 @@ import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
 import com.personal.oyl.newffms.incoming.domain.IncomingType;
 import com.personal.oyl.newffms.incoming.store.mapper.AccountIncomingMapper;
 import com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper;
+import com.personal.oyl.newffms.user.domain.UserKey;
 
 import junit.framework.TestCase;
 
@@ -109,7 +110,7 @@ public class IncomingTest extends TestCase {
 		acnt1.setAcntDesc("招商银行");
 		acnt1.setAcntType(AccountType.Bankcard);
 		acnt1.setBalance(BigDecimal.valueOf(150));
-		acnt1.setOwnerOid(BigDecimal.ONE);
+		acnt1.setOwner(new UserKey(BigDecimal.ONE));
 		acntRepos.add(acnt1, "欧阳亮");
 		
 		Incoming bean = new Incoming();

@@ -21,6 +21,7 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
 import com.personal.oyl.newffms.consumption.store.mapper.AccountConsumptionMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
+import com.personal.oyl.newffms.user.domain.UserKey;
 
 import junit.framework.TestCase;
 
@@ -62,14 +63,14 @@ public class ConsumptionTest extends TestCase {
 		acnt1.setAcntDesc("招商银行");
 		acnt1.setAcntType(AccountType.Bankcard);
 		acnt1.setBalance(BigDecimal.valueOf(150));
-		acnt1.setOwnerOid(BigDecimal.ONE);
+		acnt1.setOwner(new UserKey(BigDecimal.ONE));
 		acntRepos.add(acnt1, "欧阳亮");
 		
 		Account acnt2 = new Account();
 		acnt2.setAcntDesc("招商银行");
 		acnt2.setAcntType(AccountType.Bankcard);
 		acnt2.setBalance(BigDecimal.valueOf(150));
-		acnt2.setOwnerOid(BigDecimal.valueOf(2));
+		acnt2.setOwner(new UserKey(BigDecimal.valueOf(2)));
 		acntRepos.add(acnt2, "喻敏");
 		
 		// 创建消费

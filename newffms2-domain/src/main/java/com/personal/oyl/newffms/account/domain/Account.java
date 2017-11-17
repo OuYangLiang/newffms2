@@ -16,6 +16,7 @@ import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.AppContext;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
 
@@ -28,7 +29,7 @@ public class Account implements AccountOperation, Serializable {
 	private BigDecimal balance;
 	private BigDecimal quota;
 	private BigDecimal debt;
-	private BigDecimal ownerOid;
+	private UserKey owner;
 
 	private Date createTime;
 	private Date updateTime;
@@ -93,12 +94,12 @@ public class Account implements AccountOperation, Serializable {
 		this.debt = debt;
 	}
 
-	public BigDecimal getOwnerOid() {
-		return ownerOid;
+	public UserKey getOwner() {
+		return owner;
 	}
 
-	public void setOwnerOid(BigDecimal ownerOid) {
-		this.ownerOid = ownerOid;
+	public void setOwner(UserKey owner) {
+		this.owner = owner;
 	}
 
 	public Date getCreateTime() {

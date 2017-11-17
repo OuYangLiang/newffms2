@@ -28,6 +28,7 @@ import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.user.domain.UserKey;
 
 import junit.framework.TestCase;
 
@@ -59,7 +60,7 @@ public class AccountTest extends TestCase {
 		bean.setAcntDesc("招商银行");
 		bean.setAcntType(AccountType.Bankcard);
 		bean.setBalance(BigDecimal.valueOf(100));
-		bean.setOwnerOid(BigDecimal.ONE);
+		bean.setOwner(new UserKey(BigDecimal.ONE));
 		
 		repos.add(bean, "欧阳亮");
 		
@@ -72,7 +73,7 @@ public class AccountTest extends TestCase {
 		assertEquals(bean.getAcntDesc(), bean2.getAcntDesc());
 		assertEquals(bean.getAcntType(), bean2.getAcntType());
 		assertTrue(bean.getBalance().compareTo(bean2.getBalance()) == 0);
-		assertEquals(bean.getOwnerOid(), bean2.getOwnerOid());
+		assertEquals(bean.getOwner().getUserOid(), bean2.getOwner().getUserOid());
 		assertEquals(Integer.valueOf(1), bean.getSeqNo());
 		assertNotNull(bean2.getCreateTime());
 		assertNotNull(bean2.getCreateBy());
@@ -88,7 +89,7 @@ public class AccountTest extends TestCase {
 		bean.setAcntDesc("招商银行");
 		bean.setAcntType(AccountType.Bankcard);
 		bean.setBalance(BigDecimal.valueOf(100));
-		bean.setOwnerOid(BigDecimal.ONE);
+		bean.setOwner(new UserKey(BigDecimal.ONE));
 		
 		repos.add(bean, "欧阳亮");
 		
@@ -104,7 +105,7 @@ public class AccountTest extends TestCase {
 		assertEquals(bean.getAcntType(), bean2.getAcntType());
 		assertTrue(bean.getBalance().compareTo(bean2.getBalance()) == 0);
 		assertTrue(BigDecimal.valueOf(45).compareTo(bean2.getBalance()) == 0);
-		assertEquals(bean.getOwnerOid(), bean2.getOwnerOid());
+		assertEquals(bean.getOwner().getUserOid(), bean2.getOwner().getUserOid());
 		assertEquals(Integer.valueOf(2), bean.getSeqNo());
 		assertNotNull(bean2.getCreateTime());
 		assertNotNull(bean2.getCreateBy());
@@ -122,7 +123,7 @@ public class AccountTest extends TestCase {
 		bean.setAcntDesc("招商银行");
 		bean.setAcntType(AccountType.Bankcard);
 		bean.setBalance(BigDecimal.valueOf(100));
-		bean.setOwnerOid(BigDecimal.ONE);
+		bean.setOwner(new UserKey(BigDecimal.ONE));
 		
 		repos.add(bean, "欧阳亮");
 		
@@ -138,7 +139,7 @@ public class AccountTest extends TestCase {
 		assertEquals(bean.getAcntType(), bean2.getAcntType());
 		assertTrue(bean.getBalance().compareTo(bean2.getBalance()) == 0);
 		assertTrue(BigDecimal.valueOf(155).compareTo(bean2.getBalance()) == 0);
-		assertEquals(bean.getOwnerOid(), bean2.getOwnerOid());
+		assertEquals(bean.getOwner().getUserOid(), bean2.getOwner().getUserOid());
 		assertEquals(Integer.valueOf(2), bean.getSeqNo());
 		assertNotNull(bean2.getCreateTime());
 		assertNotNull(bean2.getCreateBy());
@@ -157,14 +158,14 @@ public class AccountTest extends TestCase {
 		bean.setAcntDesc("招商银行1");
 		bean.setAcntType(AccountType.Bankcard);
 		bean.setBalance(BigDecimal.valueOf(100));
-		bean.setOwnerOid(BigDecimal.ONE);
+		bean.setOwner(new UserKey(BigDecimal.ONE));
 		repos.add(bean, "欧阳亮");
 		
 		Account bean2 = new Account();
 		bean2.setAcntDesc("招商银行2");
 		bean2.setAcntType(AccountType.Bankcard);
 		bean2.setBalance(BigDecimal.valueOf(100));
-		bean2.setOwnerOid(BigDecimal.ONE);
+		bean2.setOwner(new UserKey(BigDecimal.ONE));
 		repos.add(bean2, "喻敏");
 		
 		bean.transfer(bean2, BigDecimal.valueOf(30), "欧");

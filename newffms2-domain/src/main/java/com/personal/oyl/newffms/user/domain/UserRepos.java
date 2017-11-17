@@ -15,7 +15,7 @@ public interface UserRepos {
      * @return 用户实体
      * @throws UserProfileKeyEmptyException
      */
-    User userProfileOfId(UserKey key) throws UserKeyEmptyException;
+    User userOfId(UserKey key) throws UserKeyEmptyException;
     
     /**
      * 根据登户id查询用户
@@ -24,7 +24,7 @@ public interface UserRepos {
      * @return 用户实体
      * @throws UserLoginIdEmptyException
      */
-    User userProfileOfLoginId(String loginId) throws UserLoginIdEmptyException;
+    User userOfLoginId(String loginId) throws UserLoginIdEmptyException;
     
     /**
      * 根据用户标识查询菜单

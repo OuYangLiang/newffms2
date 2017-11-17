@@ -14,7 +14,7 @@ public class UserReposImpl implements UserRepos {
     private UserMapper mapper;
 
     @Override
-    public User userProfileOfId(UserKey key) throws UserKeyEmptyException {
+    public User userOfId(UserKey key) throws UserKeyEmptyException {
         if (null == key || null == key.getUserOid()) {
             throw new UserKeyEmptyException();
         }
@@ -32,7 +32,7 @@ public class UserReposImpl implements UserRepos {
     }
 
     @Override
-    public User userProfileOfLoginId(String loginId) throws UserLoginIdEmptyException {
+    public User userOfLoginId(String loginId) throws UserLoginIdEmptyException {
         if (null == loginId || loginId.trim().isEmpty()) {
             throw new UserLoginIdEmptyException();
         }

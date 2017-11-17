@@ -34,7 +34,7 @@ public class UserProfileTest extends TestCase {
         
         // 测试key查询
         try {
-            user = repos.userProfileOfId(new UserKey(BigDecimal.valueOf(1)));
+            user = repos.userOfId(new UserKey(BigDecimal.valueOf(1)));
         } catch (UserKeyEmptyException e) {
             e.printStackTrace();
         }
@@ -53,7 +53,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getUserTypeOid()) == 0);
         
         try {
-            user = repos.userProfileOfId(new UserKey(BigDecimal.valueOf(2)));
+            user = repos.userOfId(new UserKey(BigDecimal.valueOf(2)));
         } catch (UserKeyEmptyException e) {
             e.printStackTrace();
         }
@@ -72,7 +72,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getUserTypeOid()) == 0);
         
         try {
-            user = repos.userProfileOfId(new UserKey(BigDecimal.valueOf(25)));
+            user = repos.userOfId(new UserKey(BigDecimal.valueOf(25)));
         } catch (UserKeyEmptyException e) {
             e.printStackTrace();
         }
@@ -81,7 +81,7 @@ public class UserProfileTest extends TestCase {
         
         // 测试login id查询
         try {
-            user = repos.userProfileOfLoginId("oyl");
+            user = repos.userOfLoginId("oyl");
         } catch (UserLoginIdEmptyException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -101,7 +101,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getUserTypeOid()) == 0);
         
         try {
-            user = repos.userProfileOfLoginId("yumin");
+            user = repos.userOfLoginId("yumin");
         } catch (UserLoginIdEmptyException e) {
             e.printStackTrace();
         }
@@ -120,7 +120,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getUserTypeOid()) == 0);
         
         try {
-            user = repos.userProfileOfLoginId("oyl123");
+            user = repos.userOfLoginId("oyl123");
         } catch (UserLoginIdEmptyException e) {
             e.printStackTrace();
         }

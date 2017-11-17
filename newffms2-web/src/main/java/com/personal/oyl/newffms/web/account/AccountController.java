@@ -1,4 +1,4 @@
-package com.personal.oyl.newffms.web;
+package com.personal.oyl.newffms.web.account;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -24,6 +24,8 @@ import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserRepos;
+import com.personal.oyl.newffms.web.BaseController;
+import com.personal.oyl.newffms.web.user.UserDto;
 
 @Controller
 @RequestMapping("/account")
@@ -278,11 +280,11 @@ public class AccountController extends BaseController {
             for (User user : users) {
                 try {
                     List<Account> accounts = acntRepos.accountsOfUser(user.getKey());
+                    List<AccountDto> acnts = new LinkedList<>();
+                    
                     Map<String, Object> item = new HashMap<>();
-                    
-                    item.put("user", user);
-                    item.put("accounts", accounts);
-                    
+                    item.put("user", new UserDto(user));
+                    item.put("accounts", acnts);
                     
                     BigDecimal totalBal = BigDecimal.ZERO;
                     BigDecimal totalDept= BigDecimal.ZERO;
@@ -291,6 +293,7 @@ public class AccountController extends BaseController {
                     if (null != accounts) {
                         numOfAccounts = accounts.size();
                         for (Account account : accounts) {
+                            acnts.add(new AccountDto(account));
                             if (AccountType.Creditcard.equals(account.getAcntType())) {
                                 totalDept = totalDept.add(account.getDebt());
                             }

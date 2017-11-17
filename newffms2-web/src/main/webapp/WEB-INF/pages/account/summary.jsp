@@ -66,15 +66,15 @@
                   		             .replace( /#\{numOfAccount\}/g, obj.numOfAccount )
                   		             .replace( /#\{totalBalance\}/g, amtFormatter(obj.totalBalance) )
                   		             .replace( /#\{totalDept\}/g, amtFormatter(obj.totalDept) )
-                  		             .replace( /#\{cardListId\}/g, "cardList-" + obj.user.key.userOid )
+                  		             .replace( /#\{cardListId\}/g, "cardList-" + obj.user.userOid )
                   		             .replace( /#\{activeness\}/g, 0 == idx ? "active" : "" )
                   	);
                   	
                   	if (obj.accounts) {
                           $.each(obj.accounts, function(idx, item) {
-                              $ ( "#cardList-" + obj.user.key.userOid ).append(
-                              	cardTemplate.replace( /#\{cardType\}/g, item.acntType )
-                                            .replace( /#\{cardBalance\}/g, "余额: " + amtFormatter(item.balance) + ("信用卡" === item.acntType ? " 欠款: " + amtFormatter(item.debt) : "") )
+                              $ ( "#cardList-" + obj.user.userOid ).append(
+                              	cardTemplate.replace( /#\{cardType\}/g, item.acntTypeDesc )
+                                            .replace( /#\{cardBalance\}/g, "余额: " + amtFormatter(item.balance) + ("Creditcard" === item.acntType ? " 欠款: " + amtFormatter(item.debt) : "") )
                                             .replace( /#\{itemOid\}/g, item.acntOid )
                                             .replace( /#\{itemInfo\}/g, item.acntDesc )
                               );

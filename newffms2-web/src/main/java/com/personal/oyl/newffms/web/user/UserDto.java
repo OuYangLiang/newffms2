@@ -1,14 +1,17 @@
 package com.personal.oyl.newffms.web.user;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.personal.oyl.newffms.user.domain.Gender;
 import com.personal.oyl.newffms.user.domain.User;
 
-public class UserDto {
+@SuppressWarnings("serial")
+public class UserDto implements Serializable {
     private BigDecimal userOid;
     private String userName;
     private String userAlias;
-    private String gender;
+    private Gender gender;
     private String genderDesc;
     private String phone;
     private String email;
@@ -17,16 +20,16 @@ public class UserDto {
     private String loginId;
     private String loginPwd;
     private BigDecimal userTypeOid;
-    
+
     public UserDto() {
-        
+
     }
-    
+
     public UserDto(User user) {
         this.setUserOid(user.getKey().getUserOid());
         this.setUserName(user.getUserName());
         this.setUserAlias(user.getUserAlias());
-        this.setGender(user.getGender().name());
+        this.setGender(user.getGender());
         this.setGenderDesc(user.getGender().getDesc());
         this.setPhone(user.getPhone());
         this.setEmail(user.getEmail());
@@ -61,11 +64,11 @@ public class UserDto {
         this.userAlias = userAlias;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 

@@ -9,21 +9,33 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.user.domain.User;
+import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
+import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.user.domain.UserRepos;
+import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
 import com.personal.oyl.newffms.web.user.UserDto;
 
@@ -45,86 +57,111 @@ public class AccountController extends BaseController {
     @Autowired
     private UserRepos userRepos;
 
-    /*@Autowired
-    private AccountValidator accountValidator;*/
-
-    /*@InitBinder
+    @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(accountValidator);
-    }*/
+        binder.setValidator(new AccountDtoValidator());
+    }
 
     @RequestMapping("summary")
     public String summary(HttpServletRequest request, Model model, HttpSession session) throws SQLException {
         return "account/summary";
     }
 
-   /* @RequestMapping("/initAdd")
+    @RequestMapping("/initAdd")
     public String initAdd(@RequestParam(value = "back", required = false) Boolean back, Model model,
             HttpSession session) throws SQLException {
 
-        Account form = null;
+        AccountDto form = null;
 
         if (null != back && back && null != session.getAttribute("acntForm")) {
-            form = (Account) session.getAttribute("acntForm");
+            form = (AccountDto) session.getAttribute("acntForm");
         } else {
-            form = new Account();
+            form = new AccountDto();
+        }
+        
+        List<User> users = userRepos.queryAllUser();
+        List<UserDto> userList = new LinkedList<>();
+        for (User user : users) {
+            userList.add(new UserDto(user));
         }
 
         model.addAttribute("acntForm", form);
         model.addAttribute("acntTypes", AccountType.toMapValue());
-        model.addAttribute("users", userProfileService.selectAllUsers());
+        model.addAttribute("users", userList);
 
         return "account/add";
     }
 
     @RequestMapping("/confirmAdd")
-    public String confirmAdd(@Valid @ModelAttribute("acntForm") Account form, BindingResult result, Model model,
-            HttpSession session) throws SQLException {
+    public String confirmAdd(@Valid @ModelAttribute("acntForm") AccountDto form, BindingResult result, Model model,
+            HttpSession session) throws UserKeyEmptyException {
         if (result.hasErrors()) {
+            List<User> users = userRepos.queryAllUser();
+            List<UserDto> userList = new LinkedList<>();
+            for (User user : users) {
+                userList.add(new UserDto(user));
+            }
+            
             model.addAttribute("acntTypes", AccountType.toMapValue());
-            model.addAttribute("users", userProfileService.selectAllUsers());
+            model.addAttribute("users", userList);
             model.addAttribute("validation", false);
-
+            
             return "account/add";
         }
 
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-
+        form.setAcntTypeDesc(form.getAcntType().getDesc());
+        form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
         session.setAttribute("acntForm", form);
 
         return "account/confirmAdd";
     }
 
     @RequestMapping("/saveAdd")
-    public String saveAdd(Model model, HttpSession session) throws SQLException {
-        Account form = (Account) session.getAttribute("acntForm");
-
-        BaseObject base = new BaseObject();
-        base.setCreateTime(new Date());
-        base.setCreateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-
-        form.setBaseObject(base);
-
-        transactionService.createAccount(form);
+    public String saveAdd(Model model, HttpSession session) {
+        AccountDto form = (AccountDto) session.getAttribute("acntForm");
+        
+        Account account = form.toAccount();
+        
+        try {
+            acntRepos.add(account, SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            //result.reject(e.getErrorCode(), e.getMessage());
+            
+            List<User> users = userRepos.queryAllUser();
+            List<UserDto> userList = new LinkedList<>();
+            for (User user : users) {
+                userList.add(new UserDto(user));
+            }
+            
+            model.addAttribute("acntTypes", AccountType.toMapValue());
+            model.addAttribute("users", userList);
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+            
+            return "account/confirmAdd";
+        }
 
         session.removeAttribute("acntForm");
-
         return "redirect:/account/summary?keepSp=Y";
     }
 
     @RequestMapping("/view")
-    public String view(@RequestParam("acntOid") BigDecimal acntOid, Model model) throws SQLException {
-        Account form = accountService.selectByKey(new AccountKey(acntOid));
+    public String view(@RequestParam("acntOid") BigDecimal acntOid, Model model) throws AccountKeyEmptyException, UserKeyEmptyException {
+        Account account = acntRepos.accountOfId(new AccountKey(acntOid));
+        AccountDto form = new AccountDto(account);
 
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
+        User user = userRepos.userOfId(account.getOwner());
+        form.setOwner(new UserDto(user));
 
         model.addAttribute("acntForm", form);
-        model.addAttribute("isAccountSafeToRemove", accountService.isAccountSafeToRemove(acntOid));
+        //model.addAttribute("isAccountSafeToRemove", accountService.isAccountSafeToRemove(acntOid));
+        model.addAttribute("isAccountSafeToRemove", false);// TODO
 
         return "account/view";
     }
 
-    @RequestMapping("/initEdit")
+    /*@RequestMapping("/initEdit")
     public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
             @RequestParam(value = "acntOid", required = false) BigDecimal acntOid, Model model, HttpSession session)
             throws SQLException {

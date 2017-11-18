@@ -100,8 +100,8 @@ public class AccountReposImpl implements AccountRepos {
             if (bean.getDebt().compareTo(BigDecimal.ZERO) < 0) {
                 throw new AccountDebtInvalidException();
             }
-
-            if (bean.getDebt().compareTo(bean.getQuota()) > 0) {
+            
+            if ( (bean.getBalance().add(bean.getDebt())).subtract(bean.getQuota()).compareTo(BigDecimal.ZERO) != 0 ) {
                 throw new AccountDebtPlusBalanceNeqQuotaException();
             }
         }

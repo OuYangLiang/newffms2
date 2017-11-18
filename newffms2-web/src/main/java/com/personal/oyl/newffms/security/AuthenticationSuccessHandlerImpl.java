@@ -1,7 +1,6 @@
 package com.personal.oyl.newffms.security;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -22,11 +21,11 @@ import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
 import com.personal.oyl.newffms.user.domain.UserException.UserLoginIdEmptyException;
 import com.personal.oyl.newffms.user.domain.UserRepos;
 import com.personal.oyl.newffms.util.Constants;
-
+import com.personal.oyl.newffms.web.user.UserDto;
 
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationSuccessHandlerImpl.class);
-    
+
     @Autowired
     private UserRepos repos;
 
@@ -39,18 +38,18 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         } catch (UserLoginIdEmptyException e) {
             log.error(e.getErrorCode(), e);
         }
-        
-        //如果以后涉及子菜单，这里就需要修改一下。
+
+        // 如果以后涉及子菜单，这里就需要修改一下。
         List<Module> menus = null;
         try {
             menus = repos.queryMenusByUser(user.getKey());
         } catch (UserKeyEmptyException e) {
             log.error(e.getErrorCode(), e);
         }
-        
-        request.getSession().setAttribute(Constants.SESSION_USER_KEY, user);
+
+        request.getSession().setAttribute(Constants.SESSION_USER_KEY, new UserDto(user));
         request.getSession().setAttribute(Constants.SESSION_MENU_KEY, menus);
-        
+
         RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
         redirectStrategy.sendRedirect(request, response, "/welcome");
     }

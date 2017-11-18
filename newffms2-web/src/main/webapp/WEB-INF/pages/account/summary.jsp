@@ -45,54 +45,52 @@
   <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
 
   <script>
-      $( document ).ready(function() {
-      	var slideTemplate = "<li data-target=\"#myCarousel\" data-slide-to=\"\#{slideIdx}\"></li>";
-      	var innerTemplate = "<div class=\"item \#{activeness}\"><div class=\"box box-primary\"><div class=\"box-body box-profile\"><img class=\"profile-user-img img-responsive img-circle\" src=\"<c:url value='/resources/img/\#{icon}' />\" alt=\"User profile picture\"/><h3 class=\"profile-username text-center\">\#{username}</h3><p class=\"text-muted text-center\">\#{userRemark}</p></div><div class=\"box-footer\"><div class=\"row\"><div class=\"col-sm-4 border-right\"><div class=\"description-block\"> <h5 class=\"description-header\">\#{numOfAccount}</h5> <span class=\"description-text\">账户数</span></div></div><div class=\"col-sm-4 border-right\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalBalance}</h5><span class=\"description-text\">总余额</span></div></div><div class=\"col-sm-4\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalDept}</h5><span class=\"description-text\">欠额</span></div></div></div></div><div class=\"box-footer\"><div class=\"row\" id=\"\#{cardListId}\"></div></div></div></div>";
-      	var cardTemplate = "<div class=\"col-md-4 col-sm-6 col-xs-12\"><div class=\"info-box bg-yellow\"><span class=\"info-box-icon\"><i class=\"fa fa-credit-card\"></i></span><div class=\"info-box-content\"><span class=\"info-box-text\">\#{cardType}&nbsp;&nbsp;<a href=\"<c:url value='/account/view' />?acntOid=\#{itemOid}\" >More Info</a></span><span class=\"info-box-text\">\#{cardBalance}</span><div class=\"progress\"><div class=\"progress-bar\" style=\"width: 100%\"></div></div><span class=\"progress-description\">\#{itemInfo}</span></div></div></div>";
-      	
-      	$.ajax({
-              cache: false,
-              url: "<c:url value='/account/ajaxGetAllAccounts' />",
-              type: "POST",
-              async: true,
-              success: function(data) {
-                  $.each(data, function(idx, obj) {
-                  	$("#carouselSlide").append(slideTemplate.replace( /#\{slideIdx\}/g, idx ));
-                  	
-                  	$("#carouselInner").append(
-                  		innerTemplate.replace( /#\{icon\}/g, obj.user.icon )
-                  		             .replace( /#\{username\}/g, obj.user.userName )
-                  		             .replace( /#\{userRemark\}/g, obj.user.remarks )
-                  		             .replace( /#\{numOfAccount\}/g, obj.numOfAccount )
-                  		             .replace( /#\{totalBalance\}/g, amtFormatter(obj.totalBalance) )
-                  		             .replace( /#\{totalDept\}/g, amtFormatter(obj.totalDept) )
-                  		             .replace( /#\{cardListId\}/g, "cardList-" + obj.user.userOid )
-                  		             .replace( /#\{activeness\}/g, 0 == idx ? "active" : "" )
-                  	);
-                  	
-                  	if (obj.accounts) {
-                          $.each(obj.accounts, function(idx, item) {
-                              $ ( "#cardList-" + obj.user.userOid ).append(
-                              	cardTemplate.replace( /#\{cardType\}/g, item.acntTypeDesc )
-                                            .replace( /#\{cardBalance\}/g, "余额: " + amtFormatter(item.balance) + ("Creditcard" === item.acntType ? " 欠款: " + amtFormatter(item.debt) : "") )
-                                            .replace( /#\{itemOid\}/g, item.acntOid )
-                                            .replace( /#\{itemInfo\}/g, item.acntDesc )
-                              );
-                          })
-                      }
-                  })
-              }
-          });
-      	
-          function amtFormatter(value) {
-              return "¥" + parseFloat(value).toFixed(2);
+  $( document ).ready(function() {
+      var slideTemplate = "<li data-target=\"#myCarousel\" data-slide-to=\"\#{slideIdx}\"></li>";
+      var innerTemplate = "<div class=\"item \#{activeness}\"><div class=\"box box-primary\"><div class=\"box-body box-profile\"><img class=\"profile-user-img img-responsive img-circle\" src=\"<c:url value='/resources/img/\#{icon}' />\" alt=\"User profile picture\"/><h3 class=\"profile-username text-center\">\#{username}</h3><p class=\"text-muted text-center\">\#{userRemark}</p></div><div class=\"box-footer\"><div class=\"row\"><div class=\"col-sm-4 border-right\"><div class=\"description-block\"> <h5 class=\"description-header\">\#{numOfAccount}</h5> <span class=\"description-text\">账户数</span></div></div><div class=\"col-sm-4 border-right\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalBalance}</h5><span class=\"description-text\">总余额</span></div></div><div class=\"col-sm-4\"><div class=\"description-block\"><h5 class=\"description-header\">\#{totalDept}</h5><span class=\"description-text\">欠额</span></div></div></div></div><div class=\"box-footer\"><div class=\"row\" id=\"\#{cardListId}\"></div></div></div></div>";
+      var cardTemplate = "<div class=\"col-md-4 col-sm-6 col-xs-12\"><div class=\"info-box bg-yellow\"><span class=\"info-box-icon\"><i class=\"fa fa-credit-card\"></i></span><div class=\"info-box-content\"><span class=\"info-box-text\">\#{cardType}&nbsp;&nbsp;<a href=\"<c:url value='/account/view' />?acntOid=\#{itemOid}\" >More Info</a></span><span class=\"info-box-text\">\#{cardBalance}</span><div class=\"progress\"><div class=\"progress-bar\" style=\"width: 100%\"></div></div><span class=\"progress-description\">\#{itemInfo}</span></div></div></div>";
+
+      $.ajax({
+          cache: false,
+          url: "<c:url value='/account/ajaxGetAllAccounts' />",
+          type: "POST",
+          async: true,
+          success: function(data) {
+              $.each(data, function(idx, obj) {
+                  $("#carouselSlide").append(slideTemplate.replace( /#\{slideIdx\}/g, idx ));
+
+                  $("#carouselInner").append(innerTemplate.replace( /#\{icon\}/g, obj.user.icon )
+                        .replace( /#\{username\}/g, obj.user.userName )
+                        .replace( /#\{userRemark\}/g, obj.user.remarks )
+                        .replace( /#\{numOfAccount\}/g, obj.numOfAccount )
+                        .replace( /#\{totalBalance\}/g, amtFormatter(obj.totalBalance) )
+                        .replace( /#\{totalDept\}/g, amtFormatter(obj.totalDept) )
+                        .replace( /#\{cardListId\}/g, "cardList-" + obj.user.userOid )
+                        .replace( /#\{activeness\}/g, 0 == idx ? "active" : "" )
+                  );
+
+                  if (obj.accounts) {
+                      $.each(obj.accounts, function(idx, item) {
+                          $ ( "#cardList-" + obj.user.userOid ).append(
+                               cardTemplate.replace( /#\{cardType\}/g, item.acntTypeDesc )
+                              .replace( /#\{cardBalance\}/g, "余额: " + amtFormatter(item.balance) + ("Creditcard" === item.acntType ? " 欠款: " + amtFormatter(item.debt) : "") )
+                              .replace( /#\{itemOid\}/g, item.acntOid )
+                              .replace( /#\{itemInfo\}/g, item.acntDesc )
+                          );
+                      })
+                  }
+              })
           }
-          
-          $ ("#btn-add").click(function(){
-              window.location.href = "<c:url value='/account/initAdd' />";
-          });
-          
       });
+
+      function amtFormatter(value) {
+          return "¥" + parseFloat(value).toFixed(2);
+      }
+
+      $ ("#btn-add").click(function(){
+          window.location.href = "<c:url value='/account/initAdd' />";
+      });
+  });
   </script>
 </body>
 </html>

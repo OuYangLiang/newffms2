@@ -18,6 +18,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmpt
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.user.domain.UserKey;
 
 public interface AccountRepos {
@@ -78,7 +79,18 @@ public interface AccountRepos {
      */
     List<AccountAuditVo> auditsOfBatchNum(String batchNum)
             throws AccountBatchNumEmptyException, AccountBatchNumInvalidException;
-	
+    
+    /**
+     * 根据账户查询流水
+     * 
+     * @param key 账户标识
+     * @param page 页数
+     * @param sizePerPage 每页记录数
+     * @return
+     * @throws AccountKeyEmptyException
+     */
+    Tuple<Integer, List<AccountAuditVo>> auditsOfAccount(AccountKey key, int page, int sizePerPage) throws AccountKeyEmptyException;
+
     /**
      * 删除账户
      * 

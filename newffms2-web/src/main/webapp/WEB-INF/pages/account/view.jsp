@@ -113,10 +113,10 @@
                 <tr>
                   <th data-field="adtDesc">描述</th>
                   <th data-field="adtType">类型</th>
-                  <th data-field="amount" data-align="right" data-formatter="amtFormatter">变化量</th>
+                  <th data-field="chgAmt" data-align="right" data-formatter="amtFormatter">变化量</th>
+                  <th data-field="balanceAfter" data-align="right" data-formatter="amtFormatter">变化后余额</th>
                   <th data-field="adtTime">发生时间</th>
-                  <th data-field="baseObject.createBy">操作人</th>
-                  <th data-field="baseObject.createTime">操作时间</th>
+                  <th data-field="createTime">操作时间</th>
                 </tr>
               </thead>
             </table>

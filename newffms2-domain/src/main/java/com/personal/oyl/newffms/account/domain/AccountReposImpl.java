@@ -2,7 +2,9 @@ package com.personal.oyl.newffms.account.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +26,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmpty
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.user.domain.UserKey;
 
 public class AccountReposImpl implements AccountRepos {
@@ -193,6 +196,26 @@ public class AccountReposImpl implements AccountRepos {
         }
 
         return list;
+    }
+
+    @Override
+    public Tuple<Integer, List<AccountAuditVo>> auditsOfAccount(AccountKey key, int page, int sizePerPage)
+            throws AccountKeyEmptyException {
+        if (null == key || null == key.getAcntOid()) {
+            throw new AccountKeyEmptyException();
+        }
+        
+        List<AccountAuditVo> list = null;
+        int count = auditMapper.getCountOfSummary(key);
+        if (count > 0) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("acntOid", key.getAcntOid());
+            param.put("start", (page - 1) * sizePerPage);
+            param.put("sizePerPage", sizePerPage);
+            list = auditMapper.getListOfSummary(param);
+        }
+        
+        return new Tuple<Integer, List<AccountAuditVo>>(count, list);
     }
 
 }

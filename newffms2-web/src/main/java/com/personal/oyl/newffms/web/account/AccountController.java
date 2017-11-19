@@ -25,16 +25,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountAuditVo;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.common.NewffmsDomainException;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
 import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.user.domain.UserRepos;
+import com.personal.oyl.newffms.util.BootstrapTableJsonRlt;
 import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
 import com.personal.oyl.newffms.web.user.UserDto;
@@ -266,36 +269,25 @@ public class AccountController extends BaseController {
         transactionService.deleteAccount(acntOid);
 
         return "redirect:/account/summary?keepSp=Y";
-    }
+    }*/
 
     @RequestMapping("/listOfItemSummary")
     @ResponseBody
-    public BootstrapTableJsonRlt<AccountAudit> listOfItemSummary(
+    public BootstrapTableJsonRlt listOfItemSummary(
             @RequestParam(value = "acntOid", required = true) BigDecimal acntOid,
             @RequestParam(value = "offset", required = true) int offset,
             @RequestParam(value = "limit", required = true) int limit,
             @RequestParam(value = "sort", required = true) String sort,
-            @RequestParam(value = "order", required = true) String order, HttpSession session) throws SQLException {
+            @RequestParam(value = "order", required = true) String order, HttpSession session) throws AccountKeyEmptyException {
 
         int sizePerPage = limit;
         int requestPage = offset / limit + 1;
-        String sortField = sort;
-        String sortDir = order;
+//        String sortField = sort;
+//        String sortDir = order;
 
-        // 从session中取出查询对象并查询
-        AccountAudit searchParam = new AccountAudit();
-        searchParam.setAcntOid(acntOid);
-        searchParam.setStart((requestPage - 1) * sizePerPage);
-        searchParam.setSizePerPage(sizePerPage);
-        searchParam.setRequestPage(requestPage);
-
-        if (sortField != null && !sortField.trim().isEmpty()) {
-            searchParam.setSortField(sortField);
-            searchParam.setSortDir(sortDir);
-        }
-
-        return this.initBootstrapPaging(accountAuditService, searchParam);
-    }*/
+        Tuple<Integer, List<AccountAuditVo>> tuple = acntRepos.auditsOfAccount(new AccountKey(acntOid), requestPage, sizePerPage);
+        return new BootstrapTableJsonRlt(tuple.first, tuple.second);
+    }
 
     @RequestMapping("/alaxGetAllAccountsByUser")
     @ResponseBody

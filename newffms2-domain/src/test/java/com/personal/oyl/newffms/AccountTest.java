@@ -23,6 +23,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountOperation
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOwnerEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInvalidException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTransferToSelfException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.account.domain.AccountType;
@@ -152,7 +153,7 @@ public class AccountTest extends TestCase {
 	}
 	
 	
-	public void testTransfer() throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException {
+	public void testTransfer() throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException, AccountKeyEmptyException, AccountDescEmptyException, AccountTypeEmptyException, AccountBalanceEmptyException, AccountBalanceInvalidException, AccountOwnerEmptyException, AccountQuotaEmptyException, AccountQuotaInvalidException, AccountDebtEmptyException, AccountDebtInvalidException, AccountDebtPlusBalanceNeqQuotaException, AccountDescTooLongException, AccountTransferToSelfException {
 		AccountRepos repos = ctx.getBean(AccountRepos.class);
 		
 		Account bean = new Account();

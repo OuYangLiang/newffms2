@@ -39,6 +39,13 @@ public interface AccountRepos {
      * @throws AccountOwnerEmptyException
      */
     List<Account> accountsOfUser(UserKey key) throws AccountOwnerEmptyException;
+    
+    /**
+     * 查询所有账户
+     * 
+     * @return 账户实体集合
+     */
+    List<Account> queryAll();
 	
     /**
      * 创建新的账户

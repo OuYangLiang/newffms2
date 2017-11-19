@@ -184,4 +184,15 @@ public class AccountReposImpl implements AccountRepos {
         return list;
     }
 
+    @Override
+    public List<Account> queryAll() {
+        List<Account> list = mapper.select(null);
+
+        if (null == list || list.isEmpty()) {
+            return null;
+        }
+
+        return list;
+    }
+
 }

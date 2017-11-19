@@ -52,7 +52,7 @@
 
       $.ajax({
           cache: false,
-          url: "<c:url value='/account/ajaxGetAllAccounts' />",
+          url: "<c:url value='/account/alaxGetAllAccountsByUser' />",
           type: "POST",
           async: true,
           success: function(data) {

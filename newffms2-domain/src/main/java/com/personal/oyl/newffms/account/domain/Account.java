@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTransferToSelfException;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.AppContext;
@@ -214,27 +215,30 @@ public class Account implements AccountOperation, Serializable {
 		this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Add);
 	}
 	
-	@Override
-    public void transfer(Account target, BigDecimal amount, String operator)
-            throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException {
-    	if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new AccountAmountInvalidException();
-		}
+    @Override
+    public void transfer(Account target, BigDecimal amount, String operator) throws AccountAmountInvalidException,
+            AccountBalanceInsufficiencyException, NoOperatorException, AccountTransferToSelfException {
+        if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+            throw new AccountAmountInvalidException();
+        }
 
-		if (this.getBalance().compareTo(amount) < 0) {
-			throw new AccountBalanceInsufficiencyException();
-		}
+        if (this.getBalance().compareTo(amount) < 0) {
+            throw new AccountBalanceInsufficiencyException();
+        }
 
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		Date now = new Date();
-		String batchNum = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-		this.subtract(amount, "转账至：" + target.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_subtract);
-		target.increase(amount, "进账自：" + this.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_add);
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
 
-	}
+        if (this.getKey().getAcntOid().compareTo(target.getKey().getAcntOid()) == 0) {
+            throw new AccountException.AccountTransferToSelfException();
+        }
+
+        Date now = new Date();
+        String batchNum = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+        this.subtract(amount, "转账至：" + target.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_subtract);
+        target.increase(amount, "进账自：" + this.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_add);
+    }
 	
 	private void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator, AccountAuditType auditType) {
 		Map<String, Object> param = new HashMap<String, Object>();

@@ -23,20 +23,20 @@ public class AccountDtoValidator implements Validator {
         }
 
         if (null == acnt.getAcntType()) {
-            errors.reject(null, "账户类型是什么，亲。");
+            //errors.reject(null, "账户类型是什么，亲。");
         }
 
-        /*
-         * if (null != acnt.getTarget() && acnt.getAcntOid().equals(acnt.getTarget().getAcntOid())) {
-         * errors.reject(null, "目标账户与源账户相同，亲。");
-         * }
-         */
+        if (null != acnt.getTarget() && acnt.getAcntOid().equals(acnt.getTarget().getAcntOid())) {
+            errors.reject(null, "目标账户与源账户相同，亲。");
+        }
+        
+        if (null != acnt.getPayment() && acnt.getPayment().compareTo(BigDecimal.ZERO) <= 0) {
+            errors.reject(null, "转账金额不合法啊，亲。");
+        }
 
-        /*
-         * if (null != acnt.getPayment() && acnt.getBalance().compareTo(acnt.getPayment()) < 0) {
-         * errors.reject(null, "余额不足啊，亲。"); 
-         * }
-         */
+        if (null != acnt.getPayment() && acnt.getBalance().compareTo(acnt.getPayment()) < 0) {
+            errors.reject(null, "余额不足啊，亲。");
+        }
 
         if (AccountType.Creditcard.equals(acnt.getAcntType())) {
             if (null == acnt.getQuota()) {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.personal.oyl.newffms.account.domain.Account;
+import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.web.user.UserDto;
@@ -13,11 +14,12 @@ public class AccountDto implements Serializable {
     private BigDecimal acntOid;
     private String acntDesc;
     private AccountType acntType;
-    private String acntTypeDesc;
     private BigDecimal balance;
     private BigDecimal quota;
     private BigDecimal debt;
     private UserDto owner;
+    private AccountDto target;
+    private BigDecimal payment;
 
     public AccountDto() {
 
@@ -27,7 +29,6 @@ public class AccountDto implements Serializable {
         this.setAcntOid(acnt.getKey().getAcntOid());
         this.setAcntDesc(acnt.getAcntDesc());
         this.setAcntType(acnt.getAcntType());
-        this.setAcntTypeDesc(acnt.getAcntType().getDesc());
         this.setBalance(acnt.getBalance());
         this.setQuota(acnt.getQuota());
         this.setDebt(acnt.getDebt());
@@ -39,6 +40,7 @@ public class AccountDto implements Serializable {
 
     public Account toAccount() {
         Account acnt = new Account();
+        acnt.setKey(new AccountKey(this.getAcntOid()));
         acnt.setAcntDesc(this.getAcntDesc());
         acnt.setAcntType(this.getAcntType());
         acnt.setBalance(this.getBalance());
@@ -73,12 +75,9 @@ public class AccountDto implements Serializable {
     }
 
     public String getAcntTypeDesc() {
-        return acntTypeDesc;
+        return null == acntType ? null : acntType.getDesc();
     }
 
-    public void setAcntTypeDesc(String acntTypeDesc) {
-        this.acntTypeDesc = acntTypeDesc;
-    }
 
     public BigDecimal getBalance() {
         return balance;
@@ -112,4 +111,31 @@ public class AccountDto implements Serializable {
         this.owner = owner;
     }
 
+    public AccountDto getTarget() {
+        return target;
+    }
+
+    public void setTarget(AccountDto target) {
+        this.target = target;
+    }
+
+    public BigDecimal getPayment() {
+        return payment;
+    }
+
+    public void setPayment(BigDecimal payment) {
+        this.payment = payment;
+    }
+
+    public String getAcntHumanDesc() {
+        if (null == owner || null == owner.getUserName()) {
+            if (null == acntType) {
+                return this.getAcntDesc();
+            }
+
+            return this.getAcntTypeDesc() + " " + this.getAcntDesc();
+        }
+
+        return owner.getUserName() + " " + this.getAcntTypeDesc() + " " + this.getAcntDesc();
+    }
 }

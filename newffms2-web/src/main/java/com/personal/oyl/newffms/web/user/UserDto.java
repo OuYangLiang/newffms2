@@ -12,7 +12,6 @@ public class UserDto implements Serializable {
     private String userName;
     private String userAlias;
     private Gender gender;
-    private String genderDesc;
     private String phone;
     private String email;
     private String icon;
@@ -30,7 +29,6 @@ public class UserDto implements Serializable {
         this.setUserName(user.getUserName());
         this.setUserAlias(user.getUserAlias());
         this.setGender(user.getGender());
-        this.setGenderDesc(user.getGender().getDesc());
         this.setPhone(user.getPhone());
         this.setEmail(user.getEmail());
         this.setIcon(user.getIcon());
@@ -73,11 +71,7 @@ public class UserDto implements Serializable {
     }
 
     public String getGenderDesc() {
-        return genderDesc;
-    }
-
-    public void setGenderDesc(String genderDesc) {
-        this.genderDesc = genderDesc;
+        return null == gender ? null : gender.getDesc();
     }
 
     public String getPhone() {

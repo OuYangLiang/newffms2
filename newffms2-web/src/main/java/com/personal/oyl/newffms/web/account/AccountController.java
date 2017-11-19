@@ -109,7 +109,6 @@ public class AccountController extends BaseController {
             return "account/add";
         }
 
-        form.setAcntTypeDesc(form.getAcntType().getDesc());
         form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
         session.setAttribute("acntForm", form);
 
@@ -125,16 +124,6 @@ public class AccountController extends BaseController {
         try {
             acntRepos.add(account, SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
-            //result.reject(e.getErrorCode(), e.getMessage());
-            
-            List<User> users = userRepos.queryAllUser();
-            List<UserDto> userList = new LinkedList<>();
-            for (User user : users) {
-                userList.add(new UserDto(user));
-            }
-            
-            model.addAttribute("acntTypes", AccountType.toMapValue());
-            model.addAttribute("users", userList);
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());
             model.addAttribute("errMsg", e.getMessage());
@@ -215,63 +204,64 @@ public class AccountController extends BaseController {
         session.removeAttribute("acntForm");
 
         return "redirect:/account/summary?keepSp=Y";
-    }
+    }*/
 
     @RequestMapping("/initTransfer")
     public String initTransfer(@RequestParam(value = "acntOid", required = false) BigDecimal acntOid, Model model,
-            HttpSession session) throws SQLException {
+            HttpSession session) throws AccountKeyEmptyException, UserKeyEmptyException {
 
-        Account form = null;
+        AccountDto form = null;
 
         if (null != session.getAttribute("acntForm")) {
-            form = (Account) session.getAttribute("acntForm");
+            form = (AccountDto) session.getAttribute("acntForm");
         } else {
-            form = accountService.selectByKey(new AccountKey(acntOid));
-            form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
+            Account account = acntRepos.accountOfId(new AccountKey(acntOid));
+            form = new AccountDto(account);
+            form.setOwner(new UserDto(userRepos.userOfId(account.getOwner())));
         }
 
         model.addAttribute("acntForm", form);
-
         return "account/transfer";
     }
 
     @RequestMapping("/confirmTransfer")
-    public String confirmTransfer(@Valid @ModelAttribute("acntForm") Account form, BindingResult result, Model model,
-            HttpSession session) throws SQLException {
+    public String confirmTransfer(@Valid @ModelAttribute("acntForm") AccountDto form, BindingResult result, Model model,
+            HttpSession session) throws UserKeyEmptyException, AccountKeyEmptyException {
+        form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
+        form.setTarget(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTarget().getAcntOid()))));
+        form.getTarget().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTarget().getOwner().getUserOid()))));
+        
         if (result.hasErrors()) {
-            form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-            form.setTarget(accountService.selectByKey(new AccountKey(form.getTarget().getAcntOid())));
-            form.getTarget()
-                    .setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTarget().getOwnerOid())));
-
             model.addAttribute("validation", false);
-
             return "account/transfer";
         }
 
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-
-        form.setTarget(accountService.selectByKey(new AccountKey(form.getTarget().getAcntOid())));
-        form.getTarget().setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTarget().getOwnerOid())));
-
         session.setAttribute("acntForm", form);
-
         return "account/confirmTransfer";
     }
 
     @RequestMapping("/saveTransfer")
-    public String saveTransfer(Model model, HttpSession session) throws SQLException {
-        Account form = (Account) session.getAttribute("acntForm");
+    public String saveTransfer(Model model, HttpSession session) throws SQLException, AccountKeyEmptyException {
+        AccountDto form = (AccountDto) session.getAttribute("acntForm");
 
-        transactionService.doAccountTransfer(form.getAcntOid(), form.getTarget().getAcntOid(), form.getPayment(),
-                SessionUtil.getInstance().getLoginUser(session).getUserName());
+        Account source = acntRepos.accountOfId(new AccountKey(form.getAcntOid()));
+        Account target = acntRepos.accountOfId(new AccountKey(form.getTarget().getAcntOid()));
+
+        try {
+            source.transfer(target, form.getPayment(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+
+            return "account/confirmTransfer";
+        }
 
         session.removeAttribute("acntForm");
-
         return "redirect:/account/summary?keepSp=Y";
     }
 
-    @RequestMapping("/delete")
+    /*@RequestMapping("/delete")
     public String delete(@RequestParam("acntOid") BigDecimal acntOid, Model model) throws SQLException {
         transactionService.deleteAccount(acntOid);
 
@@ -307,9 +297,9 @@ public class AccountController extends BaseController {
         return this.initBootstrapPaging(accountAuditService, searchParam);
     }*/
 
-    @RequestMapping("/ajaxGetAllAccounts")
+    @RequestMapping("/alaxGetAllAccountsByUser")
     @ResponseBody
-    public List<Map<String, Object>> alaxGetAllAccounts() {
+    public List<Map<String, Object>> alaxGetAllAccountsByUser() {
         List<Map<String, Object>> rlt = new LinkedList<>();
         
         List<User> users = userRepos.queryAllUser();
@@ -349,6 +339,26 @@ public class AccountController extends BaseController {
         }
 
         return rlt;
+    }
+    
+    @RequestMapping("/ajaxGetAllAccounts")
+    @ResponseBody
+    public List<AccountDto> alaxGetAllAccounts() throws AccountOwnerEmptyException {
+        List<AccountDto> list = new LinkedList<>();
+        List<User> userList = userRepos.queryAllUser();
+        if (null != userList) {
+            for (User user : userList) {
+                List<Account> acntList = acntRepos.accountsOfUser(user.getKey());
+                if (null != acntList) {
+                    for (Account acnt : acntList) {
+                        AccountDto item = new AccountDto(acnt);
+                        item.setOwner(new UserDto(user));
+                        list.add(item);
+                    }
+                }
+            }
+        }
+        return list;
     }
 
 }

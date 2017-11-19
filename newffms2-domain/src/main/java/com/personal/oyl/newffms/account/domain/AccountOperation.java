@@ -8,6 +8,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceIn
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTransferToSelfException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public interface AccountOperation {
@@ -66,5 +67,5 @@ public interface AccountOperation {
      * @throws NoOperatorException 
      */
     public void transfer(Account target, BigDecimal amount, String operator)
-            throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException;
+            throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException, AccountTransferToSelfException;
 }

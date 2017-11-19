@@ -119,4 +119,10 @@ public class AccountException {
         }
     }
     
+    public static class AccountTransferToSelfException extends NewffmsDomainException {
+        public AccountTransferToSelfException() {
+            super("EFFMS120", "转账目标账户不合法。");
+        }
+    }
+    
 }

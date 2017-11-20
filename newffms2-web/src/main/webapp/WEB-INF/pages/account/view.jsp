@@ -22,19 +22,9 @@
             <i class="glyphicon glyphicon-arrow-left"></i>
           </button>
 
-          <button type="button" class="btn btn-default" id="btn-edit">
-            <i class="glyphicon glyphicon-edit"></i>
-          </button>
-
           <c:if test="${acntForm.balance > 0 }">
             <button type="button" class="btn btn-default" id="btn-transfer">
               <i class="glyphicon glyphicon-transfer"></i>
-            </button>
-          </c:if>
-
-          <c:if test="${isAccountSafeToRemove }">
-            <button type="button" class="btn btn-default" id="btn-delete" data-toggle="modal" data-target="#deleteModal">
-              <i class="glyphicon glyphicon-remove"></i>
             </button>
           </c:if>
 
@@ -126,23 +116,6 @@
     </div>
   </section>
 
-  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="deleteModalLabel">警告</h4>
-        </div>
-        <div class="modal-body">
-          <div class="container lead">确定要删除吗?</div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-danger" id="btn-delete-confirm" data-dismiss="modal">删除</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-table-1.10.1/bootstrap-table.min.js' />" charset="utf-8"></script>
@@ -176,12 +149,6 @@
       if ($ ("#btn-transfer").length > 0) {
           $ ("#btn-transfer").click(function(){
               window.location.href = "<c:url value='/account/initTransfer' />?acntOid=<c:out value='${acntForm.acntOid}' />";
-          });
-      }
-
-      if ($ ("#btn-delete").length > 0) {
-          $ ("#btn-delete-confirm").click(function(){
-              window.location.href = "<c:url value='/account/delete' />?acntOid=<c:out value='${acntForm.acntOid}' />";
           });
       }
 

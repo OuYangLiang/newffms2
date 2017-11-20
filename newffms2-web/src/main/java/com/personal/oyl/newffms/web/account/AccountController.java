@@ -46,14 +46,6 @@ import com.personal.oyl.newffms.web.user.UserDto;
 @RequestMapping("/account")
 public class AccountController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
-    //private static final String SESSION_KEY_SEARCH_PARAM_ACCOUNT = "SESSION_KEY_SEARCH_PARAM_ACCOUNT";
-    //private static final Map<String, String> colMapping;
-
-    /*static {
-        colMapping = new HashMap<String, String>();
-        colMapping.put("owner.userName", "OWNER_OID");
-        colMapping.put("acntType", "ACNT_TYPE");
-    }*/
     
     @Autowired
     private AccountRepos acntRepos;
@@ -147,67 +139,8 @@ public class AccountController extends BaseController {
         form.setOwner(new UserDto(user));
 
         model.addAttribute("acntForm", form);
-        //model.addAttribute("isAccountSafeToRemove", accountService.isAccountSafeToRemove(acntOid));
-        model.addAttribute("isAccountSafeToRemove", false);// TODO
-
         return "account/view";
     }
-
-    /*@RequestMapping("/initEdit")
-    public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
-            @RequestParam(value = "acntOid", required = false) BigDecimal acntOid, Model model, HttpSession session)
-            throws SQLException {
-
-        Account form = null;
-
-        if (null != back && back && null != session.getAttribute("acntForm")) {
-            form = (Account) session.getAttribute("acntForm");
-        } else {
-            form = accountService.selectByKey(new AccountKey(acntOid));
-            form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-        }
-
-        model.addAttribute("acntForm", form);
-        model.addAttribute("acntTypes", AccountType.toMapValue());
-        model.addAttribute("users", userProfileService.selectAllUsers());
-
-        return "account/edit";
-    }
-
-    @RequestMapping("/confirmEdit")
-    public String confirmEdit(@Valid @ModelAttribute("acntForm") Account form, BindingResult result, Model model,
-            HttpSession session) throws SQLException {
-        if (result.hasErrors()) {
-            model.addAttribute("acntTypes", AccountType.toMapValue());
-            model.addAttribute("users", userProfileService.selectAllUsers());
-            model.addAttribute("validation", false);
-
-            return "account/edit";
-        }
-
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-
-        session.setAttribute("acntForm", form);
-
-        return "account/confirmEdit";
-    }
-
-    @RequestMapping("/saveEdit")
-    public String saveEdit(Model model, HttpSession session) throws SQLException {
-        Account form = (Account) session.getAttribute("acntForm");
-
-        Account oldObj = accountService.selectByKey(new AccountKey(form.getAcntOid()));
-        form.setBaseObject(new BaseObject());
-        form.getBaseObject().setSeqNo(oldObj.getBaseObject().getSeqNo());
-        form.getBaseObject().setUpdateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-        form.getBaseObject().setUpdateTime(new Date());
-
-        transactionService.updateAccount(form);
-
-        session.removeAttribute("acntForm");
-
-        return "redirect:/account/summary?keepSp=Y";
-    }*/
 
     @RequestMapping("/initTransfer")
     public String initTransfer(@RequestParam(value = "acntOid", required = false) BigDecimal acntOid, Model model,
@@ -263,13 +196,6 @@ public class AccountController extends BaseController {
         session.removeAttribute("acntForm");
         return "redirect:/account/summary?keepSp=Y";
     }
-
-    /*@RequestMapping("/delete")
-    public String delete(@RequestParam("acntOid") BigDecimal acntOid, Model model) throws SQLException {
-        transactionService.deleteAccount(acntOid);
-
-        return "redirect:/account/summary?keepSp=Y";
-    }*/
 
     @RequestMapping("/listOfItemSummary")
     @ResponseBody

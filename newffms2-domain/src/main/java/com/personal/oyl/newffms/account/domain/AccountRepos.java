@@ -86,7 +86,7 @@ public interface AccountRepos {
      * @param key 账户标识
      * @param page 页数
      * @param sizePerPage 每页记录数
-     * @return
+     * @return 账户流水分页信息
      * @throws AccountKeyEmptyException
      */
     Tuple<Integer, List<AccountAuditVo>> auditsOfAccount(AccountKey key, int page, int sizePerPage) throws AccountKeyEmptyException;

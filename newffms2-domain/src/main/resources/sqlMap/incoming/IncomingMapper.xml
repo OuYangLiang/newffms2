@@ -92,4 +92,48 @@
         WHERE INCOMING_OID = #{incomingOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
     </update>
     
+    <select id="getCountOfSummary" parameterType="java.util.Map" resultType="int">
+        SELECT COUNT(*)
+            FROM INCOMING
+        <where>
+            <if test="ownerOid != null">
+                OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+            </if>
+            <if test="incomingType != null">
+                AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+            </if>
+            <if test="confirmed != null">
+                AND CONFIRMED = #{confirmed,jdbcType=BIT}
+            </if>
+            <if test="incomingDesc != null">
+                AND INCOMING_DESC LIKE CONCAT('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
+            </if>
+        </where>
+    </select>
+    
+    <select id="getListOfSummary" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+            FROM INCOMING I
+            <where>
+                <if test="ownerOid != null">
+                    AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                </if>
+                <if test="incomingType != null">
+                    AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+                </if>
+                <if test="confirmed != null">
+                    AND CONFIRMED = #{confirmed,jdbcType=BIT}
+                </if>
+                <if test="incomingDesc != null">
+                    AND INCOMING_DESC LIKE CONCAT('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
+                </if>
+            </where>
+            <if test="sortField == null" >
+                ORDER BY INCOMING_DATE DESC
+            </if>
+            <if test="sortField != null" >
+                ORDER BY ${sortField} ${sortDir}
+            </if>
+            LIMIT #{start}, #{sizePerPage}
+    </select>
 </mapper>

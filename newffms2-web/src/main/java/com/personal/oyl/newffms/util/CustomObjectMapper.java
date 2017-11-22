@@ -12,9 +12,7 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 
 import com.personal.oyl.newffms.account.domain.AccountAuditType;
-import com.personal.oyl.newffms.account.domain.AccountType;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
-import com.personal.oyl.newffms.incoming.domain.IncomingType;
 
 public class CustomObjectMapper extends ObjectMapper {
     public CustomObjectMapper() {
@@ -35,26 +33,6 @@ public class CustomObjectMapper extends ObjectMapper {
             public void serialize(ConsumptionType value, JsonGenerator jsonGenerator, SerializerProvider provider)
                     throws IOException, JsonProcessingException {
                 jsonGenerator.writeString(value.getDesc());
-            }
-
-        });
-
-        factory.addGenericMapping(IncomingType.class, new JsonSerializer<IncomingType>() {
-
-            @Override
-            public void serialize(IncomingType value, JsonGenerator jsonGenerator, SerializerProvider provider)
-                    throws IOException, JsonProcessingException {
-                jsonGenerator.writeString(value.getDesc());
-            }
-
-        });
-
-        factory.addGenericMapping(AccountType.class, new JsonSerializer<AccountType>() {
-
-            @Override
-            public void serialize(AccountType value, JsonGenerator jsonGenerator, SerializerProvider provider)
-                    throws IOException, JsonProcessingException {
-                jsonGenerator.writeString(value.name());
             }
 
         });

@@ -1,7 +1,11 @@
 package com.personal.oyl.newffms.incoming.domain;
 
+import java.util.List;
+
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.PaginationParameter;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAccountEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAlreadyConfirmedException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountEmptyException;
@@ -16,14 +20,14 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingOwnerE
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingTypeEmptyException;
 
 public interface IncomingRepos {
-	/**
-	 * 根据收入标识查询收入
-	 * 
-	 * @param key 账户标识
-	 * @return 账户实体
-	 * @throws IncomingKeyEmptyException
-	 */
-	Incoming incomingOfId(IncomingKey key) throws IncomingKeyEmptyException;
+    /**
+     * 根据收入标识查询收入
+     * 
+     * @param key 账户标识
+     * @return 账户实体
+     * @throws IncomingKeyEmptyException
+     */
+    Incoming incomingOfId(IncomingKey key) throws IncomingKeyEmptyException;
 	
     /**
      * 创建新的收入
@@ -48,10 +52,10 @@ public interface IncomingRepos {
             IncomingTypeEmptyException, IncomingAlreadyConfirmedException, IncomingOwnerEmptyException,
             IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException, IncomingBatchNumEmptyException;
 	
-	/**
-	 * 删除收入
-	 * 
-	 * @param key 待删除收入标识
+    /**
+     * 删除收入
+     * 
+     * @param key 待删除收入标识
      * @throws IncomingKeyEmptyException
      * @throws IncomingNotExistException
      * @throws IncomingAlreadyConfirmedException
@@ -59,4 +63,13 @@ public interface IncomingRepos {
      */
     void remove(IncomingKey key) throws IncomingKeyEmptyException, IncomingNotExistException,
             IncomingAlreadyConfirmedException, NewffmsSystemException;
+    
+    /**
+     * 根据指定条件查询收入
+     * 
+     * @param condition 查询条件
+     * @param param 分页信息
+     * @return 收入分页信息
+     */
+    Tuple<Integer, List<Incoming>> queryIncomings(IncomingCondition condition, PaginationParameter param);
 }

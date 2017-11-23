@@ -1,28 +1,25 @@
 package com.personal.oyl.newffms.incoming.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class AccountIncomingVo implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class AccountIncomingVo {
+    private BigDecimal acntOid;
+    private BigDecimal incomingOid;
 
-	private BigDecimal acntOid;
-	private BigDecimal incomingOid;
+    public BigDecimal getAcntOid() {
+        return acntOid;
+    }
 
-	public BigDecimal getAcntOid() {
-		return acntOid;
-	}
+    public void setAcntOid(BigDecimal acntOid) {
+        this.acntOid = acntOid;
+    }
 
-	public void setAcntOid(BigDecimal acntOid) {
-		this.acntOid = acntOid;
-	}
+    public BigDecimal getIncomingOid() {
+        return incomingOid;
+    }
 
-	public BigDecimal getIncomingOid() {
-		return incomingOid;
-	}
-
-	public void setIncomingOid(BigDecimal incomingOid) {
-		this.incomingOid = incomingOid;
-	}
+    public void setIncomingOid(BigDecimal incomingOid) {
+        this.incomingOid = incomingOid;
+    }
 
 }

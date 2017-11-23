@@ -3,9 +3,11 @@ package com.personal.oyl.newffms.web.incoming;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.personal.oyl.newffms.incoming.domain.AccountIncomingVo;
 import com.personal.oyl.newffms.incoming.domain.Incoming;
 import com.personal.oyl.newffms.incoming.domain.IncomingKey;
 import com.personal.oyl.newffms.incoming.domain.IncomingType;
+import com.personal.oyl.newffms.web.account.AccountDto;
 import com.personal.oyl.newffms.web.user.UserDto;
 
 public class IncomingDto {
@@ -18,6 +20,8 @@ public class IncomingDto {
     private Date incomingDate;
     private String batchNum;
     private String createBy;
+    
+    private AccountDto targetAccount;
 
     public IncomingDto() {
 
@@ -46,6 +50,10 @@ public class IncomingDto {
         incoming.setOwnerOid(this.getOwner().getUserOid());
         incoming.setIncomingDate(this.getIncomingDate());
         incoming.setBatchNum(this.getBatchNum());
+        AccountIncomingVo acntRel = new AccountIncomingVo();
+        acntRel.setAcntOid(this.getTargetAccount().getAcntOid());
+        incoming.setAcntRel(acntRel);
+        
         return incoming;
     }
 
@@ -123,6 +131,14 @@ public class IncomingDto {
 
     public void setCreateBy(String createBy) {
         this.createBy = createBy;
+    }
+
+    public AccountDto getTargetAccount() {
+        return targetAccount;
+    }
+
+    public void setTargetAccount(AccountDto targetAccount) {
+        this.targetAccount = targetAccount;
     }
 
 }

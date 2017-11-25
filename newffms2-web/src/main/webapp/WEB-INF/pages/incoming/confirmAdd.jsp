@@ -37,9 +37,8 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-10">
                   <div class="alert alert-danger" role="alert">
-                    <span class="glyphicon glyphicon-exclamation-sign"
-                      aria-hidden="true"></span> <span class="sr-only">Error:</span>
-                    ${errCode },&nbsp;${errMsg }
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>${errCode },&nbsp;${errMsg }
                   </div>
                 </div>
               </div>

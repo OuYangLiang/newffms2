@@ -42,7 +42,7 @@ public class IncomingDto {
 
     public Incoming toIncoming() {
         Incoming incoming = new Incoming();
-        incoming.setKey(new IncomingKey(this.getIncomingOid()));
+        incoming.setKey(null == this.getIncomingOid() ? null : new IncomingKey(this.getIncomingOid()));
         incoming.setIncomingDesc(this.getIncomingDesc());
         incoming.setAmount(this.getAmount());
         incoming.setIncomingType(this.getIncomingType());
@@ -52,6 +52,7 @@ public class IncomingDto {
         incoming.setBatchNum(this.getBatchNum());
         AccountIncomingVo acntRel = new AccountIncomingVo();
         acntRel.setAcntOid(this.getTargetAccount().getAcntOid());
+        acntRel.setIncomingOid(this.getIncomingOid());
         incoming.setAcntRel(acntRel);
         
         return incoming;

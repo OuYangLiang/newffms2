@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
@@ -32,19 +31,10 @@ import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.common.Util;
 import com.personal.oyl.newffms.incoming.domain.Incoming;
 import com.personal.oyl.newffms.incoming.domain.IncomingCondition;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAccountEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAlreadyConfirmedException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountEmptyException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingAmountInvalidException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingBatchNumEmptyException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDateEmptyException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescEmptyException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingKeyEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingNotConfirmedException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingNotExistException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingOwnerEmptyException;
-import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingTypeEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingKey;
 import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
 import com.personal.oyl.newffms.incoming.domain.IncomingType;
@@ -250,68 +240,85 @@ public class IncomingController extends BaseController {
         return "incoming/view";
     }
 
-    /*@RequestMapping("/initEdit")
-	public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
-			@RequestParam(value = "incomingOid", required = false) BigDecimal incomingOid,
-			Model model, HttpSession session) throws SQLException {
+    @RequestMapping("/initEdit")
+    public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
+            @RequestParam(value = "incomingOid", required = false) BigDecimal incomingOid, Model model,
+            HttpSession session) throws IncomingKeyEmptyException, UserKeyEmptyException {
 
-        Incoming form = null;
-        
+        IncomingDto form = null;
+
         if (null != back && back && null != session.getAttribute("incomingForm")) {
-            form = (Incoming) session.getAttribute("incomingForm");
+            form = (IncomingDto) session.getAttribute("incomingForm");
+        } else {
+            form = new IncomingDto(incomingRepos.incomingOfId(new IncomingKey(incomingOid)));
+            form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
+            form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(incomingOid))));
+            form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
         }
-        else {
-            form = incomingService.selectByKey(new IncomingKey(incomingOid));
-            form.setTargetAccount(accountService.queryAccountsByIncoming(incomingOid));
-            form.getTargetAccount().setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTargetAccount().getOwnerOid())));
+
+        List<User> users = userRepos.queryAllUser();
+        List<UserDto> userList = new LinkedList<>();
+        for (User user : users) {
+            userList.add(new UserDto(user));
         }
         
         model.addAttribute("incomingForm", form);
         model.addAttribute("incomingTypes", IncomingType.toMapValue());
-        model.addAttribute("users", userProfileService.selectAllUsers());
-        
+        model.addAttribute("users", userList);
+
         return "incoming/edit";
     }
-    
+
     @RequestMapping("/confirmEdit")
-    public String confirmEdit(@Valid @ModelAttribute("incomingForm") Incoming form, BindingResult result, Model model, HttpSession session) throws SQLException {
+    public String confirmEdit(@Valid @ModelAttribute("incomingForm") IncomingDto form, BindingResult result, Model model,
+            HttpSession session) throws UserKeyEmptyException, AccountKeyEmptyException, IncomingKeyEmptyException {
         if (result.hasErrors()) {
-        	//页面回显
-        	form.setTargetAccount(accountService.selectByKey(new AccountKey(form.getTargetAccount().getAcntOid())));
-            form.getTargetAccount().setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTargetAccount().getOwnerOid())));
+            // 页面回显
+            form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(form.getIncomingOid()))));
+            form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+
+            List<User> users = userRepos.queryAllUser();
+            List<UserDto> userList = new LinkedList<>();
+            for (User user : users) {
+                userList.add(new UserDto(user));
+            }
             
             model.addAttribute("incomingTypes", IncomingType.toMapValue());
-            model.addAttribute("users", userProfileService.selectAllUsers());
+            model.addAttribute("users", userList);
             model.addAttribute("validation", false);
-            
+
             return "incoming/edit";
         }
-        
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-        form.setTargetAccount(accountService.selectByKey(new AccountKey(form.getTargetAccount().getAcntOid())));
-        form.getTargetAccount().setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTargetAccount().getOwnerOid())));
-        
+
+        form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
+        form.setTargetAccount(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
+        form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+
         session.setAttribute("incomingForm", form);
-        
         return "incoming/confirmEdit";
     }
-    
+
     @RequestMapping("/saveEdit")
-    public String saveEdit(Model model, HttpSession session) throws SQLException {
-        Incoming form = (Incoming) session.getAttribute("incomingForm");
+    public String saveEdit(Model model, HttpSession session) throws IncomingKeyEmptyException
+             {
+        IncomingDto form = (IncomingDto) session.getAttribute("incomingForm");
         
-        Incoming oldObj = incomingService.selectByKey(new IncomingKey(form.getIncomingOid()));
-        form.setBaseObject(new BaseObject());
-        form.getBaseObject().setSeqNo(oldObj.getBaseObject().getSeqNo());
-        form.getBaseObject().setUpdateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-        form.getBaseObject().setUpdateTime(new Date());
-        
-        transactionService.updateIncoming(form);
-        
+        Incoming newObj = form.toIncoming();
+        Incoming oldObj = incomingRepos.incomingOfId(newObj.getKey());
+        newObj.setSeqNo(oldObj.getSeqNo());
+        try {
+            newObj.updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+            
+            return "incoming/confirmEdit";
+        }
+
         session.removeAttribute("incomingForm");
-        
         return "redirect:/incoming/summary?keepSp=Y";
-    }*/
+    }
 
     @RequestMapping("/delete")
     public String delete(@RequestParam("incomingOid") BigDecimal incomingOid, Model model)

@@ -262,62 +262,60 @@ public class Incoming implements IncomingOperation, Serializable {
     @Override
     public void updateAll(String operator) throws NoOperatorException, IncomingAlreadyConfirmedException,
             NewffmsSystemException, IncomingDescInvalidException, IncomingAmountInvalidException {
-        
-        if (null != this.getIncomingDesc() && this.getIncomingDesc().trim().length() > 30) {
+        if (null == this.getIncomingDesc() || this.getIncomingDesc().trim().isEmpty() || this.getIncomingDesc().trim().length() > 30) {
             throw new IncomingDescInvalidException();
         }
-        
+
         if (null != this.getAmount() && BigDecimal.ZERO.compareTo(this.getAmount()) >= 0) {
             throw new IncomingAmountInvalidException();
         }
-        
-        if (this.getConfirmed()) {
+
+        if (null != this.getConfirmed() && this.getConfirmed()) {
             throw new IncomingAlreadyConfirmedException();
         }
-        
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("incomingOid", this.getKey().getIncomingOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("incomingDesc", this.getIncomingDesc());
-		param.put("amount", this.getAmount());
-		param.put("incomingType", this.getIncomingType());
-		param.put("ownerOid", this.getOwnerOid());
-		param.put("incomingDate", this.getIncomingDate());
-		
-		int n = mapper.updateInfo(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		if (null != this.getAcntRel() && null != this.getAcntRel().getAcntOid()) {
-		    AccountIncomingVo itemParam = new AccountIncomingVo();
-	        itemParam.setIncomingOid(this.getKey().getIncomingOid());
-	        n = itemMapper.delete(itemParam);
-	        
-	        if (1 != n) {
-	            throw new NewffmsSystemException();
-	        }
-	        
-	        n = itemMapper.insert(this.getAcntRel());
-	        
-	        if (1 != n) {
-	            throw new NewffmsSystemException();
-	        }
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-	}
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("incomingOid", this.getKey().getIncomingOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("incomingDesc", this.getIncomingDesc());
+        param.put("amount", this.getAmount());
+        param.put("incomingType", this.getIncomingType());
+        param.put("ownerOid", this.getOwnerOid());
+        param.put("incomingDate", this.getIncomingDate());
+
+        int n = mapper.updateInfo(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        if (null != this.getAcntRel() && null != this.getAcntRel().getAcntOid()) {
+            AccountIncomingVo itemParam = new AccountIncomingVo();
+            itemParam.setIncomingOid(this.getKey().getIncomingOid());
+            n = itemMapper.delete(itemParam);
+
+            if (1 != n) {
+                throw new NewffmsSystemException();
+            }
+
+            n = itemMapper.insert(this.getAcntRel());
+
+            if (1 != n) {
+                throw new NewffmsSystemException();
+            }
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+    }
 
 }

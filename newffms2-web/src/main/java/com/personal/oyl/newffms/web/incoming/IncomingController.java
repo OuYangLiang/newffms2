@@ -40,8 +40,10 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingBatchN
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDateEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingKeyEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingOwnerEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingTypeEmptyException;
+import com.personal.oyl.newffms.incoming.domain.IncomingKey;
 import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
 import com.personal.oyl.newffms.incoming.domain.IncomingType;
 import com.personal.oyl.newffms.user.domain.User;
@@ -232,21 +234,21 @@ public class IncomingController extends BaseController {
         return "redirect:/incoming/summary?keepSp=Y";
     }
 
-    /*@RequestMapping("/view")
-    public String view(@RequestParam("incomingOid") BigDecimal incomingOid, Model model) throws SQLException {
-        Incoming form = incomingService.selectByKey(new IncomingKey(incomingOid));
-        
-        
-        form.setOwner(userProfileService.selectByKey(new UserProfileKey(form.getOwnerOid())));
-        form.setTargetAccount(accountService.queryAccountsByIncoming(incomingOid));
-        form.getTargetAccount().setOwner(userProfileService.selectByKey(new UserProfileKey(form.getTargetAccount().getOwnerOid())));
-        
+    @RequestMapping("/view")
+    public String view(@RequestParam("incomingOid") BigDecimal incomingOid, Model model)
+            throws IncomingKeyEmptyException, UserKeyEmptyException, AccountKeyEmptyException {
+        IncomingDto form = new IncomingDto(incomingRepos.incomingOfId(new IncomingKey(incomingOid)));
+
+        form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
+        form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(incomingOid))));
+        form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+
         model.addAttribute("incomingForm", form);
-        
+
         return "incoming/view";
     }
-    
-    @RequestMapping("/initEdit")
+
+    /*@RequestMapping("/initEdit")
 	public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
 			@RequestParam(value = "incomingOid", required = false) BigDecimal incomingOid,
 			Model model, HttpSession session) throws SQLException {

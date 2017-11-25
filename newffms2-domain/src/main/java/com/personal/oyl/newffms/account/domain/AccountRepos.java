@@ -19,6 +19,8 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountQuotaInva
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 import com.personal.oyl.newffms.common.Tuple;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingKeyEmptyException;
+import com.personal.oyl.newffms.incoming.domain.IncomingKey;
 import com.personal.oyl.newffms.user.domain.UserKey;
 
 public interface AccountRepos {
@@ -31,6 +33,15 @@ public interface AccountRepos {
      * @throws AccountKeyEmptyException
      */
     Account accountOfId(AccountKey key) throws AccountKeyEmptyException;
+    
+    /**
+     * 根据收入标识查询账户
+     * 
+     * @param key 收入标识
+     * @return 账户实体
+     * @throws IncomingKeyEmptyException
+     */
+    Account accountOfIncoming(IncomingKey key) throws IncomingKeyEmptyException;
     
     /**
      * 根据用户标识查询账户集合

@@ -27,6 +27,10 @@ import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 import com.personal.oyl.newffms.common.Tuple;
+import com.personal.oyl.newffms.incoming.domain.AccountIncomingVo;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingKeyEmptyException;
+import com.personal.oyl.newffms.incoming.domain.IncomingKey;
+import com.personal.oyl.newffms.incoming.store.mapper.AccountIncomingMapper;
 import com.personal.oyl.newffms.user.domain.UserKey;
 
 public class AccountReposImpl implements AccountRepos {
@@ -36,6 +40,9 @@ public class AccountReposImpl implements AccountRepos {
 
     @Autowired
     private AccountAuditMapper auditMapper;
+    
+    @Autowired
+    private AccountIncomingMapper acntIncomingMapper;
 
     @Override
     public Account accountOfId(AccountKey key) throws AccountKeyEmptyException {
@@ -216,6 +223,33 @@ public class AccountReposImpl implements AccountRepos {
         }
         
         return new Tuple<Integer, List<AccountAuditVo>>(count, list);
+    }
+
+    @Override
+    public Account accountOfIncoming(IncomingKey key) throws IncomingKeyEmptyException {
+        if (null == key || null == key.getIncomingOid()) {
+            throw new IncomingKeyEmptyException();
+        }
+        
+        AccountIncomingVo voParam = new AccountIncomingVo();
+        voParam.setIncomingOid(key.getIncomingOid());
+        
+        List<AccountIncomingVo> voList = acntIncomingMapper.select(voParam);
+        
+        if (null == voList || voList.isEmpty()) {
+            return null;
+        }
+        
+        Account param = new Account();
+        param.setKey(new AccountKey(voList.get(0).getAcntOid()));
+
+        List<Account> list = mapper.select(param);
+
+        if (null == list || list.isEmpty()) {
+            return null;
+        }
+
+        return list.get(0);
     }
 
 }

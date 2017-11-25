@@ -209,7 +209,7 @@ public class Incoming implements IncomingOperation, Serializable {
         }
         
 		try {
-            acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), now, operator);
+            acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), this.getIncomingDate(), operator);
         } catch (NewffmsDomainException e) {
             throw new NewffmsSystemException();
         } 

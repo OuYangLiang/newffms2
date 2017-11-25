@@ -41,6 +41,8 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDateEm
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingDescInvalidException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingKeyEmptyException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingNotConfirmedException;
+import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingNotExistException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingOwnerEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingTypeEmptyException;
 import com.personal.oyl.newffms.incoming.domain.IncomingKey;
@@ -309,26 +311,31 @@ public class IncomingController extends BaseController {
         session.removeAttribute("incomingForm");
         
         return "redirect:/incoming/summary?keepSp=Y";
-    }
-    
-    @RequestMapping("/delete")
-    public String delete(@RequestParam("incomingOid") BigDecimal incomingOid, Model model) throws SQLException {
-        transactionService.deleteIncoming(incomingOid);
-        
-        return "redirect:/incoming/summary?keepSp=Y";
-    }
-    
-    @RequestMapping("/confirm")
-    public String confirm(@RequestParam("incomingOid") BigDecimal incomingOid, Model model, HttpSession session) throws SQLException {
-        transactionService.confirmIncoming(incomingOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
-        
-        return "redirect:/incoming/summary?keepSp=Y";
-    }
-    
-    @RequestMapping("/rollback")
-    public String rollback(@RequestParam("incomingOid") BigDecimal incomingOid, Model model, HttpSession session) throws SQLException {
-        transactionService.rollbackIncoming(incomingOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
-        
-        return "redirect:/incoming/summary?keepSp=Y";
     }*/
+
+    @RequestMapping("/delete")
+    public String delete(@RequestParam("incomingOid") BigDecimal incomingOid, Model model)
+            throws IncomingKeyEmptyException, IncomingNotExistException, IncomingAlreadyConfirmedException,
+            NewffmsSystemException {
+        incomingRepos.remove(new IncomingKey(incomingOid));
+        return "redirect:/incoming/summary?keepSp=Y";
+    }
+
+    @RequestMapping("/confirm")
+    public String confirm(@RequestParam("incomingOid") BigDecimal incomingOid, Model model, HttpSession session)
+            throws NoOperatorException, IncomingAlreadyConfirmedException, NewffmsSystemException,
+            IncomingKeyEmptyException {
+        Incoming incoming = incomingRepos.incomingOfId(new IncomingKey(incomingOid));
+        incoming.confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        return "redirect:/incoming/summary?keepSp=Y";
+    }
+
+    @RequestMapping("/rollback")
+    public String rollback(@RequestParam("incomingOid") BigDecimal incomingOid, Model model, HttpSession session)
+            throws IncomingKeyEmptyException, NoOperatorException, IncomingNotConfirmedException,
+            NewffmsSystemException {
+        Incoming incoming = incomingRepos.incomingOfId(new IncomingKey(incomingOid));
+        incoming.unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        return "redirect:/incoming/summary?keepSp=Y";
+    }
 }

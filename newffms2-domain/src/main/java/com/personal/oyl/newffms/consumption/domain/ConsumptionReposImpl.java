@@ -2,12 +2,15 @@ package com.personal.oyl.newffms.consumption.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAmountNotMatchException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionBatchNumEmptyException;
@@ -212,5 +215,19 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
 		    throw new NewffmsSystemException();
 		}
 	}
+
+    @Override
+    public Tuple<Integer, List<ConsumptionItemPaginationVo>> queryConsumptionItems(ConsumptionCondition condition) {
+        Map<String, Object> querys = new HashMap<>();
+        condition.fillMap(querys);
+        
+        int count = itemMapper.getCountOfSummary(querys);
+        List<ConsumptionItemPaginationVo> list = null;
+        if (count > 0) {
+            list = itemMapper.getListOfSummary(querys);
+        }
+        
+        return new Tuple<Integer, List<ConsumptionItemPaginationVo>>(count, list);
+    }
 
 }

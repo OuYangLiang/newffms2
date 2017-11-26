@@ -1,7 +1,10 @@
 package com.personal.oyl.newffms.consumption.domain;
 
+import java.util.List;
+
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAmountNotMatchException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionBatchNumEmptyException;
@@ -21,11 +24,11 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionException.Consumpt
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionTypeEmptyException;
 
 public interface ConsumptionRepos {
-	/**
-	 * 创建新的消费
-	 * 
-	 * @param param 消费实体
-	 * @param operator 操作人
+    /**
+     * 创建新的消费
+     * 
+     * @param param 消费实体
+     * @param operator 操作人
      * @throws ConsumptionTypeEmptyException
      * @throws ConsumptionBatchNumEmptyException
      * @throws ConsumptionTimeEmptyException
@@ -51,19 +54,19 @@ public interface ConsumptionRepos {
             ConsumptionPaymentAmountEmptyException, ConsumptionPaymentAmountInvalidException,
             ConsumptionPaymentAccountEmptyException, ConsumptionAmountNotMatchException, NoOperatorException;
 	
-	/**
-	 * 根据消费标识查询消费
-	 * 
-	 * @param key 消费标识
-	 * @return 消费实体
+    /**
+     * 根据消费标识查询消费
+     * 
+     * @param key 消费标识
+     * @return 消费实体
      * @throws ConsumptionKeyEmptyException
      */
     Consumption consumptionOfId(ConsumptionKey key) throws ConsumptionKeyEmptyException;
 
-	/**
-	 * 删除消费
-	 * 
-	 * @param key 待删除消费标识
+    /**
+     * 删除消费
+     * 
+     * @param key 待删除消费标识
      * @throws ConsumptionKeyEmptyException
      * @throws ConsumptionNotExistException
      * @throws ConsumptionAlreadyConfirmedException
@@ -71,4 +74,12 @@ public interface ConsumptionRepos {
      */
     void remove(ConsumptionKey key) throws ConsumptionKeyEmptyException, ConsumptionNotExistException,
             ConsumptionAlreadyConfirmedException, NewffmsSystemException;
+    
+    /**
+     * 根据指定条件查询消费明细
+     * 
+     * @param condition 查询条件
+     * @return 消费明细
+     */
+    Tuple<Integer, List<ConsumptionItemPaginationVo>> queryConsumptionItems(ConsumptionCondition condition);
 }

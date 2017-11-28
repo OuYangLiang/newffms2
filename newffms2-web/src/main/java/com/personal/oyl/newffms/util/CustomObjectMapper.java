@@ -12,7 +12,6 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 
 import com.personal.oyl.newffms.account.domain.AccountAuditType;
-import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
 
 public class CustomObjectMapper extends ObjectMapper {
     public CustomObjectMapper() {
@@ -25,16 +24,6 @@ public class CustomObjectMapper extends ObjectMapper {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                 jsonGenerator.writeString(sdf.format(value));
             }
-        });
-
-        factory.addGenericMapping(ConsumptionType.class, new JsonSerializer<ConsumptionType>() {
-
-            @Override
-            public void serialize(ConsumptionType value, JsonGenerator jsonGenerator, SerializerProvider provider)
-                    throws IOException, JsonProcessingException {
-                jsonGenerator.writeString(value.getDesc());
-            }
-
         });
 
         factory.addGenericMapping(AccountAuditType.class, new JsonSerializer<AccountAuditType>() {

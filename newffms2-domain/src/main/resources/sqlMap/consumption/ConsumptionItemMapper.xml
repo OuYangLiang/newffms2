@@ -65,12 +65,12 @@
         <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
         <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
         <result column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
-        <result column="CPN_TYPE" property="consumption.cpnType" jdbcType="VARCHAR" />
-        <result column="CPN_TIME" property="consumption.cpnTime" jdbcType="TIMESTAMP" />
-        <result column="TOTAL" property="consumption.amount" jdbcType="DECIMAL" />
-        <result column="BATCH_NUM" property="consumption.batchNum" jdbcType="VARCHAR" />
-        <result column="CONFIRMED" property="consumption.confirmed" jdbcType="BIT" />
-        <result column="CREATE_BY" property="consumption.createBy" jdbcType="NVARCHAR" />
+        <result column="CPN_TYPE" property="cpnType" jdbcType="VARCHAR" />
+        <result column="CPN_TIME" property="cpnTime" jdbcType="TIMESTAMP" />
+        <result column="TOTAL" property="total" jdbcType="DECIMAL" />
+        <result column="BATCH_NUM" property="batchNum" jdbcType="VARCHAR" />
+        <result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
+        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
     </resultMap>
 
     <select id="getCountOfSummary" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionCondition" resultType="int">
@@ -98,7 +98,7 @@
     </select>
     
     <select id="getListOfSummary" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionCondition" resultMap="GridResultMap">
-        SELECT I.ITEM_OID, I.ITEM_DESC, I.AMOUNT, I.OWNER_OID, I.CATEGORY_OID, C.CPN_OID, C.CPN_TYPE, C.CPN_TIME, C.AMOUNT AS TOTAL, C.CONFIRMED, C.CONFIRMED, C.CREATE_BY
+        SELECT I.ITEM_OID, I.ITEM_DESC, I.AMOUNT, I.OWNER_OID, I.CATEGORY_OID, C.CPN_OID, C.CPN_TYPE, C.CPN_TIME, C.AMOUNT AS TOTAL, C.BATCH_NUM, C.CONFIRMED, C.CONFIRMED, C.CREATE_BY
             FROM CONSUMPTION C, CONSUMPTION_ITEM I
             WHERE C.CPN_OID = I.CPN_OID
             <if test="cpnTimeFrom != null">

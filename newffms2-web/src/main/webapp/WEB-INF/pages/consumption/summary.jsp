@@ -126,15 +126,15 @@
               data-toolbar="#search-toolbar">
               <thead>
                 <tr>
-                  <th data-field="consumption.cpnTime" data-sortable="true" data-align="center" data-formatter="dateFormatter">时间</th>
+                  <th data-field="cpnTime" data-sortable="true" data-align="center" data-formatter="dateFormatter">时间</th>
                   <th data-field="itemDesc" data-sortable="true">描述</th>
-                  <th data-field="categoryFullDesc">类别</th>
+                  <th data-field="categoryDesc">类别</th>
                   <th data-field="userName">消费人</th>
-                  <th data-field="consumption.cpnType">消费方式</th>
+                  <th data-field="cpnType">消费方式</th>
                   <th data-field="amount" data-align="right" data-formatter="amtFormatter">行金额</th>
-                  <th data-field="consumption.amount" data-align="right" data-formatter="amtFormatter">总金额</th>
-                  <th data-field="consumption.baseObject.createBy">登记人</th>
-                  <th data-field="consumption.confirmed" data-align="center" data-formatter="statusFormatter">状态</th>
+                  <th data-field="total" data-align="right" data-formatter="amtFormatter">总金额</th>
+                  <th data-field="createBy">登记人</th>
+                  <th data-field="confirmed" data-align="center" data-formatter="statusFormatter">状态</th>
                   <th data-formatter="oprFormatter"></th>
                 </tr>
               </thead>

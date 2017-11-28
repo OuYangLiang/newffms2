@@ -78,6 +78,10 @@ public class ConsumptionItemPaginationVo {
     public ConsumptionType getCpnType() {
         return cpnType;
     }
+    
+    public String getCpnTypeDesc() {
+        return null == cpnType ? null : cpnType.getDesc();
+    }
 
     public void setCpnType(ConsumptionType cpnType) {
         this.cpnType = cpnType;

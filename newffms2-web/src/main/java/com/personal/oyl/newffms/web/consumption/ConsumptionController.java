@@ -2,6 +2,7 @@ package com.personal.oyl.newffms.web.consumption;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,37 +11,49 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
+import com.personal.oyl.newffms.account.domain.AccountKey;
+import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.common.Tuple;
+import com.personal.oyl.newffms.common.Util;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionCondition;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemPaginationVo;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionRepos;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
 import com.personal.oyl.newffms.user.domain.User;
+import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
+import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.user.domain.UserRepos;
 import com.personal.oyl.newffms.util.BootstrapTableJsonRlt;
 import com.personal.oyl.newffms.util.DateUtil;
+import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
+import com.personal.oyl.newffms.web.account.AccountDto;
 import com.personal.oyl.newffms.web.user.UserDto;
 
 @Controller
 @RequestMapping("/consumption")
 public class ConsumptionController extends BaseController {
 
-    /*@Autowired
-    private ConsumptionFormValidator consumptionFormValidator;*/
-    
-    /*@InitBinder
+    @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(consumptionFormValidator);
-    }*/
-    
+        binder.setValidator(new ConsumptionDtoValidator());
+    }
+
     private static final String SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM = "SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM";
     private static final Map<String, String> colMapping;
 
@@ -52,6 +65,8 @@ public class ConsumptionController extends BaseController {
     
     @Autowired
     private UserRepos userRepos;
+    @Autowired
+    private AccountRepos acntRepos;
     @Autowired
     private ConsumptionRepos consumptionRepos;
 
@@ -138,97 +153,102 @@ public class ConsumptionController extends BaseController {
         return new BootstrapTableJsonRlt(tuple.first, tuple.second);
     }
     
-    /*@RequestMapping("/initAdd")
-    public String initAdd(@RequestParam(value = "back", required = false) Boolean back, Model model, HttpSession session) throws SQLException {
-        
-        ConsumptionForm form = null;
-        
+    @RequestMapping("/initAdd")
+    public String initAdd(@RequestParam(value = "back", required = false) Boolean back, Model model,
+            HttpSession session) throws SQLException {
+
+        ConsumptionDto form = null;
+
         if (null != back && back && null != session.getAttribute("cpnForm")) {
-            form = (ConsumptionForm) session.getAttribute("cpnForm");
+            form = (ConsumptionDto) session.getAttribute("cpnForm");
+        } else {
+            form = new ConsumptionDto();
         }
-        else {
-            form = new ConsumptionForm();
+
+        List<User> users = userRepos.queryAllUser();
+        List<UserDto> userList = new LinkedList<>();
+        for (User user : users) {
+            userList.add(new UserDto(user));
         }
-        
+
         model.addAttribute("cpnForm", form);
         model.addAttribute("cpnTypes", ConsumptionType.toMapValue());
-        model.addAttribute("users", userProfileService.selectAllUsers());
-        
+        model.addAttribute("users", userList);
+
         return "consumption/add";
     }
-    
-    
+
     @RequestMapping("/confirmAdd")
-    public String confirmAdd(@Valid @ModelAttribute("cpnForm") ConsumptionForm form, BindingResult result, Model model, HttpSession session) throws SQLException {
+    public String confirmAdd(@Valid @ModelAttribute("cpnForm") ConsumptionDto form, BindingResult result, Model model,
+            HttpSession session) throws AccountKeyEmptyException, UserKeyEmptyException {
         if (result.hasErrors()) {
-        	//回显
-        	if (null != form.getAccounts()) {
-        		List<Account> accounts = new ArrayList<Account>();
-        		
-        		for (Account acnt : form.getAccounts()) {
-        			BigDecimal payment = acnt.getPayment();
-        			
-        			acnt = accountService.selectByKey(new AccountKey(acnt.getAcntOid()));
-        			acnt.setOwner(userProfileService.selectByKey(new UserProfileKey(acnt.getOwnerOid())));
-        			acnt.setPayment(payment);
-        			
-        			accounts.add(acnt);
-        		}
-        		form.setAccounts(accounts);
-        	}
-        	
+            // 回显
+            if (null != form.getPayments()) {
+                List<AccountDto> accounts = new ArrayList<AccountDto>();
+                for (AccountDto acnt : form.getPayments()) {
+                    BigDecimal payment = acnt.getPayment();
+                    acnt = new AccountDto(acntRepos.accountOfId(new AccountKey(acnt.getAcntOid())));
+                    acnt.setOwner(new UserDto(userRepos.userOfId(new UserKey(acnt.getOwner().getUserOid()))));
+                    acnt.setPayment(payment);
+                    accounts.add(acnt);
+                }
+                form.setPayments(accounts);
+            }
+
+            List<User> users = userRepos.queryAllUser();
+            List<UserDto> userList = new LinkedList<>();
+            for (User user : users) {
+                userList.add(new UserDto(user));
+            }
+
             model.addAttribute("cpnTypes", ConsumptionType.toMapValue());
-            model.addAttribute("users", userProfileService.selectAllUsers());
+            model.addAttribute("users", userList);
             model.addAttribute("validation", false);
-            
+
             return "consumption/add";
         }
-        
-        form.getConsumption().setCpnTypeDesc(form.getConsumption().getCpnType().getDesc());
-        
-        for ( ConsumptionItem item : form.getCpnItems() ) {
-            item.setUserName(userProfileService.selectByKey(new UserProfileKey(item.getOwnerOid())).getUserName());
-            item.setCategoryFullDesc(categoryService.selectFullDescByKey(item.getCategoryOid()));
+
+        for (ConsumptionItemDto item : form.getItems()) {
+            item.setOwnerName(userRepos.userOfId(new UserKey(item.getOwnerOid())).getUserName());
+            // TODO item.setCategoryFullDesc(categoryService.selectFullDescByKey(item.getCategoryOid()));
         }
-        
-        List<Account> accounts = new ArrayList<Account>();
-		for (Account acnt : form.getAccounts()) {
-			BigDecimal payment = acnt.getPayment();
-			
-			acnt = accountService.selectByKey(new AccountKey(acnt.getAcntOid()));
-			acnt.setOwner(userProfileService.selectByKey(new UserProfileKey(acnt.getOwnerOid())));
-			acnt.setPayment(payment);
-			
-			accounts.add(acnt);
-		}
-		form.setAccounts(accounts);
-        
+
+        List<AccountDto> accounts = new ArrayList<AccountDto>();
+        for (AccountDto acnt : form.getPayments()) {
+            BigDecimal payment = acnt.getPayment();
+            acnt = new AccountDto(acntRepos.accountOfId(new AccountKey(acnt.getAcntOid())));
+            acnt.setOwner(new UserDto(userRepos.userOfId(new UserKey(acnt.getOwner().getUserOid()))));
+            acnt.setPayment(payment);
+            accounts.add(acnt);
+        }
+        form.setPayments(accounts);
+
         session.setAttribute("cpnForm", form);
-        
         return "consumption/confirmAdd";
     }
     
     
     @RequestMapping("/saveAdd")
-    public String saveAdd(Model model, HttpSession session) throws SQLException {
-        ConsumptionForm form = (ConsumptionForm) session.getAttribute("cpnForm");
-        
-        form.getConsumption().setAmount(form.getTotalItemAmount());
-        form.getConsumption().setConfirmed(false);
-        BaseObject base = new BaseObject();
-        base.setCreateTime(new Date());
-        base.setCreateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-        
-        form.getConsumption().setBaseObject(base);
-        
-        transactionService.createConsumption(form);
+    public String saveAdd(Model model, HttpSession session) {
+        ConsumptionDto form = (ConsumptionDto) session.getAttribute("cpnForm");
+        form.setAmount(form.getTotalItemAmount());
+        form.setConfirmed(false);
+        form.setBatchNum(Util.getInstance().generateBatchNum());
+        try {
+            consumptionRepos.add(form.toConsumption(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+            
+            return "consumption/confirmAdd";
+        }
         
         session.removeAttribute("cpnForm");
-        
         return "consumption/summary";
     }
     
-    @RequestMapping("/view")
+    /*@RequestMapping("/view")
     public String view(@RequestParam("cpnOid") BigDecimal cpnOid, Model model) throws SQLException {
         ConsumptionForm form = new ConsumptionForm();
         

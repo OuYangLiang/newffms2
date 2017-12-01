@@ -2,6 +2,7 @@ package com.personal.oyl.newffms.web.consumption;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +38,33 @@ public class ConsumptionDto {
         this.setPayments(new LinkedList<>());
         this.getItems().add(new ConsumptionItemDto());
         this.getPayments().add(new AccountDto());
+    }
+    
+    public ConsumptionDto(Consumption cpn) {
+        this.setCpnOid(cpn.getKey().getCpnOid());
+        this.setCpnType(cpn.getCpnType());
+        this.setAmount(cpn.getAmount());
+        this.setCpnTime(cpn.getCpnTime());
+        this.setBatchNum(cpn.getBatchNum());
+        this.setConfirmed(cpn.getConfirmed());
+        this.setCreateTime(cpn.getCreateTime());
+        this.setCreateBy(cpn.getCreateBy());
+        this.setUpdateBy(cpn.getUpdateBy());
+        this.setUpdateTime(cpn.getUpdateTime());
+        this.setSeqNo(cpn.getSeqNo());
+        
+        this.setItems(new ArrayList<>(cpn.getItems().size()));
+        for (ConsumptionItemVo vo : cpn.getItems()) {
+            this.getItems().add(new ConsumptionItemDto(vo));
+        }
+        
+        this.setPayments(new ArrayList<>(cpn.getPayments().size()));
+        for (AccountConsumptionVo item : cpn.getPayments()) {
+            AccountDto dto = new AccountDto();
+            dto.setPayment(item.getAmount());
+            dto.setAcntOid(item.getAcntOid());
+            this.getPayments().add(dto);
+        }
     }
     
     public Consumption toConsumption() {

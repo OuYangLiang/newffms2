@@ -34,7 +34,9 @@ import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.common.Util;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionCondition;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionKeyEmptyException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemPaginationVo;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionKey;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionRepos;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
 import com.personal.oyl.newffms.user.domain.User;
@@ -254,30 +256,37 @@ public class ConsumptionController extends BaseController {
         return "consumption/summary";
     }
     
-    /*@RequestMapping("/view")
-    public String view(@RequestParam("cpnOid") BigDecimal cpnOid, Model model) throws SQLException {
-        ConsumptionForm form = new ConsumptionForm();
+    @RequestMapping("/view")
+    public String view(@RequestParam("cpnOid") BigDecimal cpnOid, Model model) throws ConsumptionKeyEmptyException, CategoryKeyEmptyException, AccountKeyEmptyException {
+        ConsumptionDto form = new ConsumptionDto(consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid)));
         
-        Consumption consumption = consumptionService.selectByKey(new ConsumptionKey(cpnOid));
-        List<ConsumptionItem> cItems = consumptionItemService.queryConsumptionItemByCpn(cpnOid);
-        List<Account> acntItems = accountService.queryAccountsByConsumption(cpnOid);
-        
-        form.setConsumption(consumption);
-        form.setCpnItems(cItems);
-        form.setAccounts(acntItems);
-        
-        form.getConsumption().setCpnTypeDesc(form.getConsumption().getCpnType().getDesc());
-        
-        for ( ConsumptionItem item : form.getCpnItems() ) {
-            item.setCategoryFullDesc(categoryService.selectFullDescByKey(item.getCategoryOid()));
+        List<User> userList = userRepos.queryAllUser();
+        Map<BigDecimal, UserDto> group = new HashMap<>();
+        if (null != userList) {
+            for (User user : userList) {
+                group.put(user.getKey().getUserOid(), new UserDto(user));
+            }
         }
         
-        model.addAttribute("cpnForm", form);
+        for (ConsumptionItemDto dto : form.getItems()) {
+            dto.setOwnerName(group.get(dto.getOwnerOid()).getUserName());
+            dto.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(dto.getCategoryOid())).getCategoryDesc());
+        }
         
+        List<AccountDto> list = new ArrayList<>(form.getPayments().size());
+        for (AccountDto dto : form.getPayments()) {
+            BigDecimal payment = dto.getPayment();
+            dto = new AccountDto(acntRepos.accountOfId(new AccountKey(dto.getAcntOid())));
+            dto.setPayment(payment);
+            list.add(dto);
+        }
+        form.setPayments(list);
+        
+        model.addAttribute("cpnForm", form);
         return "consumption/view";
     }
     
-    @RequestMapping("/initEdit")
+    /*@RequestMapping("/initEdit")
 	public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
 			@RequestParam(value = "cpnOid", required = false) BigDecimal cpnOid,
 			Model model, HttpSession session) throws SQLException {

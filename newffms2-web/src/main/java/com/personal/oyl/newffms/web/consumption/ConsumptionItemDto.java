@@ -2,6 +2,8 @@ package com.personal.oyl.newffms.web.consumption;
 
 import java.math.BigDecimal;
 
+import com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo;
+
 public class ConsumptionItemDto {
     private BigDecimal itemOid;
     private String itemDesc;
@@ -11,6 +13,19 @@ public class ConsumptionItemDto {
     private BigDecimal categoryOid;
     private String categoryDesc;
     private BigDecimal cpnOid;
+    
+    public ConsumptionItemDto() {
+        
+    }
+    
+    public ConsumptionItemDto(ConsumptionItemVo item) {
+        this.setItemOid(item.getItemOid());
+        this.setItemDesc(item.getItemDesc());
+        this.setAmount(item.getAmount());
+        this.setOwnerOid(item.getOwnerOid());
+        this.setCategoryOid(item.getCategoryOid());
+        this.setCpnOid(item.getCpnOid());
+    }
 
     public BigDecimal getItemOid() {
         return itemOid;

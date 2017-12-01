@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.category.domain.CategoryKey;
+import com.personal.oyl.newffms.category.domain.CategoryRepos;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.common.Util;
@@ -67,6 +70,8 @@ public class ConsumptionController extends BaseController {
     private UserRepos userRepos;
     @Autowired
     private AccountRepos acntRepos;
+    @Autowired
+    private CategoryRepos categoryRepos;
     @Autowired
     private ConsumptionRepos consumptionRepos;
 
@@ -124,7 +129,7 @@ public class ConsumptionController extends BaseController {
             @RequestParam(value = "offset", required = true) int offset,
             @RequestParam(value = "limit", required = true) int limit,
             @RequestParam(value = "sort", required = true) String sort,
-            @RequestParam(value = "order", required = true) String order, HttpSession session) throws SQLException {
+            @RequestParam(value = "order", required = true) String order, HttpSession session) throws CategoryKeyEmptyException {
 
         int sizePerPage = limit;
         int requestPage = offset / limit + 1;
@@ -148,6 +153,7 @@ public class ConsumptionController extends BaseController {
         if (null != tuple.second) {
             for (ConsumptionItemPaginationVo item : tuple.second) {
                 item.setOwnerName(group.get(item.getOwnerOid()).getUserName());
+                item.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(item.getCategoryOid())).getCategoryDesc());
             }
         }
         return new BootstrapTableJsonRlt(tuple.first, tuple.second);

@@ -11,6 +11,7 @@ public class ConsumptionItemPaginationVo {
     private BigDecimal ownerOid;
     private String ownerName;
     private BigDecimal categoryOid;
+    private String categoryDesc;
     private BigDecimal cpnOid;
     private ConsumptionType cpnType;
     private Date cpnTime;
@@ -125,6 +126,14 @@ public class ConsumptionItemPaginationVo {
 
     public void setCreateBy(String createBy) {
         this.createBy = createBy;
+    }
+
+    public String getCategoryDesc() {
+        return categoryDesc;
+    }
+
+    public void setCategoryDesc(String categoryDesc) {
+        this.categoryDesc = categoryDesc;
     }
 
 }

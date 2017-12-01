@@ -129,8 +129,8 @@
                   <th data-field="cpnTime" data-sortable="true" data-align="center" data-formatter="dateFormatter">时间</th>
                   <th data-field="itemDesc" data-sortable="true">描述</th>
                   <th data-field="categoryDesc">类别</th>
-                  <th data-field="userName">消费人</th>
-                  <th data-field="cpnType">消费方式</th>
+                  <th data-field="ownerName">消费人</th>
+                  <th data-field="cpnTypeDesc">消费方式</th>
                   <th data-field="amount" data-align="right" data-formatter="amtFormatter">行金额</th>
                   <th data-field="total" data-align="right" data-formatter="amtFormatter">总金额</th>
                   <th data-field="createBy">登记人</th>

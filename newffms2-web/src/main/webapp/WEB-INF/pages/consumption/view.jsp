@@ -173,6 +173,22 @@
       </div>
     </div>
   </div>
+  
+  <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="alertModalLabel">警告</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container lead" id="alertMsg"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
@@ -206,7 +222,20 @@
       });
   
       $ ("#btn-confirm").click(function(){
-          window.location.href = "<c:url value='/consumption/confirm' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+          $.ajax({
+              cache: false,
+              url: "<c:url value='/consumption/confirm' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />",
+              type: "POST",
+              async: true,
+              success: function(data) {
+                  if (data.success) {
+                      window.location.href = "<c:url value='/consumption/view' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+                  } else {
+                      $('#alertMsg').text(data.errCode + ", " + data.errMsg);
+                      $('#alertModal').modal('show')
+                  }
+              }
+          });
       });
   
       if ($ ("#btn-delete").length > 0) {
@@ -218,7 +247,20 @@
 
       <c:if test="${cpnForm.confirmed }" >
       $ ("#btn-rollback").click(function(){
-          window.location.href = "<c:url value='/consumption/rollback' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+          $.ajax({
+              cache: false,
+              url: "<c:url value='/consumption/rollback' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />",
+              type: "POST",
+              async: true,
+              success: function(data) {
+                  if (data.success) {
+                      window.location.href = "<c:url value='/consumption/view' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+                  } else {
+                      $('#alertMsg').text(data.errCode + ", " + data.errMsg);
+                      $('#alertModal').modal('show')
+                  }
+              }
+          });
       });
       </c:if>
   });

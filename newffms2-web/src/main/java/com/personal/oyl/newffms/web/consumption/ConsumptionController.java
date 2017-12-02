@@ -27,13 +27,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountKey;
 import com.personal.oyl.newffms.account.domain.AccountRepos;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
-import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.common.Util;
+import com.personal.oyl.newffms.consumption.domain.Consumption;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionCondition;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionKeyEmptyException;
@@ -46,6 +47,7 @@ import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserException.UserKeyEmptyException;
 import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.user.domain.UserRepos;
+import com.personal.oyl.newffms.util.AjaxResult;
 import com.personal.oyl.newffms.util.BootstrapTableJsonRlt;
 import com.personal.oyl.newffms.util.DateUtil;
 import com.personal.oyl.newffms.util.SessionUtil;
@@ -396,17 +398,31 @@ public class ConsumptionController extends BaseController {
         return "redirect:/consumption/summary?keepSp=Y";
     }
     
-    /*@RequestMapping("/confirm")
-    public String confirm(@RequestParam("cpnOid") BigDecimal cpnOid, Model model, HttpSession session) throws SQLException {
-        transactionService.confirmConsumption(cpnOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
-        
-        return "redirect:/consumption/summary?keepSp=Y";
+    @RequestMapping("/confirm")
+    @ResponseBody
+    public AjaxResult<?> confirm(@RequestParam("cpnOid") BigDecimal cpnOid, Model model, HttpSession session)
+            throws ConsumptionKeyEmptyException {
+        Consumption cpn = consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid));
+        try {
+            cpn.confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            return new AjaxResult<>(false, e.getErrorCode(), e.getMessage());
+        }
+
+        return new AjaxResult<>(true);
     }
-    
+
     @RequestMapping("/rollback")
-    public String rollback(@RequestParam("cpnOid") BigDecimal cpnOid, Model model, HttpSession session) throws SQLException {
-        transactionService.rollbackConsumption(cpnOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
-        
-        return "redirect:/consumption/summary?keepSp=Y";
-    }*/
+    @ResponseBody
+    public AjaxResult<?> rollback(@RequestParam("cpnOid") BigDecimal cpnOid, Model model, HttpSession session)
+            throws ConsumptionKeyEmptyException {
+        Consumption cpn = consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid));
+        try {
+            cpn.unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            return new AjaxResult<>(false, e.getErrorCode(), e.getMessage());
+        }
+
+        return new AjaxResult<>(true);
+    }
 }

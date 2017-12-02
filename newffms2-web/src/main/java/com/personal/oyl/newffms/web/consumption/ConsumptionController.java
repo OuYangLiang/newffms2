@@ -31,10 +31,13 @@ import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.common.NewffmsDomainException;
+import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.common.Util;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionCondition;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionKeyEmptyException;
+import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionNotExistException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemPaginationVo;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionKey;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionRepos;
@@ -257,9 +260,10 @@ public class ConsumptionController extends BaseController {
     }
     
     @RequestMapping("/view")
-    public String view(@RequestParam("cpnOid") BigDecimal cpnOid, Model model) throws ConsumptionKeyEmptyException, CategoryKeyEmptyException, AccountKeyEmptyException {
+    public String view(@RequestParam("cpnOid") BigDecimal cpnOid, Model model)
+            throws ConsumptionKeyEmptyException, CategoryKeyEmptyException, AccountKeyEmptyException {
         ConsumptionDto form = new ConsumptionDto(consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid)));
-        
+
         List<User> userList = userRepos.queryAllUser();
         Map<BigDecimal, UserDto> group = new HashMap<>();
         if (null != userList) {
@@ -267,12 +271,12 @@ public class ConsumptionController extends BaseController {
                 group.put(user.getKey().getUserOid(), new UserDto(user));
             }
         }
-        
+
         for (ConsumptionItemDto dto : form.getItems()) {
             dto.setOwnerName(group.get(dto.getOwnerOid()).getUserName());
             dto.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(dto.getCategoryOid())).getCategoryDesc());
         }
-        
+
         List<AccountDto> list = new ArrayList<>(form.getPayments().size());
         for (AccountDto dto : form.getPayments()) {
             BigDecimal payment = dto.getPayment();
@@ -281,7 +285,7 @@ public class ConsumptionController extends BaseController {
             list.add(dto);
         }
         form.setPayments(list);
-        
+
         model.addAttribute("cpnForm", form);
         return "consumption/view";
     }
@@ -382,16 +386,17 @@ public class ConsumptionController extends BaseController {
         session.removeAttribute("cpnForm");
         
         return "consumption/summary";
-    }
-    
+    }*/
+
     @RequestMapping("/delete")
-    public String delete(@RequestParam("cpnOid") BigDecimal cpnOid, Model model) throws SQLException {
-        transactionService.deleteConsumption(cpnOid);
-        
+    public String delete(@RequestParam("cpnOid") BigDecimal cpnOid, Model model)
+            throws ConsumptionKeyEmptyException, ConsumptionNotExistException,
+            ConsumptionAlreadyConfirmedException, NewffmsSystemException {
+        consumptionRepos.remove(new ConsumptionKey(cpnOid));
         return "redirect:/consumption/summary?keepSp=Y";
     }
     
-    @RequestMapping("/confirm")
+    /*@RequestMapping("/confirm")
     public String confirm(@RequestParam("cpnOid") BigDecimal cpnOid, Model model, HttpSession session) throws SQLException {
         transactionService.confirmConsumption(cpnOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
         

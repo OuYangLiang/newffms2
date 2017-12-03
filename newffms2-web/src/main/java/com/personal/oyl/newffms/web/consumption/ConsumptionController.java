@@ -292,103 +292,127 @@ public class ConsumptionController extends BaseController {
         return "consumption/view";
     }
     
-    /*@RequestMapping("/initEdit")
-	public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
-			@RequestParam(value = "cpnOid", required = false) BigDecimal cpnOid,
-			Model model, HttpSession session) throws SQLException {
-  
-        ConsumptionForm form = null;
-        
+    @RequestMapping("/initEdit")
+    public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
+            @RequestParam(value = "cpnOid", required = false) BigDecimal cpnOid, Model model, HttpSession session)
+            throws CategoryKeyEmptyException, AccountKeyEmptyException, ConsumptionKeyEmptyException {
+
+        List<User> users = userRepos.queryAllUser();
+        List<UserDto> userList = new LinkedList<>();
+        for (User user : users) {
+            userList.add(new UserDto(user));
+        }
+        ConsumptionDto form = null;
+
         if (null != back && back && null != session.getAttribute("cpnForm")) {
-            form = (ConsumptionForm) session.getAttribute("cpnForm");
+            form = (ConsumptionDto) session.getAttribute("cpnForm");
+        } else {
+            Map<BigDecimal, UserDto> group = new HashMap<>();
+            if (null != userList) {
+                for (User user : users) {
+                    group.put(user.getKey().getUserOid(), new UserDto(user));
+                }
+            }
+
+            form = new ConsumptionDto(consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid)));
+            for (ConsumptionItemDto dto : form.getItems()) {
+                dto.setOwnerName(group.get(dto.getOwnerOid()).getUserName());
+                dto.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(dto.getCategoryOid())).getCategoryDesc());
+            }
+
+            List<AccountDto> list = new ArrayList<>(form.getPayments().size());
+            for (AccountDto dto : form.getPayments()) {
+                BigDecimal payment = dto.getPayment();
+                dto = new AccountDto(acntRepos.accountOfId(new AccountKey(dto.getAcntOid())));
+                dto.setPayment(payment);
+                list.add(dto);
+            }
+            form.setPayments(list);
         }
-        else {
-            form = new ConsumptionForm();
-            
-            Consumption consumption = consumptionService.selectByKey(new ConsumptionKey(cpnOid));
-            List<ConsumptionItem> cItems = consumptionItemService.queryConsumptionItemByCpn(cpnOid);
-            List<Account> acntItems = accountService.queryAccountsByConsumption(cpnOid);
-            
-            form.setConsumption(consumption);
-            form.setCpnItems(cItems);
-            form.setAccounts(acntItems);
-        }
-        
+
         model.addAttribute("cpnForm", form);
         model.addAttribute("cpnTypes", ConsumptionType.toMapValue());
-        model.addAttribute("users", userProfileService.selectAllUsers());
-        
+        model.addAttribute("users", userList);
+
         return "consumption/edit";
     }
-    
+
     @RequestMapping("/confirmEdit")
-    public String confirmEdit(@Valid @ModelAttribute("cpnForm") ConsumptionForm form, BindingResult result, Model model, HttpSession session) throws SQLException {
+    public String confirmEdit(@Valid @ModelAttribute("cpnForm") ConsumptionDto form, BindingResult result, Model model,
+            HttpSession session) throws AccountKeyEmptyException, UserKeyEmptyException, CategoryKeyEmptyException {
+        List<User> users = userRepos.queryAllUser();
         if (result.hasErrors()) {
-        	//回显
-        	if (null != form.getAccounts()) {
-        		List<Account> accounts = new ArrayList<Account>();
-        		
-        		for (Account acnt : form.getAccounts()) {
-        			BigDecimal payment = acnt.getPayment();
-        			
-        			acnt = accountService.selectByKey(new AccountKey(acnt.getAcntOid()));
-        			acnt.setOwner(userProfileService.selectByKey(new UserProfileKey(acnt.getOwnerOid())));
-        			acnt.setPayment(payment);
-        			
-        			accounts.add(acnt);
-        		}
-        		form.setAccounts(accounts);
-        	}
-        	
-            model.addAttribute("cpnTypes", ConsumptionType.toMapValue());
-            model.addAttribute("users", userProfileService.selectAllUsers());
-            model.addAttribute("validation", false);
+            // 回显
+            if (null != form.getPayments()) {
+                List<AccountDto> accounts = new ArrayList<AccountDto>();
+                for (AccountDto acnt : form.getPayments()) {
+                    BigDecimal payment = acnt.getPayment();
+                    acnt = new AccountDto(acntRepos.accountOfId(new AccountKey(acnt.getAcntOid())));
+                    acnt.setOwner(new UserDto(userRepos.userOfId(new UserKey(acnt.getOwner().getUserOid()))));
+                    acnt.setPayment(payment);
+                    accounts.add(acnt);
+                }
+                form.setPayments(accounts);
+            }
             
+            List<UserDto> userList = new LinkedList<>();
+            for (User user : users) {
+                userList.add(new UserDto(user));
+            }
+
+            model.addAttribute("cpnTypes", ConsumptionType.toMapValue());
+            model.addAttribute("users", userList);
+            model.addAttribute("validation", false);
+
             return "consumption/edit";
         }
         
-        form.getConsumption().setCpnTypeDesc(form.getConsumption().getCpnType().getDesc());
-        
-        for ( ConsumptionItem item : form.getCpnItems() ) {
-            item.setUserName(userProfileService.selectByKey(new UserProfileKey(item.getOwnerOid())).getUserName());
-            item.setCategoryFullDesc(categoryService.selectFullDescByKey(item.getCategoryOid()));
+        Map<BigDecimal, UserDto> group = new HashMap<>();
+        if (null != users) {
+            for (User user : users) {
+                group.put(user.getKey().getUserOid(), new UserDto(user));
+            }
         }
-        
-        List<Account> accounts = new ArrayList<Account>();
-		for (Account acnt : form.getAccounts()) {
-			BigDecimal payment = acnt.getPayment();
-			
-			acnt = accountService.selectByKey(new AccountKey(acnt.getAcntOid()));
-			acnt.setOwner(userProfileService.selectByKey(new UserProfileKey(acnt.getOwnerOid())));
-			acnt.setPayment(payment);
-			
-			accounts.add(acnt);
-		}
-		form.setAccounts(accounts);
-        
+
+        for (ConsumptionItemDto item : form.getItems()) {
+            item.setOwnerName(group.get(item.getOwnerOid()).getUserName());
+            item.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(item.getCategoryOid())).getCategoryDesc());
+        }
+
+        List<AccountDto> list = new ArrayList<>(form.getPayments().size());
+        for (AccountDto dto : form.getPayments()) {
+            BigDecimal payment = dto.getPayment();
+            dto = new AccountDto(acntRepos.accountOfId(new AccountKey(dto.getAcntOid())));
+            dto.setPayment(payment);
+            list.add(dto);
+        }
+        form.setPayments(list);
+
         session.setAttribute("cpnForm", form);
-        
         return "consumption/confirmEdit";
     }
-    
+
     @RequestMapping("/saveEdit")
-    public String saveEdit(Model model, HttpSession session) throws SQLException {
-        ConsumptionForm form = (ConsumptionForm) session.getAttribute("cpnForm");
+    public String saveEdit(Model model, HttpSession session) throws ConsumptionKeyEmptyException {
+        ConsumptionDto form = (ConsumptionDto) session.getAttribute("cpnForm");
+        form.setAmount(form.getTotalItemAmount());
+        form.setConfirmed(false);
+        Consumption oldObj = consumptionRepos.consumptionOfId(new ConsumptionKey(form.getCpnOid()));
+        form.setSeqNo(oldObj.getSeqNo());
         
-        form.getConsumption().setAmount(form.getTotalItemAmount());
-        
-        Consumption oldObj = consumptionService.selectByKey(new ConsumptionKey(form.getConsumption().getCpnOid()));
-        form.getConsumption().setBaseObject(new BaseObject());
-        form.getConsumption().getBaseObject().setSeqNo(oldObj.getBaseObject().getSeqNo());
-        form.getConsumption().getBaseObject().setUpdateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-        form.getConsumption().getBaseObject().setUpdateTime(new Date());
-        
-        transactionService.updateConsumption(form);
-        
+        try {
+            form.toConsumption().updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        } catch (NewffmsDomainException e) {
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+            
+            return "consumption/confirmEdit";
+        }
+
         session.removeAttribute("cpnForm");
-        
         return "consumption/summary";
-    }*/
+    }
 
     @RequestMapping("/delete")
     public String delete(@RequestParam("cpnOid") BigDecimal cpnOid, Model model)

@@ -385,10 +385,10 @@
              $ ( "#acntHumanDesc" + seq).attr("onClick", "javascript:selectAccount(" + (seq-1) + ");");
              $ ( "#acntHumanDesc" + seq).attr("id", "acntHumanDesc" + (seq-1));
              
-             $ ( "#accountOid" + seq).attr("name", "accounts[" + (seq-1) + "].acntOid");
+             $ ( "#accountOid" + seq).attr("name", "payments[" + (seq-1) + "].acntOid");
              $ ( "#accountOid" + seq).attr("id", "accountOid" + (seq-1));
              
-             $ ( "#payment" + seq).attr("name", "accounts[" + (seq-1) + "].payment");
+             $ ( "#payment" + seq).attr("name", "payments[" + (seq-1) + "].payment");
              $ ( "#payment" + seq).attr("id", "payment" + (seq-1));
              seq++;
          }
@@ -523,10 +523,10 @@
       	"<div class=\"form-horizontal\">" +
       	"<div class=\"col-sm-9\">" +
       	"<input class=\"form-control\" placeholder=\"账户\" data-validation-engine=\"validate[required]\" id=\"acntHumanDesc\#{accountSeq}\" onClick=\"javascript:selectAccount(\#{accountSeq});\" />" +
-      	"<input type=\"hidden\" id=\"accountOid\#{accountSeq}\" name=\"accounts[\#{accountSeq}].acntOid\" />" +
+      	"<input type=\"hidden\" id=\"accountOid\#{accountSeq}\" name=\"payments[\#{accountSeq}].acntOid\" />" +
       	"</div>" +
       	"<div class=\"col-sm-3\">" +
-      	"<input type=\"text\" class=\"form-control\" placeholder=\"支付金额\" data-validation-engine=\"validate[required]\" id=\"payment\#{accountSeq}\" name=\"accounts[\#{accountSeq}].payment\" onBlur=\"javascript:checkAccountAmount(this);\" maxlength=\"11\" />" +
+      	"<input type=\"text\" class=\"form-control\" placeholder=\"支付金额\" data-validation-engine=\"validate[required]\" id=\"payment\#{accountSeq}\" name=\"payments[\#{accountSeq}].payment\" onBlur=\"javascript:checkAccountAmount(this);\" maxlength=\"11\" />" +
       	"</div>" +
       	"</div>" +
       	"</div>" +

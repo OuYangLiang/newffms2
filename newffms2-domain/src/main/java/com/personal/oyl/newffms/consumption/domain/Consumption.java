@@ -292,7 +292,7 @@ public class Consumption implements ConsumptionOperation, Serializable {
 		this.setConfirmed(false);
 	}
 	
-	@Override
+    @Override
     public void updateAll(String operator)
             throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException,
             ConsumptionAlreadyConfirmedException, ConsumptionItemsEmptyException, ConsumptionItemDescEmptyException,
@@ -301,119 +301,119 @@ public class Consumption implements ConsumptionOperation, Serializable {
             ConsumptionPaymentsEmptyException, ConsumptionPaymentAmountEmptyException,
             ConsumptionPaymentAmountInvalidException, ConsumptionPaymentAccountEmptyException,
             ConsumptionAmountNotMatchException, NoOperatorException, NewffmsSystemException {
-	
-	    if (null == this.getCpnType()) {
+
+        if (null == this.getCpnType()) {
             throw new ConsumptionTypeEmptyException();
         }
-        
-        if (null == this.getBatchNum() || this.getBatchNum().trim().isEmpty()) {
+
+        /*if (null == this.getBatchNum() || this.getBatchNum().trim().isEmpty()) {
             throw new ConsumptionBatchNumEmptyException();
-        }
-        
+        }*/
+
         if (null == this.getCpnTime()) {
             throw new ConsumptionTimeEmptyException();
         }
-        
+
         if (this.getConfirmed()) {
             throw new ConsumptionAlreadyConfirmedException();
         }
-        
+
         if (null == this.getItems() || this.getItems().isEmpty()) {
             throw new ConsumptionItemsEmptyException();
         }
-        
+
         this.setAmount(BigDecimal.ZERO);
         for (ConsumptionItemVo item : this.getItems()) {
             if (null == item || null == item.getItemDesc() || item.getItemDesc().trim().isEmpty()) {
                 throw new ConsumptionItemDescEmptyException();
             }
-            
+
             if (null == item.getAmount()) {
                 throw new ConsumptionItemAmountEmptyException();
             }
-            
+
             if (BigDecimal.ZERO.compareTo(item.getAmount()) >= 0) {
                 throw new ConsumptionItemAmountInvalidException();
             }
-            
+
             if (null == item.getOwnerOid()) {
                 throw new ConsumptionItemOwnerEmptyException();
             }
-            
+
             if (null == item.getCategoryOid()) {
                 throw new ConsumptionItemCategoryEmptyException();
             }
-            
+
             this.setAmount(this.getAmount().add(item.getAmount()));
         }
-        
+
         if (null == this.getPayments() || this.getPayments().isEmpty()) {
             throw new ConsumptionPaymentsEmptyException();
         }
-        
+
         BigDecimal paymentTotal = BigDecimal.ZERO;
         for (AccountConsumptionVo payment : this.getPayments()) {
             if (null == payment || null == payment.getAmount()) {
                 throw new ConsumptionPaymentAmountEmptyException();
             }
-            
+
             if (BigDecimal.ZERO.compareTo(payment.getAmount()) >= 0) {
                 throw new ConsumptionPaymentAmountInvalidException();
             }
-            
+
             if (null == payment.getAcntOid()) {
                 throw new ConsumptionPaymentAccountEmptyException();
             }
-            
+
             paymentTotal = paymentTotal.add(payment.getAmount());
         }
-        
+
         if (paymentTotal.compareTo(this.getAmount()) != 0) {
             throw new ConsumptionAmountNotMatchException();
         }
-        
+
         if (null == operator || operator.trim().isEmpty()) {
             throw new NoOperatorException();
         }
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("cpnOid", this.getKey().getCpnOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("cpnType", this.getCpnType());
-		param.put("amount", this.getAmount());
-		param.put("cpnTime", this.getCpnTime());
-		
-		int n = mapper.updateInfo(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		ConsumptionItemVo itemParam = new ConsumptionItemVo();
-		itemParam.setCpnOid(this.getKey().getCpnOid());
-		itemMapper.delete(itemParam);
-		
-		AccountConsumptionVo paymentParam = new AccountConsumptionVo();
-		paymentParam.setCpnOid(this.getKey().getCpnOid());
-		paymentMapper.delete(paymentParam);
-		
-		for (ConsumptionItemVo item : this.getItems()) {
-			item.setCpnOid(this.getKey().getCpnOid());
-			itemMapper.insert(item);
-		}
-		
-		for (AccountConsumptionVo payment : this.getPayments()) {
-			payment.setCpnOid(this.getKey().getCpnOid());
-			paymentMapper.insert(payment);
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-	}
-	
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("cpnOid", this.getKey().getCpnOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("cpnType", this.getCpnType());
+        param.put("amount", this.getAmount());
+        param.put("cpnTime", this.getCpnTime());
+
+        int n = mapper.updateInfo(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        ConsumptionItemVo itemParam = new ConsumptionItemVo();
+        itemParam.setCpnOid(this.getKey().getCpnOid());
+        itemMapper.delete(itemParam);
+
+        AccountConsumptionVo paymentParam = new AccountConsumptionVo();
+        paymentParam.setCpnOid(this.getKey().getCpnOid());
+        paymentMapper.delete(paymentParam);
+
+        for (ConsumptionItemVo item : this.getItems()) {
+            item.setCpnOid(this.getKey().getCpnOid());
+            itemMapper.insert(item);
+        }
+
+        for (AccountConsumptionVo payment : this.getPayments()) {
+            payment.setCpnOid(this.getKey().getCpnOid());
+            paymentMapper.insert(payment);
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+    }
+
 }

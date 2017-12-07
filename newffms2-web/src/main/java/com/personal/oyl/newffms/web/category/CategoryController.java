@@ -3,7 +3,6 @@ package com.personal.oyl.newffms.web.category;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +26,7 @@ import com.personal.oyl.newffms.category.domain.Category;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
+import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
 
@@ -36,16 +36,11 @@ public class CategoryController extends BaseController {
 
     @Autowired
     private CategoryRepos categoryRepos;
-    /*@Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private CategoryValidator categoryValidator;
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-        binder.setValidator(categoryValidator);
-    }*/
+        binder.setValidator(new CategoryValidator());
+    }
 
     @RequestMapping("summary")
     public String summary(@RequestParam(value = "parentOid", required = false) BigDecimal parentOid, Model model)
@@ -62,23 +57,21 @@ public class CategoryController extends BaseController {
         return "category/summary";
     }
 
-    /*@RequestMapping("/initAdd")
+    @RequestMapping("/initAdd")
     public String initAdd(@RequestParam(value = "back", required = false) Boolean back,
             @RequestParam(value = "parentOid", required = false) BigDecimal parentOid, Model model, HttpSession session)
-            throws SQLException {
-
-        Category form = null;
+            throws CategoryKeyEmptyException {
+        CategoryDto form = null;
 
         if (null != back && back && null != session.getAttribute("catForm")) {
-            form = (Category) session.getAttribute("catForm");
+            form = (CategoryDto) session.getAttribute("catForm");
         } else {
-            form = new Category();
+            form = new CategoryDto();
         }
 
         if (null != parentOid) {
-            Category parent = categoryService.selectByKey(new CategoryKey(parentOid));
-            form.setParent(parent);
-            parent.setCategoryDesc(categoryService.selectFullDescByKey(parent.getCategoryOid()));
+            Category parent = categoryRepos.categoryOfId(new CategoryKey(parentOid));
+            form.setParent(new CategoryDto(parent));
         }
 
         model.addAttribute("catForm", form);
@@ -87,46 +80,49 @@ public class CategoryController extends BaseController {
     }
 
     @RequestMapping("/confirmAdd")
-    public String confirmAdd(@Valid @ModelAttribute("catForm") Category form, BindingResult result, Model model,
-            HttpSession session) throws SQLException {
+    public String confirmAdd(@Valid @ModelAttribute("catForm") CategoryDto form, BindingResult result, Model model,
+            HttpSession session) throws CategoryKeyEmptyException {
         if (result.hasErrors()) {
             if (null != form.getParentOid()) {
-                Category parent = categoryService.selectByKey(new CategoryKey(form.getParentOid()));
-                form.setParent(parent);
+                Category parent = categoryRepos.categoryOfId(new CategoryKey(form.getParentOid()));
+                form.setParent(new CategoryDto(parent));
             }
 
             model.addAttribute("validation", false);
-
             return "category/add";
         }
 
         if (null != form.getParentOid()) {
-            Category parent = categoryService.selectByKey(new CategoryKey(form.getParentOid()));
-            form.setParent(parent);
-            parent.setCategoryDesc(categoryService.selectFullDescByKey(parent.getCategoryOid()));
+            Category parent = categoryRepos.categoryOfId(new CategoryKey(form.getParentOid()));
+            form.setParent(new CategoryDto(parent));
         }
 
         session.setAttribute("catForm", form);
-
         return "category/confirmAdd";
     }
 
     @RequestMapping("/saveAdd")
     public String saveAdd(Model model, HttpSession session) throws SQLException {
-        Category form = (Category) session.getAttribute("catForm");
-
-        BaseObject base = new BaseObject();
-        base.setCreateTime(new Date());
-        base.setCreateBy(SessionUtil.getInstance().getLoginUser(session).getUserName());
-
-        form.setBaseObject(base);
-
-        transactionService.createCategory(form);
+        CategoryDto form = (CategoryDto) session.getAttribute("catForm");
+        try {
+            if (null == form.getParentOid()) {
+                form.setLeaf(true);
+                form.setCategoryLevel(Integer.valueOf(0));
+                categoryRepos.add(form.toCategory(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+            } else {
+                Category parent = categoryRepos.categoryOfId(new CategoryKey(form.getParentOid()));
+                parent.addChild(form.getCategoryDesc(), form.getMonthlyBudget(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+            }
+        } catch (NewffmsDomainException e) {
+            model.addAttribute("validation", false);
+            model.addAttribute("errCode", e.getErrorCode());
+            model.addAttribute("errMsg", e.getMessage());
+            return "category/confirmAdd";
+        }
 
         session.removeAttribute("catForm");
-
         return "category/summary";
-    }*/
+    }
 
     @RequestMapping("/view")
     public String view(@RequestParam("categoryOid") BigDecimal categoryOid, Model model)

@@ -62,7 +62,7 @@ public class CategoryReposImpl implements CategoryRepos {
             bean.setCategoryLevel(Integer.valueOf(1));
         }
 
-        if (!bean.getLeaf() || bean.getCategoryLevel() != 1) {
+        if (!bean.getLeaf() || bean.getCategoryLevel() != 0) {
             throw new CategoryNotRootException();
         }
 

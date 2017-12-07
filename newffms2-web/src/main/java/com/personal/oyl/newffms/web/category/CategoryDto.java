@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.personal.oyl.newffms.category.domain.Category;
+import com.personal.oyl.newffms.category.domain.CategoryKey;
 
 public class CategoryDto {
     private BigDecimal categoryOid;
@@ -15,6 +16,10 @@ public class CategoryDto {
     private CategoryDto parent;
     private List<CategoryDto> subCategories;
     
+    public CategoryDto() {
+        
+    }
+    
     public CategoryDto(Category category) {
         this.setCategoryOid(category.getKey().getCategoryOid());
         this.setCategoryDesc(category.getCategoryDesc());
@@ -22,6 +27,17 @@ public class CategoryDto {
         this.setCategoryLevel(category.getCategoryLevel());
         this.setLeaf(category.getLeaf());
         this.setParentOid(null == category.getParentKey() ? null : category.getParentKey().getCategoryOid());
+    }
+    
+    public Category toCategory() {
+        Category cat = new Category();
+        cat.setKey(new CategoryKey(this.getCategoryOid()));
+        cat.setCategoryDesc(this.getCategoryDesc());
+        cat.setMonthlyBudget(this.getMonthlyBudget());
+        cat.setCategoryLevel(this.getCategoryLevel());
+        cat.setLeaf(this.getLeaf());
+        cat.setParentKey(null == this.getParentOid() ? null : new CategoryKey(this.getParentOid()));
+        return cat;
     }
 
     public BigDecimal getCategoryOid() {

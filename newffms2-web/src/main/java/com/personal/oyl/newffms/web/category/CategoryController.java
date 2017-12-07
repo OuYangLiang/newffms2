@@ -126,21 +126,22 @@ public class CategoryController extends BaseController {
         session.removeAttribute("catForm");
 
         return "category/summary";
-    }
+    }*/
 
     @RequestMapping("/view")
-    public String view(@RequestParam("categoryOid") BigDecimal categoryOid, Model model) throws SQLException {
+    public String view(@RequestParam("categoryOid") BigDecimal categoryOid, Model model)
+            throws CategoryKeyEmptyException {
 
-        Category form = categoryService.selectByKey(new CategoryKey(categoryOid));
-        form.setCategoryDesc(categoryService.selectFullDescByKey(categoryOid));
+        CategoryDto form = new CategoryDto(categoryRepos.categoryOfId(new CategoryKey(categoryOid)));
 
         model.addAttribute("catForm", form);
-        model.addAttribute("removable", !categoryService.isCategoryUsed(categoryOid));
+        model.addAttribute("removable",
+                false/* !categoryService.isCategoryUsed(categoryOid) */);
 
         return "category/view";
     }
 
-    @RequestMapping("/initEdit")
+    /*@RequestMapping("/initEdit")
     public String initEdit(@RequestParam(value = "back", required = false) Boolean back,
             @RequestParam(value = "categoryOid", required = false) BigDecimal categoryOid, Model model,
             HttpSession session) throws SQLException {

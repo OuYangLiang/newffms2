@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.personal.oyl.newffms.category.domain.Category;
+import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
+import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
 import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
@@ -43,26 +45,24 @@ public class CategoryController extends BaseController {
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         binder.setValidator(categoryValidator);
-    }
+    }*/
 
     @RequestMapping("summary")
     public String summary(@RequestParam(value = "parentOid", required = false) BigDecimal parentOid, Model model)
-            throws SQLException {
+            throws CategoryKeyEmptyException {
         model.addAttribute("parentOid", parentOid);
 
         if (null != parentOid) {
-            Category category = categoryService.selectByKey(new CategoryKey(parentOid));
-
-            if (null != category.getParentOid()) {
-                model.addAttribute("parentParentOid", category.getParentOid());
+            Category category = categoryRepos.categoryOfId(new CategoryKey(parentOid));
+            if (null != category.getParentKey()) {
+                model.addAttribute("parentParentOid", category.getParentKey().getCategoryOid());
             }
-
         }
 
         return "category/summary";
     }
 
-    @RequestMapping("/initAdd")
+    /*@RequestMapping("/initAdd")
     public String initAdd(@RequestParam(value = "back", required = false) Boolean back,
             @RequestParam(value = "parentOid", required = false) BigDecimal parentOid, Model model, HttpSession session)
             throws SQLException {
@@ -231,18 +231,29 @@ public class CategoryController extends BaseController {
         transactionService.deleteCategory(categoryOid, SessionUtil.getInstance().getLoginUser(session).getUserName());
 
         return "redirect:/category/summary";
-    }
+    }*/
 
     @RequestMapping("/ajaxGetCategoriesByParent")
     @ResponseBody
-    public List<Category> ajaxGetCategoriesByParent(
-            @RequestParam(value = "parentOid", required = false) BigDecimal parentOid) throws SQLException {
+    public List<CategoryDto> ajaxGetCategoriesByParent(
+            @RequestParam(value = "parentOid", required = false) BigDecimal parentOid)
+            throws CategoryKeyEmptyException {
+        List<CategoryDto> list = new LinkedList<>();
+        List<Category> cats = null;
         if (null == parentOid) {
-            return categoryService.selectByLevel(0);
+            cats = categoryRepos.rootCategories();
+        } else {
+            cats = categoryRepos.categoriesOfParent(new CategoryKey(parentOid));
         }
 
-        return categoryService.selectByParent(parentOid);
-    }*/
+        if (null != cats) {
+            for (Category cat : cats) {
+                list.add(new CategoryDto(cat));
+            }
+        }
+
+        return list;
+    }
 
     @RequestMapping("/ajaxGetAllCategories")
     @ResponseBody

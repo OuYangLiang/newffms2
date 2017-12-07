@@ -162,7 +162,7 @@ public class CategoryReposImpl implements CategoryRepos {
     @Override
     public List<Category> rootCategories() {
         Category param = new Category();
-        param.setCategoryLevel(Integer.valueOf(1));
+        param.setCategoryLevel(Integer.valueOf(0));
 
         List<Category> list = mapper.select(param);
 

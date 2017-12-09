@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInvalidException;
@@ -40,7 +43,7 @@ public class AccountReposImpl implements AccountRepos {
 
     @Autowired
     private AccountAuditMapper auditMapper;
-    
+
     @Autowired
     private AccountIncomingMapper acntIncomingMapper;
 
@@ -62,6 +65,7 @@ public class AccountReposImpl implements AccountRepos {
         return list.get(0);
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Account bean, String operator)
             throws AccountDescEmptyException, AccountTypeEmptyException, NoOperatorException,
@@ -110,8 +114,8 @@ public class AccountReposImpl implements AccountRepos {
             if (bean.getDebt().compareTo(BigDecimal.ZERO) < 0) {
                 throw new AccountDebtInvalidException();
             }
-            
-            if ( (bean.getBalance().add(bean.getDebt())).subtract(bean.getQuota()).compareTo(BigDecimal.ZERO) != 0 ) {
+
+            if ((bean.getBalance().add(bean.getDebt())).subtract(bean.getQuota()).compareTo(BigDecimal.ZERO) != 0) {
                 throw new AccountDebtPlusBalanceNeqQuotaException();
             }
         }
@@ -150,6 +154,7 @@ public class AccountReposImpl implements AccountRepos {
         return list;
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException {
         if (null == key || null == key.getAcntOid()) {
@@ -211,7 +216,7 @@ public class AccountReposImpl implements AccountRepos {
         if (null == key || null == key.getAcntOid()) {
             throw new AccountKeyEmptyException();
         }
-        
+
         List<AccountAuditVo> list = null;
         int count = auditMapper.getCountOfSummary(key);
         if (count > 0) {
@@ -221,7 +226,7 @@ public class AccountReposImpl implements AccountRepos {
             param.put("sizePerPage", sizePerPage);
             list = auditMapper.getListOfSummary(param);
         }
-        
+
         return new Tuple<Integer, List<AccountAuditVo>>(count, list);
     }
 
@@ -230,16 +235,16 @@ public class AccountReposImpl implements AccountRepos {
         if (null == key || null == key.getIncomingOid()) {
             throw new IncomingKeyEmptyException();
         }
-        
+
         AccountIncomingVo voParam = new AccountIncomingVo();
         voParam.setIncomingOid(key.getIncomingOid());
-        
+
         List<AccountIncomingVo> voList = acntIncomingMapper.select(voParam);
-        
+
         if (null == voList || voList.isEmpty()) {
             return null;
         }
-        
+
         Account param = new Account();
         param.setKey(new AccountKey(voList.get(0).getAcntOid()));
 

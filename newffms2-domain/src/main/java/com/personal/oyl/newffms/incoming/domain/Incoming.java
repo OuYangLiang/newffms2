@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountKeyEmptyException;
@@ -25,244 +28,254 @@ import com.personal.oyl.newffms.incoming.store.mapper.AccountIncomingMapper;
 import com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper;
 
 public class Incoming implements IncomingOperation, Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private IncomingKey key;
-	private String incomingDesc;
-	private BigDecimal amount;
-	private IncomingType incomingType;
-	private Boolean confirmed;
-	private BigDecimal ownerOid;
-	private Date incomingDate;
-	private String batchNum;
+    private IncomingKey key;
+    private String incomingDesc;
+    private BigDecimal amount;
+    private IncomingType incomingType;
+    private Boolean confirmed;
+    private BigDecimal ownerOid;
+    private Date incomingDate;
+    private String batchNum;
 
-	private Date createTime;
-	private Date updateTime;
-	private String createBy;
-	private String updateBy;
-	private Integer seqNo;
-	
-	private AccountIncomingVo acntRel;
-	
-	@Autowired
-	private IncomingMapper mapper;
-	@Autowired
-	private AccountIncomingMapper itemMapper;
-	@Autowired
-	private AccountRepos acntRepos;
-	@Autowired
-	private AccountService acntService;
-	
-	public Incoming() {
-		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
-	}
+    private Date createTime;
+    private Date updateTime;
+    private String createBy;
+    private String updateBy;
+    private Integer seqNo;
 
-	public IncomingKey getKey() {
-		return key;
-	}
+    private AccountIncomingVo acntRel;
 
-	public void setKey(IncomingKey key) {
-		this.key = key;
-	}
+    @Autowired
+    private IncomingMapper mapper;
+    @Autowired
+    private AccountIncomingMapper itemMapper;
+    @Autowired
+    private AccountRepos acntRepos;
+    @Autowired
+    private AccountService acntService;
 
-	public String getIncomingDesc() {
-		return incomingDesc;
-	}
+    public Incoming() {
+        AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
+    }
 
-	public void setIncomingDesc(String incomingDesc) {
-		this.incomingDesc = incomingDesc;
-	}
+    public IncomingOperation getProxy() {
+        return (IncomingOperation) AppContext.getContext().getAutowireCapableBeanFactory()
+                .applyBeanPostProcessorsAfterInitialization(this, "Incoming");
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public IncomingKey getKey() {
+        return key;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setKey(IncomingKey key) {
+        this.key = key;
+    }
 
-	public IncomingType getIncomingType() {
-		return incomingType;
-	}
+    public String getIncomingDesc() {
+        return incomingDesc;
+    }
 
-	public void setIncomingType(IncomingType incomingType) {
-		this.incomingType = incomingType;
-	}
+    public void setIncomingDesc(String incomingDesc) {
+        this.incomingDesc = incomingDesc;
+    }
 
-	public Boolean getConfirmed() {
-		return confirmed;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setConfirmed(Boolean confirmed) {
-		this.confirmed = confirmed;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public BigDecimal getOwnerOid() {
-		return ownerOid;
-	}
+    public IncomingType getIncomingType() {
+        return incomingType;
+    }
 
-	public void setOwnerOid(BigDecimal ownerOid) {
-		this.ownerOid = ownerOid;
-	}
+    public void setIncomingType(IncomingType incomingType) {
+        this.incomingType = incomingType;
+    }
 
-	public Date getIncomingDate() {
-		return incomingDate;
-	}
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
 
-	public void setIncomingDate(Date incomingDate) {
-		this.incomingDate = incomingDate;
-	}
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 
-	public String getBatchNum() {
-		return batchNum;
-	}
+    public BigDecimal getOwnerOid() {
+        return ownerOid;
+    }
 
-	public void setBatchNum(String batchNum) {
-		this.batchNum = batchNum;
-	}
+    public void setOwnerOid(BigDecimal ownerOid) {
+        this.ownerOid = ownerOid;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public Date getIncomingDate() {
+        return incomingDate;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setIncomingDate(Date incomingDate) {
+        this.incomingDate = incomingDate;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public String getBatchNum() {
+        return batchNum;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setBatchNum(String batchNum) {
+        this.batchNum = batchNum;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public String getUpdateBy() {
-		return updateBy;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public Integer getSeqNo() {
-		return seqNo;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public void setSeqNo(Integer seqNo) {
-		this.seqNo = seqNo;
-	}
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	public AccountIncomingVo getAcntRel() {
-		return acntRel;
-	}
+    public String getUpdateBy() {
+        return updateBy;
+    }
 
-	public void setAcntRel(AccountIncomingVo acntRel) {
-		this.acntRel = acntRel;
-	}
-	
-	@Override
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Integer getSeqNo() {
+        return seqNo;
+    }
+
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
+    }
+
+    public AccountIncomingVo getAcntRel() {
+        return acntRel;
+    }
+
+    public void setAcntRel(AccountIncomingVo acntRel) {
+        this.acntRel = acntRel;
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void confirm(String operator)
             throws NoOperatorException, IncomingAlreadyConfirmedException, NewffmsSystemException {
-	
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		if (this.getConfirmed()) {
-			throw new IncomingAlreadyConfirmedException();
-		}
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("incomingOid", this.getKey().getIncomingOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("confirmed", true);
-		
-		int n = mapper.updateStatus(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		Account acnt = null;
-		
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        if (this.getConfirmed()) {
+            throw new IncomingAlreadyConfirmedException();
+        }
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("incomingOid", this.getKey().getIncomingOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("confirmed", true);
+
+        int n = mapper.updateStatus(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        Account acnt = null;
+
         try {
             acnt = acntRepos.accountOfId(new AccountKey(this.getAcntRel().getAcntOid()));
         } catch (AccountKeyEmptyException e) {
             throw new NewffmsSystemException();
         }
-        
+
         if (null == acnt) {
             throw new NewffmsSystemException();
         }
-        
-		try {
-            acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), this.getIncomingDate(), operator);
+
+        try {
+            acnt.increase(this.getAmount(), this.getIncomingDesc(), this.getBatchNum(), this.getIncomingDate(),
+                    operator);
         } catch (NewffmsDomainException e) {
             throw new NewffmsSystemException();
-        } 
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setConfirmed(true);
-	}
-	
-	@Override
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setConfirmed(true);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void unconfirm(String operator)
             throws NoOperatorException, IncomingNotConfirmedException, NewffmsSystemException {
-		
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		if (!this.getConfirmed()) {
-			throw new IncomingNotConfirmedException();
-		}
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("incomingOid", this.getKey().getIncomingOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("confirmed", false);
-		
-		int n = mapper.updateStatus(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		try {
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        if (!this.getConfirmed()) {
+            throw new IncomingNotConfirmedException();
+        }
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("incomingOid", this.getKey().getIncomingOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("confirmed", false);
+
+        int n = mapper.updateStatus(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        try {
             acntService.rollback(this.getBatchNum(), operator);
         } catch (NewffmsDomainException e) {
             throw new NewffmsSystemException();
         }
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setConfirmed(false);
-	}
-	
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setConfirmed(false);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void updateAll(String operator) throws NoOperatorException, IncomingAlreadyConfirmedException,
             NewffmsSystemException, IncomingDescInvalidException, IncomingAmountInvalidException {
-        if (null == this.getIncomingDesc() || this.getIncomingDesc().trim().isEmpty() || this.getIncomingDesc().trim().length() > 30) {
+        if (null == this.getIncomingDesc() || this.getIncomingDesc().trim().isEmpty()
+                || this.getIncomingDesc().trim().length() > 30) {
             throw new IncomingDescInvalidException();
         }
 

@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmptyException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
@@ -25,130 +28,136 @@ public class Account implements AccountOperation, Serializable {
 
     private static final long serialVersionUID = 1100828800834047867L;
     private AccountKey key;
-	private String acntDesc;
-	private AccountType acntType;
-	private BigDecimal balance;
-	private BigDecimal quota;
-	private BigDecimal debt;
-	private UserKey owner;
+    private String acntDesc;
+    private AccountType acntType;
+    private BigDecimal balance;
+    private BigDecimal quota;
+    private BigDecimal debt;
+    private UserKey owner;
 
-	private Date createTime;
-	private Date updateTime;
-	private String createBy;
-	private String updateBy;
-	private Integer seqNo;
-	
-	@Autowired
-	private AccountMapper mapper;
-	@Autowired
-	private AccountAuditMapper auditMapper;
-	
-	public Account() {
-		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
-	}
+    private Date createTime;
+    private Date updateTime;
+    private String createBy;
+    private String updateBy;
+    private Integer seqNo;
 
-	public AccountKey getKey() {
-		return key;
-	}
+    @Autowired
+    private AccountMapper mapper;
+    @Autowired
+    private AccountAuditMapper auditMapper;
 
-	public void setKey(AccountKey key) {
-		this.key = key;
-	}
+    public Account() {
+        AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
+    }
 
-	public String getAcntDesc() {
-		return acntDesc;
-	}
+    public AccountOperation getProxy() {
+        return (AccountOperation) AppContext.getContext().getAutowireCapableBeanFactory()
+                .applyBeanPostProcessorsAfterInitialization(this, "Account");
+    }
 
-	public void setAcntDesc(String acntDesc) {
-		this.acntDesc = acntDesc;
-	}
+    public AccountKey getKey() {
+        return key;
+    }
 
-	public AccountType getAcntType() {
-		return acntType;
-	}
+    public void setKey(AccountKey key) {
+        this.key = key;
+    }
 
-	public void setAcntType(AccountType acntType) {
-		this.acntType = acntType;
-	}
+    public String getAcntDesc() {
+        return acntDesc;
+    }
 
-	public BigDecimal getBalance() {
-		return balance;
-	}
+    public void setAcntDesc(String acntDesc) {
+        this.acntDesc = acntDesc;
+    }
 
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
-	}
+    public AccountType getAcntType() {
+        return acntType;
+    }
 
-	public BigDecimal getQuota() {
-		return quota;
-	}
+    public void setAcntType(AccountType acntType) {
+        this.acntType = acntType;
+    }
 
-	public void setQuota(BigDecimal quota) {
-		this.quota = quota;
-	}
+    public BigDecimal getBalance() {
+        return balance;
+    }
 
-	public BigDecimal getDebt() {
-		return debt;
-	}
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
-	public void setDebt(BigDecimal debt) {
-		this.debt = debt;
-	}
+    public BigDecimal getQuota() {
+        return quota;
+    }
 
-	public UserKey getOwner() {
-		return owner;
-	}
+    public void setQuota(BigDecimal quota) {
+        this.quota = quota;
+    }
 
-	public void setOwner(UserKey owner) {
-		this.owner = owner;
-	}
+    public BigDecimal getDebt() {
+        return debt;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public void setDebt(BigDecimal debt) {
+        this.debt = debt;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public UserKey getOwner() {
+        return owner;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public void setOwner(UserKey owner) {
+        this.owner = owner;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public String getUpdateBy() {
-		return updateBy;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public Integer getSeqNo() {
-		return seqNo;
-	}
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	public void setSeqNo(Integer seqNo) {
-		this.seqNo = seqNo;
-	}
-	
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Integer getSeqNo() {
+        return seqNo;
+    }
+
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
+    }
+
     @Override
-    public void changeDesc(String newDesc, String operator) throws AccountDescEmptyException, NoOperatorException, AccountDescTooLongException {
+    public void changeDesc(String newDesc, String operator)
+            throws AccountDescEmptyException, NoOperatorException, AccountDescTooLongException {
         if (null == newDesc || newDesc.trim().isEmpty()) {
             throw new AccountDescEmptyException();
         }
-        
+
         if (newDesc.trim().length() > 30) {
             throw new AccountDescTooLongException();
         }
@@ -173,48 +182,51 @@ public class Account implements AccountOperation, Serializable {
         this.setAcntDesc(newDesc);
         this.setUpdateBy(operator);
     }
-	
-	@Override
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
             throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException,
             NoOperatorException {
         if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new AccountAmountInvalidException();
-		}
-		
-		if (this.getBalance().compareTo(amount) < 0) {
-			throw new AccountBalanceInsufficiencyException();
-		}
-		
-		if (null == desc || desc.trim().isEmpty()) {
-			throw new AccountException.AccountOperationDescException();
-		}
-		
-		if (null == operator || operator.trim().isEmpty()) {
-		    throw new NoOperatorException();
-		}
-		
-		this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Subtract);
-	}
-	
-	@Override
+            throw new AccountAmountInvalidException();
+        }
+
+        if (this.getBalance().compareTo(amount) < 0) {
+            throw new AccountBalanceInsufficiencyException();
+        }
+
+        if (null == desc || desc.trim().isEmpty()) {
+            throw new AccountException.AccountOperationDescException();
+        }
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Subtract);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
             throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException {
-		if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
-			throw new AccountAmountInvalidException();
-		}
-		
-		if (null == desc || desc.trim().isEmpty()) {
-			throw new AccountOperationDescException();
-		}
-		
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Add);
-	}
-	
+        if (null == amount || BigDecimal.ZERO.compareTo(amount) >= 0) {
+            throw new AccountAmountInvalidException();
+        }
+
+        if (null == desc || desc.trim().isEmpty()) {
+            throw new AccountOperationDescException();
+        }
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Add);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void transfer(Account target, BigDecimal amount, String operator) throws AccountAmountInvalidException,
             AccountBalanceInsufficiencyException, NoOperatorException, AccountTransferToSelfException {
@@ -236,131 +248,134 @@ public class Account implements AccountOperation, Serializable {
 
         Date now = new Date();
         String batchNum = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
-        this.subtract(amount, "转账至：" + target.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_subtract);
+        this.subtract(amount, "转账至：" + target.getAcntDesc(), batchNum, now, now, operator,
+                AccountAuditType.Trans_subtract);
         target.increase(amount, "进账自：" + this.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_add);
     }
-	
-	private void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator, AccountAuditType auditType) {
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("acntOid", this.getKey().getAcntOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("balance", this.getBalance().subtract(amount));
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			param.put("debt", this.getDebt().add(amount));
-		}
-		
-		int n = mapper.updateBalance(param);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		AccountAuditVo audit = new AccountAuditVo();
-		audit.setAdtDesc(desc);
-		audit.setAdtTime(eventTime);
-		audit.setAdtType(auditType);
-		audit.setBalanceAfter(this.getBalance().subtract(amount));
-		audit.setChgAmt(amount.negate());
-		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setBatchNum(batchNum);
-		audit.setCreateBy(operator);
-		audit.setCreateTime(now);
-		
-		n = auditMapper.insert(audit);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setBalance(this.getBalance().subtract(amount));
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			this.setDebt(this.debt.add(amount));
-		}
-	}
-	
-	private void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator, AccountAuditType auditType) {
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("acntOid", this.getKey().getAcntOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("balance", this.getBalance().add(amount));
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			param.put("debt", this.getDebt().subtract(amount));
-		}
-		
-		int n = mapper.updateBalance(param);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		AccountAuditVo audit = new AccountAuditVo();
-		audit.setAdtDesc(desc);
-		audit.setAdtTime(eventTime);
-		audit.setAdtType(auditType);
-		audit.setBalanceAfter(this.getBalance().add(amount));
-		audit.setChgAmt(amount);
-		audit.setAcntOid(this.getKey().getAcntOid());
-		audit.setBatchNum(batchNum);
-		audit.setCreateBy(operator);
-		audit.setCreateTime(now);
-		
-		n = auditMapper.insert(audit);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setBalance(this.getBalance().add(amount));
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			this.setDebt(this.debt.subtract(amount));
-		}
-	}
-	
-	void rollback(BigDecimal chgAmt, String operator) {
-		Date now = new Date();
-		
-		BigDecimal newBalance = this.getBalance().add(chgAmt);
-		
-		if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalStateException();
-		}
-		
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("acntOid", this.getKey().getAcntOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("balance", newBalance);
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			param.put("debt", this.getDebt().subtract(chgAmt));
-		}
-		
-		int n = mapper.updateBalance(param);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setBalance(newBalance);
-		if (AccountType.Creditcard.equals(this.getAcntType())) {
-			this.setDebt(this.debt.subtract(chgAmt));
-		}
-	}
-	
+
+    private void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator,
+            AccountAuditType auditType) {
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("acntOid", this.getKey().getAcntOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("balance", this.getBalance().subtract(amount));
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            param.put("debt", this.getDebt().add(amount));
+        }
+
+        int n = mapper.updateBalance(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        AccountAuditVo audit = new AccountAuditVo();
+        audit.setAdtDesc(desc);
+        audit.setAdtTime(eventTime);
+        audit.setAdtType(auditType);
+        audit.setBalanceAfter(this.getBalance().subtract(amount));
+        audit.setChgAmt(amount.negate());
+        audit.setAcntOid(this.getKey().getAcntOid());
+        audit.setBatchNum(batchNum);
+        audit.setCreateBy(operator);
+        audit.setCreateTime(now);
+
+        n = auditMapper.insert(audit);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setBalance(this.getBalance().subtract(amount));
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            this.setDebt(this.debt.add(amount));
+        }
+    }
+
+    private void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator,
+            AccountAuditType auditType) {
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("acntOid", this.getKey().getAcntOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("balance", this.getBalance().add(amount));
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            param.put("debt", this.getDebt().subtract(amount));
+        }
+
+        int n = mapper.updateBalance(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        AccountAuditVo audit = new AccountAuditVo();
+        audit.setAdtDesc(desc);
+        audit.setAdtTime(eventTime);
+        audit.setAdtType(auditType);
+        audit.setBalanceAfter(this.getBalance().add(amount));
+        audit.setChgAmt(amount);
+        audit.setAcntOid(this.getKey().getAcntOid());
+        audit.setBatchNum(batchNum);
+        audit.setCreateBy(operator);
+        audit.setCreateTime(now);
+
+        n = auditMapper.insert(audit);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setBalance(this.getBalance().add(amount));
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            this.setDebt(this.debt.subtract(amount));
+        }
+    }
+
+    void rollback(BigDecimal chgAmt, String operator) {
+        Date now = new Date();
+
+        BigDecimal newBalance = this.getBalance().add(chgAmt);
+
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalStateException();
+        }
+
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("acntOid", this.getKey().getAcntOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("balance", newBalance);
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            param.put("debt", this.getDebt().subtract(chgAmt));
+        }
+
+        int n = mapper.updateBalance(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setBalance(newBalance);
+        if (AccountType.Creditcard.equals(this.getAcntType())) {
+            this.setDebt(this.debt.subtract(chgAmt));
+        }
+    }
+
 }

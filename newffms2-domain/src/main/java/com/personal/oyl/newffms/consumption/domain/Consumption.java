@@ -238,6 +238,14 @@ public class Consumption implements ConsumptionOperation, Serializable {
         if (1 != n) {
             throw new NewffmsDomainException.NewffmsSystemException();
         }
+        
+        StringBuilder sb = new StringBuilder(50);
+        sb.append("购物消费：");
+        for (ConsumptionItemVo item : this.getItems()) {
+            sb.append(item.getItemDesc()).append("，");
+        }
+        String itemsDesc = sb.toString();
+        itemsDesc = itemsDesc.substring(0, itemsDesc.length() - 1);
 
         for (AccountConsumptionVo payment : this.getPayments()) {
             Account acnt = null;
@@ -248,7 +256,7 @@ public class Consumption implements ConsumptionOperation, Serializable {
             }
 
             try {
-                acnt.subtract(payment.getAmount(), "desc", this.getBatchNum(), this.getCpnTime(), operator);
+                acnt.subtract(payment.getAmount(), itemsDesc, this.getBatchNum(), this.getCpnTime(), operator);
             } catch (AccountBalanceInsufficiencyException e) {
                 throw e;
             } catch (NewffmsDomainException e) {

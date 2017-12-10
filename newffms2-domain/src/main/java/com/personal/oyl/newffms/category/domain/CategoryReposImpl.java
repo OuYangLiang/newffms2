@@ -1,8 +1,11 @@
 package com.personal.oyl.newffms.category.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -186,6 +189,38 @@ public class CategoryReposImpl implements CategoryRepos {
         }
 
         return list;
+    }
+
+    @Override
+    public List<Category> rootCategoriesCascaded() {
+        List<Category> list = this.allCategories();
+        Map<BigDecimal, List<Category>> catMap = new HashMap<>();
+
+        BigDecimal key = null;
+        for (Category cat : list) {
+            key = null == cat.getParentKey() ? BigDecimal.valueOf(-1) : cat.getParentKey().getCategoryOid();
+
+            if (catMap.containsKey(key)) {
+                List<Category> cList = catMap.get(key);
+                cList.add(cat);
+            } else {
+                List<Category> cList = new ArrayList<>();
+                cList.add(cat);
+                catMap.put(key, cList);
+            }
+        }
+
+        for (Category cat : list) {
+            if (!cat.getLeaf()) {
+                cat.setSubCategories(catMap.get(cat.getKey().getCategoryOid()));
+            }
+        }
+
+        List<Category> rlt = new ArrayList<>();
+        for (Category root : catMap.get(BigDecimal.valueOf(-1))) {
+            rlt.add(root);
+        }
+        return rlt;
     }
 
 }

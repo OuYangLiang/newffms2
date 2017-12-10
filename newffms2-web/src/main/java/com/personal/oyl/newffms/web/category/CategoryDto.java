@@ -1,6 +1,7 @@
 package com.personal.oyl.newffms.web.category;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.personal.oyl.newffms.category.domain.Category;
@@ -27,6 +28,13 @@ public class CategoryDto {
         this.setCategoryLevel(category.getCategoryLevel());
         this.setLeaf(category.getLeaf());
         this.setParentOid(null == category.getParentKey() ? null : category.getParentKey().getCategoryOid());
+        
+        if (null != category.getSubCategories()) {
+            this.setSubCategories(new LinkedList<>());
+            for (Category inner : category.getSubCategories()) {
+                this.getSubCategories().add(new CategoryDto(inner));
+            }
+        }
     }
     
     public Category toCategory() {

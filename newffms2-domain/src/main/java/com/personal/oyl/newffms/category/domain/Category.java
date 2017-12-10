@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class Category implements CategoryOperation, Serializable {
     private String createBy;
     private String updateBy;
     private Integer seqNo;
+    
+    private List<Category> subCategories;
 
     public Category() {
         AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
@@ -138,6 +141,14 @@ public class Category implements CategoryOperation, Serializable {
 
     public void setSeqNo(Integer seqNo) {
         this.seqNo = seqNo;
+    }
+
+    public List<Category> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List<Category> subCategories) {
+        this.subCategories = subCategories;
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)

@@ -64,6 +64,13 @@ public interface CategoryRepos {
     List<Category> categoriesOfParent(CategoryKey parentKey) throws CategoryKeyEmptyException;
 
     /**
+     * 级联查询所有根类别
+     * 
+     * @return 根类别集合，包括子类别（无排序）
+     */
+    List<Category> rootCategoriesCascaded();
+    
+    /**
      * 查询所有根类别
      * 
      * @return 根类别集合（无排序）

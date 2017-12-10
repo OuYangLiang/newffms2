@@ -255,48 +255,11 @@ public class CategoryController extends BaseController {
     @RequestMapping("/ajaxGetAllCategories")
     @ResponseBody
     public List<CategoryDto> alaxGetAllAccounts() {
-        List<Category> catList = categoryRepos.allCategories();
-        List<CategoryDto> list = new LinkedList<>();
-        for (Category cat : catList) {
-            list.add(new CategoryDto(cat));
+        List<Category> cats = categoryRepos.rootCategoriesCascaded();
+        List<CategoryDto> catList = new LinkedList<>();
+        for (Category cat : cats) {
+            catList.add(new CategoryDto(cat));
         }
-
-        Map<BigDecimal, List<CategoryDto>> catMap = new HashMap<>();
-
-        BigDecimal key = null;
-        for (CategoryDto cat : list) {
-            if (null == cat.getParentOid()) {
-                key = BigDecimal.valueOf(-1);
-            } else {
-                key = cat.getParentOid();
-            }
-
-            if (catMap.containsKey(key)) {
-                List<CategoryDto> cList = catMap.get(key);
-                cList.add(cat);
-            } else {
-                List<CategoryDto> cList = new ArrayList<>();
-                cList.add(cat);
-                catMap.put(key, cList);
-            }
-        }
-
-        for (CategoryDto cat : list) {
-            if (null == cat.getParentOid()) {
-                continue;
-            }
-
-            if (!cat.getLeaf()) {
-                cat.setSubCategories(catMap.get(cat.getCategoryOid()));
-            }
-        }
-
-        List<CategoryDto> rlt = new ArrayList<>();
-
-        for (CategoryDto root : catMap.get(BigDecimal.valueOf(-1))) {
-            rlt.add(root);
-            root.setSubCategories(catMap.get(root.getCategoryOid()));
-        }
-        return rlt;
+        return catList;
     }
 }

@@ -127,5 +127,22 @@
             </if>
             LIMIT #{start}, #{sizePerPage}
     </select>
+
+  <resultMap id="queryPersonalConsumptionResultMap" type="com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo">
+    <result column="OWNER_OID" property="userOid" jdbcType="DECIMAL" />
+    <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
+    <result column="TOTAL" property="total" jdbcType="DECIMAL" />
+  </resultMap>
+  <select id="queryPersonalConsumption" parameterType="java.util.Map" resultMap="queryPersonalConsumptionResultMap">
+        <![CDATA[
+        SELECT OWNER_OID, CATEGORY_OID, SUM(I.AMOUNT) AS TOTAL
+        FROM CONSUMPTION_ITEM I, CONSUMPTION C
+        WHERE I.CPN_OID = C.CPN_OID
+        AND C.CONFIRMED = TRUE
+        AND C.CPN_TIME >= #{start,jdbcType=TIMESTAMP}
+        AND C.CPN_TIME <= #{end,jdbcType=TIMESTAMP}
+        GROUP BY OWNER_OID, CATEGORY_OID
+        ]]>
+  </select>
     
 </mapper>

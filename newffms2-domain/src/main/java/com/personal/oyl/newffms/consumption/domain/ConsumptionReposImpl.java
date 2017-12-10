@@ -235,4 +235,13 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
         return new Tuple<Integer, List<ConsumptionItemPaginationVo>>(count, list);
     }
 
+    @Override
+    public List<PersonalConsumptionVo> queryPersonalConsumption(Date start, Date end) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("start", start);
+        param.put("end", end);
+
+        return itemMapper.queryPersonalConsumption(param);
+    }
+
 }

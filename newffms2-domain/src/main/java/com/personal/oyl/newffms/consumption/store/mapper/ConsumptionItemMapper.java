@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemPaginationVo;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo;
+import com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo;
 
 public interface ConsumptionItemMapper {
     List<ConsumptionItemVo> select(ConsumptionItemVo param);
@@ -16,4 +17,6 @@ public interface ConsumptionItemMapper {
     int getCountOfSummary(Map<String, Object> param);
 
     List<ConsumptionItemPaginationVo> getListOfSummary(Map<String, Object> param);
+    
+    List<PersonalConsumptionVo> queryPersonalConsumption(Map<String, Object> param);
 }

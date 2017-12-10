@@ -1,5 +1,6 @@
 package com.personal.oyl.newffms.consumption.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
@@ -82,4 +83,13 @@ public interface ConsumptionRepos {
      * @return 消费明细
      */
     Tuple<Integer, List<ConsumptionItemPaginationVo>> queryConsumptionItems(ConsumptionCondition condition);
+    
+    /**
+     * 根据时间范围查询用户消费金额，包括类别明细
+     * 
+     * @param start 起始时间
+     * @param end 截止时间
+     * @return 用户消费金额，包括类别明细
+     */
+    public List<PersonalConsumptionVo> queryPersonalConsumption(Date start, Date end);
 }

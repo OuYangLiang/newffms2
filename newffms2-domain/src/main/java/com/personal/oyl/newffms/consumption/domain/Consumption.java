@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.account.domain.Account;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
@@ -41,257 +44,265 @@ import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper;
 import com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper;
 
 public class Consumption implements ConsumptionOperation, Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ConsumptionKey key;
-	private ConsumptionType cpnType;
-	private BigDecimal amount;
-	private Date cpnTime;
-	private String batchNum;
-	private Boolean confirmed;
+    private ConsumptionKey key;
+    private ConsumptionType cpnType;
+    private BigDecimal amount;
+    private Date cpnTime;
+    private String batchNum;
+    private Boolean confirmed;
 
-	private Date createTime;
-	private Date updateTime;
-	private String createBy;
-	private String updateBy;
-	private Integer seqNo;
-	
-	private List<ConsumptionItemVo> items;
-	private List<AccountConsumptionVo> payments;
-	
-	@Autowired
-	private ConsumptionMapper mapper;
-	@Autowired
-	private AccountRepos acntRepos;
-	@Autowired
-	private AccountService acntService;
-	@Autowired
-	private ConsumptionItemMapper itemMapper;
-	@Autowired
-	private AccountConsumptionMapper paymentMapper;
+    private Date createTime;
+    private Date updateTime;
+    private String createBy;
+    private String updateBy;
+    private Integer seqNo;
 
-	public Consumption() {
-		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
-	}
+    private List<ConsumptionItemVo> items;
+    private List<AccountConsumptionVo> payments;
 
-	public ConsumptionKey getKey() {
-		return key;
-	}
+    @Autowired
+    private ConsumptionMapper mapper;
+    @Autowired
+    private AccountRepos acntRepos;
+    @Autowired
+    private AccountService acntService;
+    @Autowired
+    private ConsumptionItemMapper itemMapper;
+    @Autowired
+    private AccountConsumptionMapper paymentMapper;
 
-	public void setKey(ConsumptionKey key) {
-		this.key = key;
-	}
+    public Consumption() {
+        AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
+    }
+    
+    public ConsumptionOperation getProxy() {
+        return (ConsumptionOperation) AppContext.getContext().getAutowireCapableBeanFactory()
+                .applyBeanPostProcessorsAfterInitialization(this, "Consumption");
+    }
 
-	public ConsumptionType getCpnType() {
-		return cpnType;
-	}
+    public ConsumptionKey getKey() {
+        return key;
+    }
 
-	public void setCpnType(ConsumptionType cpnType) {
-		this.cpnType = cpnType;
-	}
+    public void setKey(ConsumptionKey key) {
+        this.key = key;
+    }
 
-	public BigDecimal getAmount() {
-		return amount;
-	}
+    public ConsumptionType getCpnType() {
+        return cpnType;
+    }
 
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
+    public void setCpnType(ConsumptionType cpnType) {
+        this.cpnType = cpnType;
+    }
 
-	public Date getCpnTime() {
-		return cpnTime;
-	}
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-	public void setCpnTime(Date cpnTime) {
-		this.cpnTime = cpnTime;
-	}
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-	public String getBatchNum() {
-		return batchNum;
-	}
+    public Date getCpnTime() {
+        return cpnTime;
+    }
 
-	public void setBatchNum(String batchNum) {
-		this.batchNum = batchNum;
-	}
+    public void setCpnTime(Date cpnTime) {
+        this.cpnTime = cpnTime;
+    }
 
-	public Boolean getConfirmed() {
-		return confirmed;
-	}
+    public String getBatchNum() {
+        return batchNum;
+    }
 
-	public void setConfirmed(Boolean confirmed) {
-		this.confirmed = confirmed;
-	}
+    public void setBatchNum(String batchNum) {
+        this.batchNum = batchNum;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setConfirmed(Boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public String getUpdateBy() {
-		return updateBy;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	public Integer getSeqNo() {
-		return seqNo;
-	}
+    public String getUpdateBy() {
+        return updateBy;
+    }
 
-	public void setSeqNo(Integer seqNo) {
-		this.seqNo = seqNo;
-	}
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
 
-	public List<ConsumptionItemVo> getItems() {
-		return items;
-	}
+    public Integer getSeqNo() {
+        return seqNo;
+    }
 
-	public void setItems(List<ConsumptionItemVo> items) {
-		this.items = items;
-		this.setAmount(BigDecimal.ZERO);
-		
-		if (null != items) {
-			for (ConsumptionItemVo item : items) {
-				this.setAmount(this.getAmount().add(item.getAmount()));
-			}
-		}
-	}
-	
-	public void addItem(ConsumptionItemVo item) {
-		if (null == items) {
-			items = new ArrayList<ConsumptionItemVo>();
-			this.setAmount(BigDecimal.ZERO);
-		}
-		
-		items.add(item);
-		this.setAmount(this.getAmount().add(item.getAmount()));
-	}
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
+    }
 
-	public List<AccountConsumptionVo> getPayments() {
-		return payments;
-	}
+    public List<ConsumptionItemVo> getItems() {
+        return items;
+    }
 
-	public void setPayments(List<AccountConsumptionVo> payments) {
-		this.payments = payments;
-	}
-	
-	public void addPayment(AccountConsumptionVo payment) {
-		if (null == payments) {
-			payments = new ArrayList<AccountConsumptionVo>();
-		}
-		
-		payments.add(payment);
-	}
+    public void setItems(List<ConsumptionItemVo> items) {
+        this.items = items;
+        this.setAmount(BigDecimal.ZERO);
 
-	@Override
+        if (null != items) {
+            for (ConsumptionItemVo item : items) {
+                this.setAmount(this.getAmount().add(item.getAmount()));
+            }
+        }
+    }
+
+    public void addItem(ConsumptionItemVo item) {
+        if (null == items) {
+            items = new ArrayList<ConsumptionItemVo>();
+            this.setAmount(BigDecimal.ZERO);
+        }
+
+        items.add(item);
+        this.setAmount(this.getAmount().add(item.getAmount()));
+    }
+
+    public List<AccountConsumptionVo> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<AccountConsumptionVo> payments) {
+        this.payments = payments;
+    }
+
+    public void addPayment(AccountConsumptionVo payment) {
+        if (null == payments) {
+            payments = new ArrayList<AccountConsumptionVo>();
+        }
+
+        payments.add(payment);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void confirm(String operator) throws NoOperatorException, ConsumptionAlreadyConfirmedException,
             AccountBalanceInsufficiencyException, NewffmsSystemException {
-	
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		if (this.getConfirmed()) {
-			throw new ConsumptionException.ConsumptionAlreadyConfirmedException();
-		}
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("cpnOid", this.getKey().getCpnOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("confirmed", true);
-		
-		int n = mapper.updateStatus(param);
-		
-		if (1 != n) {
-			throw new NewffmsDomainException.NewffmsSystemException();
-		}
-		
-		for (AccountConsumptionVo payment: this.getPayments()) {
-			Account acnt = null;
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        if (this.getConfirmed()) {
+            throw new ConsumptionException.ConsumptionAlreadyConfirmedException();
+        }
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("cpnOid", this.getKey().getCpnOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("confirmed", true);
+
+        int n = mapper.updateStatus(param);
+
+        if (1 != n) {
+            throw new NewffmsDomainException.NewffmsSystemException();
+        }
+
+        for (AccountConsumptionVo payment : this.getPayments()) {
+            Account acnt = null;
             try {
                 acnt = acntRepos.accountOfId(new AccountKey(payment.getAcntOid()));
             } catch (AccountKeyEmptyException e) {
                 throw new NewffmsDomainException.NewffmsSystemException();
             }
-            
-			try {
+
+            try {
                 acnt.subtract(payment.getAmount(), "desc", this.getBatchNum(), this.getCpnTime(), operator);
             } catch (AccountBalanceInsufficiencyException e) {
                 throw e;
             } catch (NewffmsDomainException e) {
                 throw new NewffmsDomainException.NewffmsSystemException();
             }
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setConfirmed(true);
-	}
-	
-	@Override
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setConfirmed(true);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void unconfirm(String operator)
             throws NoOperatorException, NewffmsSystemException, ConsumptionNotConfirmedException {
-	
-		if (null == operator || operator.trim().isEmpty()) {
-			throw new NoOperatorException();
-		}
-		
-		if (!this.getConfirmed()) {
-			throw new ConsumptionException.ConsumptionNotConfirmedException();
-		}
-		
-		Date now = new Date();
-		Map<String, Object> param = new HashMap<String, Object>();
-		
-		param.put("seqNo", this.getSeqNo());
-		param.put("cpnOid", this.getKey().getCpnOid());
-		param.put("updateBy", operator);
-		param.put("updateTime", now);
-		param.put("confirmed", false);
-		
-		int n = mapper.updateStatus(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		try {
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+
+        if (!this.getConfirmed()) {
+            throw new ConsumptionException.ConsumptionNotConfirmedException();
+        }
+
+        Date now = new Date();
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("cpnOid", this.getKey().getCpnOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("confirmed", false);
+
+        int n = mapper.updateStatus(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        try {
             acntService.rollback(this.getBatchNum(), operator);
         } catch (NewffmsDomainException e) {
             throw new NewffmsDomainException.NewffmsSystemException();
         }
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setUpdateBy(operator);
-		this.setUpdateTime(now);
-		this.setConfirmed(false);
-	}
-	
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setConfirmed(false);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void updateAll(String operator)
             throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException,
@@ -306,9 +317,11 @@ public class Consumption implements ConsumptionOperation, Serializable {
             throw new ConsumptionTypeEmptyException();
         }
 
-        /*if (null == this.getBatchNum() || this.getBatchNum().trim().isEmpty()) {
-            throw new ConsumptionBatchNumEmptyException();
-        }*/
+        /*
+         * if (null == this.getBatchNum() ||
+         * this.getBatchNum().trim().isEmpty()) { throw new
+         * ConsumptionBatchNumEmptyException(); }
+         */
 
         if (null == this.getCpnTime()) {
             throw new ConsumptionTimeEmptyException();

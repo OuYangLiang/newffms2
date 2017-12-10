@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
@@ -19,7 +22,7 @@ import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemExcep
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public class CategoryReposImpl implements CategoryRepos {
-	
+
     @Autowired
     private CategoryMapper mapper;
 
@@ -41,6 +44,7 @@ public class CategoryReposImpl implements CategoryRepos {
         return list.get(0);
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Category bean, String operator) throws CategoryDescEmptyException, CategoryDescTooLongException,
             NoOperatorException, CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException,
@@ -90,6 +94,7 @@ public class CategoryReposImpl implements CategoryRepos {
         bean.setSeqNo(1);
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(CategoryKey key, String operator) throws CategoryKeyEmptyException, NoOperatorException,
             CategoryNotLeafException, CategoryNotExistException, NewffmsSystemException {

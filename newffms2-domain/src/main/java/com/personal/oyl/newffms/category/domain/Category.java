@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
@@ -20,63 +23,68 @@ import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemExcep
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public class Category implements CategoryOperation, Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private CategoryKey key;
-	private String categoryDesc;
-	private BigDecimal monthlyBudget;
-	private Integer categoryLevel;
-	private Boolean leaf;
-	private CategoryKey parentKey;
-	
-	private Date createTime;
-	private Date updateTime;
-	private String createBy;
-	private String updateBy;
-	private Integer seqNo;
-	
-	public Category() {
-		AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
-	}
-	
-	@Autowired
-	private CategoryRepos repos;
-	@Autowired
-	private CategoryMapper mapper;
+    private static final long serialVersionUID = 1L;
 
-	public CategoryKey getKey() {
-		return key;
-	}
+    private CategoryKey key;
+    private String categoryDesc;
+    private BigDecimal monthlyBudget;
+    private Integer categoryLevel;
+    private Boolean leaf;
+    private CategoryKey parentKey;
 
-	public void setKey(CategoryKey key) {
-		this.key = key;
-	}
+    private Date createTime;
+    private Date updateTime;
+    private String createBy;
+    private String updateBy;
+    private Integer seqNo;
 
-	public String getCategoryDesc() {
-		return categoryDesc;
-	}
+    public Category() {
+        AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
+    }
+    
+    public CategoryOperation getProxy() {
+        return (CategoryOperation) AppContext.getContext().getAutowireCapableBeanFactory()
+                .applyBeanPostProcessorsAfterInitialization(this, "Category");
+    }
 
-	public void setCategoryDesc(String categoryDesc) {
-		this.categoryDesc = categoryDesc;
-	}
+    @Autowired
+    private CategoryRepos repos;
+    @Autowired
+    private CategoryMapper mapper;
 
-	public BigDecimal getMonthlyBudget() {
-		return monthlyBudget;
-	}
+    public CategoryKey getKey() {
+        return key;
+    }
 
-	public void setMonthlyBudget(BigDecimal monthlyBudget) {
-		this.monthlyBudget = monthlyBudget;
-	}
+    public void setKey(CategoryKey key) {
+        this.key = key;
+    }
 
-	public Integer getCategoryLevel() {
-		return categoryLevel;
-	}
+    public String getCategoryDesc() {
+        return categoryDesc;
+    }
 
-	public void setCategoryLevel(Integer categoryLevel) {
-		this.categoryLevel = categoryLevel;
-	}
+    public void setCategoryDesc(String categoryDesc) {
+        this.categoryDesc = categoryDesc;
+    }
 
-	public Boolean getLeaf() {
+    public BigDecimal getMonthlyBudget() {
+        return monthlyBudget;
+    }
+
+    public void setMonthlyBudget(BigDecimal monthlyBudget) {
+        this.monthlyBudget = monthlyBudget;
+    }
+
+    public Integer getCategoryLevel() {
+        return categoryLevel;
+    }
+
+    public void setCategoryLevel(Integer categoryLevel) {
+        this.categoryLevel = categoryLevel;
+    }
+
+    public Boolean getLeaf() {
         return leaf;
     }
 
@@ -85,53 +93,54 @@ public class Category implements CategoryOperation, Serializable {
     }
 
     public CategoryKey getParentKey() {
-		return parentKey;
-	}
+        return parentKey;
+    }
 
-	public void setParentKey(CategoryKey parentKey) {
-		this.parentKey = parentKey;
-	}
+    public void setParentKey(CategoryKey parentKey) {
+        this.parentKey = parentKey;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	public String getUpdateBy() {
-		return updateBy;
-	}
+    public String getUpdateBy() {
+        return updateBy;
+    }
 
-	public void setUpdateBy(String updateBy) {
-		this.updateBy = updateBy;
-	}
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
 
-	public Integer getSeqNo() {
-		return seqNo;
-	}
+    public Integer getSeqNo() {
+        return seqNo;
+    }
 
-	public void setSeqNo(Integer seqNo) {
-		this.seqNo = seqNo;
-	}
+    public void setSeqNo(Integer seqNo) {
+        this.seqNo = seqNo;
+    }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void changeCategoryDesc(String newDesc, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException {
@@ -142,146 +151,149 @@ public class Category implements CategoryOperation, Serializable {
         if (newDesc.trim().length() > 10) {
             throw new CategoryDescTooLongException();
         }
-        
+
         if (null == operator || operator.trim().isEmpty()) {
             throw new NoOperatorException();
         }
 
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("seqNo", this.getSeqNo());
-		param.put("categoryOid", this.getKey().getCategoryOid());
-		param.put("updateBy", operator);
-		param.put("categoryDesc", newDesc);
-		
-		int n = mapper.changeCategoryDesc(param);
-		
-		if (1 != n) {
-			throw new IllegalStateException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setCategoryDesc(newDesc);
-		this.setUpdateBy(operator);
-	}
-	
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("seqNo", this.getSeqNo());
+        param.put("categoryOid", this.getKey().getCategoryOid());
+        param.put("updateBy", operator);
+        param.put("categoryDesc", newDesc);
+
+        int n = mapper.changeCategoryDesc(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setCategoryDesc(newDesc);
+        this.setUpdateBy(operator);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public Category addChild(String desc, BigDecimal budget, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
             CategoryBudgetEmptyException, CategoryBudgetInvalidException, NewffmsSystemException {
 
-	    if (null == desc || desc.trim().isEmpty()) {
+        if (null == desc || desc.trim().isEmpty()) {
             throw new CategoryDescEmptyException();
         }
 
         if (desc.trim().length() > 10) {
             throw new CategoryDescTooLongException();
         }
-        
+
         if (null == budget) {
             throw new CategoryBudgetEmptyException();
         }
-        
+
         if (budget.compareTo(BigDecimal.ZERO) <= 0) {
             throw new CategoryBudgetInvalidException();
         }
-        
+
         if (null == operator || operator.trim().isEmpty()) {
             throw new NoOperatorException();
         }
-        
+
         if (null == this.getLeaf()) {
             throw new NewffmsSystemException();
         }
-	    
-		if (this.getLeaf()) {
-		    // TODO check if current category has been used already.
-		}
-		
-		Category target = new Category();
-		target.setCategoryDesc(desc);
-		target.setMonthlyBudget(budget);
-		target.setCategoryLevel(this.getCategoryLevel() + 1);
-		target.setLeaf(true);
-		target.setParentKey(new CategoryKey(this.getKey().getCategoryOid()));
-		target.setCreateBy(operator);
-		target.setCreateTime(new Date());
-		
-		mapper.insert(target);
-		target.setSeqNo(1);
-		
-		try {
-		    if (this.getLeaf()) {
-	            this.changeBudget(budget, false, operator);
-	        } else {
-	            this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
-	        }
+
+        if (this.getLeaf()) {
+            // TODO check if current category has been used already.
+        }
+
+        Category target = new Category();
+        target.setCategoryDesc(desc);
+        target.setMonthlyBudget(budget);
+        target.setCategoryLevel(this.getCategoryLevel() + 1);
+        target.setLeaf(true);
+        target.setParentKey(new CategoryKey(this.getKey().getCategoryOid()));
+        target.setCreateBy(operator);
+        target.setCreateTime(new Date());
+
+        mapper.insert(target);
+        target.setSeqNo(1);
+
+        try {
+            if (this.getLeaf()) {
+                this.changeBudget(budget, false, operator);
+            } else {
+                this.changeBudget(this.getMonthlyBudget().add(budget), false, operator);
+            }
         } catch (CategoryKeyEmptyException e) {
             throw new NewffmsSystemException();
         }
-		
-		return target;
-	}
-	
-	@Override
+
+        return target;
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
     public void changeBudget(BigDecimal newBudget, String operator)
             throws CategoryNotLeafException, NoOperatorException, NewffmsSystemException {
-	    if (null == this.getLeaf()) {
+        if (null == this.getLeaf()) {
             throw new NewffmsSystemException();
         }
-	    
-		if (!this.getLeaf()) {
-			throw new CategoryNotLeafException();
-		}
-		
-		if (null == operator || operator.trim().isEmpty()) {
+
+        if (!this.getLeaf()) {
+            throw new CategoryNotLeafException();
+        }
+
+        if (null == operator || operator.trim().isEmpty()) {
             throw new NoOperatorException();
         }
-		
-		try {
+
+        try {
             this.changeBudget(newBudget, null, operator);
         } catch (CategoryKeyEmptyException e) {
             throw new NewffmsSystemException();
         }
-	}
-	
-    protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator) throws CategoryKeyEmptyException, NewffmsSystemException {
-		if (null == newBudget || newBudget.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalArgumentException();
-		}
-		
-		BigDecimal oldBudget = this.getMonthlyBudget();
-		
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("seqNo", this.getSeqNo());
-		param.put("categoryOid", this.getKey().getCategoryOid());
-		param.put("updateBy", operator);
-		param.put("monthlyBudget", newBudget);
-		if (null != leaf) {
-			param.put("leaf", leaf);
-		}
-		
-		int n = mapper.changeBudget(param);
-		
-		if (1 != n) {
-			throw new NewffmsSystemException();
-		}
-		
-		this.setSeqNo(this.getSeqNo() + 1);
-		this.setMonthlyBudget(newBudget);
-		this.setUpdateBy(operator);
-		if (null != leaf) {
-			this.setLeaf(leaf);
-		}
-		
-		if (null != this.getParentKey()) {
-			Category parent = repos.categoryOfId(this.getParentKey());
-			if (null == parent) {
-				throw new IllegalStateException();
-			}
-			
-			BigDecimal changement = newBudget.subtract(oldBudget);
-			parent.changeBudget(changement.add(parent.getMonthlyBudget()), null, operator);
-		}
-	}
+    }
+
+    protected void changeBudget(BigDecimal newBudget, Boolean leaf, String operator)
+            throws CategoryKeyEmptyException, NewffmsSystemException {
+        if (null == newBudget || newBudget.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal oldBudget = this.getMonthlyBudget();
+
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("seqNo", this.getSeqNo());
+        param.put("categoryOid", this.getKey().getCategoryOid());
+        param.put("updateBy", operator);
+        param.put("monthlyBudget", newBudget);
+        if (null != leaf) {
+            param.put("leaf", leaf);
+        }
+
+        int n = mapper.changeBudget(param);
+
+        if (1 != n) {
+            throw new NewffmsSystemException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setMonthlyBudget(newBudget);
+        this.setUpdateBy(operator);
+        if (null != leaf) {
+            this.setLeaf(leaf);
+        }
+
+        if (null != this.getParentKey()) {
+            Category parent = repos.categoryOfId(this.getParentKey());
+            if (null == parent) {
+                throw new IllegalStateException();
+            }
+
+            BigDecimal changement = newBudget.subtract(oldBudget);
+            parent.changeBudget(changement.add(parent.getMonthlyBudget()), null, operator);
+        }
+    }
 
 }

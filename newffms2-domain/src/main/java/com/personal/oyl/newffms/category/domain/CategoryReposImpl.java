@@ -223,4 +223,14 @@ public class CategoryReposImpl implements CategoryRepos {
         return rlt;
     }
 
+    @Override
+    public Map<BigDecimal, Category> allCategoriesById() {
+        List<Category> list = this.allCategories();
+        Map<BigDecimal, Category> rlt = new HashMap<>();
+        for (Category item : list) {
+            rlt.put(item.getKey().getCategoryOid(), item);
+        }
+        return rlt;
+    }
+
 }

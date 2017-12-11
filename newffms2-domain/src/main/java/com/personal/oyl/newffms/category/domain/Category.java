@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -149,6 +150,17 @@ public class Category implements CategoryOperation, Serializable {
 
     public void setSubCategories(List<Category> subCategories) {
         this.subCategories = subCategories;
+    }
+    
+    public List<Category> toFlatList() {
+        List<Category> list = new LinkedList<>();
+        list.add(this);
+        if (null != this.getSubCategories()) {
+            for (Category item : this.getSubCategories()) {
+                list.addAll(item.toFlatList());
+            }
+        }
+        return list;
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)

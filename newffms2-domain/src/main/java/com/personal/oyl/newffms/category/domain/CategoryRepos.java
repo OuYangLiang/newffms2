@@ -1,6 +1,8 @@
 package com.personal.oyl.newffms.category.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
@@ -83,4 +85,11 @@ public interface CategoryRepos {
      * @return 全量类别集合（无排序）
      */
     List<Category> allCategories();
+    
+    /**
+     * 查询所有类别
+     * 
+     * @return 全量类别集合
+     */
+    Map<BigDecimal, Category> allCategoriesById();
 }

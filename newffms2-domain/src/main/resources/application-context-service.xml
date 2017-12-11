@@ -11,4 +11,7 @@
     <bean id="accountService"
         class="com.personal.oyl.newffms.account.domain.AccountServiceImpl" />
         
+    <bean id="reportService"
+        class="com.personal.oyl.newffms.report.ReportService" />
+        
 </beans>

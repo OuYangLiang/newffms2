@@ -1,6 +1,7 @@
 package com.personal.oyl.newffms.report;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +74,51 @@ public class ReportService {
             series.getData().add(innerSeries);
         }
 
+        return rlt;
+    }
+    
+    public HighChartResult queryUserRatioConsumption(Date start, Date end, Set<BigDecimal> excludedRootCategories) {
+        List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
+        List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
+        this.merge(list, pVos);
+        Map<String, BigDecimal> userAmtMapping = new HashMap<>();
+
+        BigDecimal total = BigDecimal.ZERO;
+        if (null != list) {
+            for (CategoryConsumptionVo item : list) {
+                if (item.getCategoryLevel() == 0 && !BigDecimal.valueOf(-1).equals(item.getUserOid())) {
+                    String username = item.getUserName();
+                    BigDecimal itemTotal = item.getTotal();
+                    total = total.add(itemTotal);
+                    if (userAmtMapping.containsKey(username)) {
+                        userAmtMapping.put(username, userAmtMapping.get(username).add(itemTotal));
+                    } else {
+                        userAmtMapping.put(username, itemTotal);
+                    }
+                }
+            }
+        }
+
+        //初始化返回对象
+        HighChartResult rlt = new HighChartResult();
+        List<HightChartSeries> seriesList = new ArrayList<HightChartSeries>();
+        rlt.setSeries(seriesList);
+        
+        HightChartSeries series = new HightChartSeries();
+        series.setName("消费比");
+        series.setType("pie");
+        series.setData(new ArrayList<HightChartSeries>());
+        seriesList.add(series);
+        
+        for (Map.Entry<String, BigDecimal> entry : userAmtMapping.entrySet() ) {
+            HightChartSeries innerSeries = new HightChartSeries();
+            innerSeries.setName(entry.getKey());
+            innerSeries.setType("pie");
+            innerSeries.setY(entry.getValue().divide(total, 4, RoundingMode.HALF_UP));
+            
+            series.getData().add(innerSeries);
+        }
+        
         return rlt;
     }
 

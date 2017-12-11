@@ -51,7 +51,7 @@
           </div>
 
           <div class="box-body">
-            <div id="container3"></div>
+            <div id="chartForUserRatioConsumption"></div>
           </div>
         </div>
       </div>
@@ -153,11 +153,41 @@
               series : []
           }
       };
+      
+      var options4UserRatioConsumption = {
+          title: {
+              text: 'title'
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: false,
+                  showInLegend: true,
+                  //cursor: 'pointer',
+                  dataLabels: {
+                      enabled: true,
+                      format: '<b>{point.name}</b>: {point.percentage:.2f} %',
+                  }
+              }
+          },
+          series: [],
+          drilldown: {
+              series:[]
+          }
+      };
 
-      var refresh = function(data) {
+      var refreshUserAmtConsumption = function(data) {
           options4UserAmtConsumption.series = data.series;
           options4UserAmtConsumption.title.text = data.title;
           $('#chartForUserAmtConsumption').highcharts(options4UserAmtConsumption);
+      };
+
+      var refreshUserRatioConsumption = function(data) {
+          options4UserRatioConsumption.series = data.series;
+          options4UserRatioConsumption.title.text = data.title;
+          $('#chartForUserRatioConsumption').highcharts(options4UserRatioConsumption);
       };
 
       mode = "monthly";
@@ -187,7 +217,17 @@
               type : "POST",
               async : true,
               success : function(data) {
-                  refresh(data);
+                  refreshUserAmtConsumption(data);
+              }
+          });
+
+          $.ajax({
+              cache : false,
+              url : '<c:url value="/report/queryUserRatioConsumption" />' + queryStr,
+              type : "POST",
+              async : true,
+              success : function(data) {
+                  refreshUserRatioConsumption(data);
               }
           });
       };

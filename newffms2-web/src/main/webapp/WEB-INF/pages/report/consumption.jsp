@@ -63,7 +63,7 @@
           </div>
 
           <div class="box-body">
-            <div id="container2"></div>
+            <div id="chartForCategoryRatioConsumption"></div>
           </div>
         </div>
       </div>
@@ -177,6 +177,27 @@
               series:[]
           }
       };
+      
+      var options4CategoryRatioConsumption = {
+          title: {
+              text: 'title'
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: false,
+                  showInLegend: true,
+                  dataLabels: {
+                      enabled: true,
+                      format: '<b>{point.name}</b>: {point.percentage:.2f} %',
+                  }
+              }
+          },
+          series: [],
+          drilldown: {series:[]}
+      };
 
       var refreshUserAmtConsumption = function(data) {
           options4UserAmtConsumption.series = data.series;
@@ -189,7 +210,15 @@
           options4UserRatioConsumption.title.text = data.title;
           $('#chartForUserRatioConsumption').highcharts(options4UserRatioConsumption);
       };
-
+      
+      var refreshCategoryRatioConsumption = function(data) {
+          options4CategoryRatioConsumption.series = data.series;
+          options4CategoryRatioConsumption.drilldown = {};
+          options4CategoryRatioConsumption.drilldown.series = data.drilldown;
+          options4CategoryRatioConsumption.title.text = data.title;
+          $('#chartForCategoryRatioConsumption').highcharts(options4CategoryRatioConsumption);
+      };
+      
       mode = "monthly";
       selectYear = parseInt(moment().format("YYYY"));
       selectMonth = parseInt(moment().format("MM"));
@@ -228,6 +257,16 @@
               async : true,
               success : function(data) {
                   refreshUserRatioConsumption(data);
+              }
+          });
+          
+          $.ajax({
+              cache : false,
+              url : '<c:url value="/report/queryCategoryRatioConsumption" />' + queryStr,
+              type : "POST",
+              async : true,
+              success : function(data) {
+                  refreshCategoryRatioConsumption(data);
               }
           });
       };

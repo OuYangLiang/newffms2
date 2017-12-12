@@ -124,6 +124,45 @@ public class ReportController {
         return result;
     }
     
+    @RequestMapping("/queryCategoryRatioConsumption")
+    @ResponseBody
+    public HighChartResult queryCategoryRatioConsumption(
+                @RequestParam(value = "mode", required = false) String mode,
+                @RequestParam(value = "year", required = false) Integer year,
+                @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "excludeCategories", required = false) String excludeCategories) throws Exception {
+        
+        Date startParam = null;
+        Date endParam   = null;
+        String title    = null;
+        
+        if ("monthly".equals(mode)) {
+            startParam = DateUtil.getInstance().getFirstTimeOfMonth(year, month);
+            endParam = DateUtil.getInstance().getLastTimeOfMonth(year, month);
+            title = year + "年" + month + "月";
+        } else if ("annually".equals(mode)) {
+            title = Integer.toString(year) + "年";
+            startParam = DateUtil.getInstance().getFirstTimeOfYear(title);
+            endParam = DateUtil.getInstance().getLastTimeOfYear(title);
+        } else {
+            throw new Exception("不可识别的参数mode: " + mode);
+        }
+        
+        HighChartResult result = null;
+        if (null == excludeCategories) {
+            result = reportService.querycategoryRatioConsumption(startParam, endParam, null);
+        } else {
+            String[] excludeCategoryOidStrs = excludeCategories.split("\\|");
+            Set<BigDecimal> excludeCategoryOids = new HashSet<>();
+            for (String excludeCategoryOidStr : excludeCategoryOidStrs) {
+                excludeCategoryOids.add(new BigDecimal(excludeCategoryOidStr));
+            }
+            result = reportService.querycategoryRatioConsumption(startParam, endParam, excludeCategoryOids);
+        }
+        result.setTitle(title);
+        return result;
+    }
+    
     
     /*@RequestMapping("/consumptionDataSource")
     @ResponseBody

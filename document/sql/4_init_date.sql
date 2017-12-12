@@ -71,6 +71,7 @@ INSERT INTO OPERATION_URL(OPN_OID, OPN_URL) VALUES(9, '/report/consumption');
 INSERT INTO OPERATION_URL(OPN_OID, OPN_URL) VALUES(9, '/report/consumptionDataSource');
 INSERT INTO OPERATION_URL(OPN_OID, OPN_URL) VALUES(9, '/report/queryUserAmtConsumption');
 INSERT INTO OPERATION_URL(OPN_OID, OPN_URL) VALUES(9, '/report/queryUserRatioConsumption');
+INSERT INTO OPERATION_URL(OPN_OID, OPN_URL) VALUES(9, '/report/queryCategoryRatioConsumption');
 
 
 INSERT INTO OPERATION(OPN_OID, OPN_DESC, MODULE_OID) VALUES(10, '进入收入模块', 4);

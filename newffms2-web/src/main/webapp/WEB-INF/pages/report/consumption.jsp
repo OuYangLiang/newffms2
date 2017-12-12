@@ -71,11 +71,11 @@
       <div class="col-lg-12">
         <div class="box box-primary">
           <div class="box-header with-border">
-            <h3 class="box-title">类别消费情况</h3>
+            <h3 class="box-title">消费明细报表</h3>
           </div>
 
           <div class="box-body">
-            <div id="container"></div>
+            <div id="chartForDetailConsumption"></div>
           </div>
         </div>
       </div>
@@ -198,6 +198,41 @@
           series: [],
           drilldown: {series:[]}
       };
+      
+      var options4DetailConsumption = {
+          chart: {
+              type: "column"
+          },
+          title: {
+              text: 'Title'
+          },
+          xAxis: {
+              type:'category'
+          },
+          tooltip: {
+              "pointFormat": "{series.name}: <b>{point.y:,.2f}</b>"
+          },
+          yAxis: {
+              title: {
+                  text: ""
+              }
+          },
+          plotOptions: {
+              series: {
+                  borderWidth: 0,
+                  dataLabels: {
+                      enabled: false,
+                      "format": "{point.y:,.2f}"
+                  }
+              }
+          },
+          dataLabels: {
+              "enabled": true,
+              "format": "<b>{point.name}</b>: {point.y:,.2f}"
+          },
+          series: [],
+          drilldown: {series:[]}
+      };
 
       var refreshUserAmtConsumption = function(data) {
           options4UserAmtConsumption.series = data.series;
@@ -217,6 +252,14 @@
           options4CategoryRatioConsumption.drilldown.series = data.drilldown;
           options4CategoryRatioConsumption.title.text = data.title;
           $('#chartForCategoryRatioConsumption').highcharts(options4CategoryRatioConsumption);
+      };
+      
+      var refreshDetailConsumption = function(data) {
+          options4DetailConsumption.series = data.series;
+          options4DetailConsumption.drilldown = {};
+          options4DetailConsumption.drilldown.series = data.drilldown;
+          options4DetailConsumption.title.text = data.title;
+          $('#chartForDetailConsumption').highcharts(options4DetailConsumption);
       };
       
       mode = "monthly";
@@ -267,6 +310,16 @@
               async : true,
               success : function(data) {
                   refreshCategoryRatioConsumption(data);
+              }
+          });
+          
+          $.ajax({
+              cache : false,
+              url : '<c:url value="/report/queryDetailConsumption" />' + queryStr,
+              type : "POST",
+              async : true,
+              success : function(data) {
+                  refreshDetailConsumption(data);
               }
           });
       };

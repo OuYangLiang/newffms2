@@ -127,6 +127,7 @@ public class ReportService {
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
         Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        List<Category> allCategories = categoryRepos.allCategories();
         
         Map<BigDecimal, BigDecimal> parentCategoryAmtMap = new HashMap<BigDecimal, BigDecimal>();
         for (CategoryConsumptionVo item : list) {
@@ -155,7 +156,6 @@ public class ReportService {
         series.setData(new ArrayList<HightChartSeries>());
         seriesList.add(series);
         
-        List<Category> allCategories = categoryRepos.allCategories();
         for (Category category : allCategories) {
             //处理series
             if (category.getCategoryLevel() == 0) {
@@ -217,6 +217,148 @@ public class ReportService {
             }
         }
         
+        return rlt;
+    }
+    
+    public HighChartResult queryDetailConsumption(Date start, Date end, Set<BigDecimal> excludedRootCategories) {
+        List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
+        List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
+        this.merge(list, pVos);
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        List<Category> allCategories = categoryRepos.allCategories();
+        List<User> allUsers = userRepos.queryAllUser();
+
+        // 初始化返回对象
+        HighChartResult rlt = new HighChartResult();
+        List<HightChartSeries> seriesList = new ArrayList<HightChartSeries>();
+        List<HightChartSeries> drilldownList = new ArrayList<HightChartSeries>();
+        rlt.setSeries(seriesList);
+        rlt.setDrilldown(drilldownList);
+
+        // 处理series
+        HightChartSeries series = new HightChartSeries();
+        series.setName("全部");
+        series.setData(new ArrayList<HightChartSeries>());
+        for (Category category : allCategories) {
+            if (category.getCategoryLevel() == 0) {
+                CategoryConsumptionVo categoryConsumption = categoryConsumptionsMap
+                        .get(category.getKey().getCategoryOid() + "_-1");
+                HightChartSeries innerSeries = new HightChartSeries();
+                innerSeries.setName(categoryConsumption.getCategoryDesc());
+                innerSeries.setY(categoryConsumption.getTotal());
+                innerSeries.setDrilldown(category.getKey().getCategoryOid() + "_-1");
+
+                series.getData().add(innerSeries);
+            }
+        }
+        seriesList.add(series);
+
+        for (User user : allUsers) {
+            series = new HightChartSeries();
+            series.setName(user.getUserName());
+            series.setData(new ArrayList<HightChartSeries>());
+
+            for (Category category : allCategories) {
+                if (category.getCategoryLevel() == 0) {
+                    CategoryConsumptionVo categoryConsumption = categoryConsumptionsMap
+                            .get(category.getKey().getCategoryOid() + "_" + user.getKey().getUserOid());
+                    HightChartSeries innerSeries = new HightChartSeries();
+                    innerSeries.setName(categoryConsumption.getCategoryDesc());
+                    innerSeries.setY(categoryConsumption.getTotal());
+                    innerSeries.setDrilldown(category.getKey().getCategoryOid() + "_" + user.getKey().getUserOid());
+
+                    series.getData().add(innerSeries);
+                }
+            }
+            seriesList.add(series);
+        }
+
+        /*
+         * if (!excludeBudget) { series = new HightChartSeries();
+         * series.setName("预算"); series.setType("spline"); series.setData(new
+         * ArrayList<HightChartSeries>()); for (Category category :
+         * allCategories) { if (category.getCategoryLevel() == 0) {
+         * HightChartSeries innerSeries = new HightChartSeries();
+         * innerSeries.setName(category.getCategoryDesc());
+         * innerSeries.setY(category.getMonthlyBudget());
+         * innerSeries.setDrilldown(category.getCategoryOid().toString());
+         * 
+         * series.getData().add(innerSeries); } } seriesList.add(series); }
+         */
+
+        // 处理drilldown
+        for (Category category : allCategories) {
+            if (category.getLeaf()) {
+                continue;
+            }
+
+            /*
+             * if (!excludeBudget) { series = new HightChartSeries();
+             * series.setType("spline");
+             * series.setId(category.getCategoryOid().toString());
+             * series.setName("预算"); series.setData(new
+             * ArrayList<HightChartSeries>());
+             * 
+             * for (Category inner : allCategories) { if
+             * (category.getCategoryOid().equals(inner.getParentOid())) {
+             * HightChartSeries innerSeries = new HightChartSeries();
+             * innerSeries.setType("spline");
+             * innerSeries.setName(inner.getCategoryDesc());
+             * innerSeries.setY(inner.getMonthlyBudget()); if
+             * (!inner.getIsLeaf()) {
+             * innerSeries.setDrilldown(inner.getCategoryOid().toString()); }
+             * 
+             * series.getData().add(innerSeries); } } drilldownList.add(series);
+             * }
+             */
+
+            // 先处理所有人的情况
+            series = new HightChartSeries();
+            series.setId(category.getKey().getCategoryOid() + "_-1");
+            series.setName(category.getCategoryDesc());
+            series.setData(new ArrayList<HightChartSeries>());
+
+            for (CategoryConsumptionVo item : list) {
+                if (category.getKey().getCategoryOid().equals(item.getParentOid())
+                        && BigDecimal.valueOf(-1).equals(item.getUserOid())) {
+                    HightChartSeries innerSeries = new HightChartSeries();
+                    innerSeries.setName(item.getCategoryDesc());
+                    innerSeries.setY(item.getTotal());
+                    if (!item.getIsLeaf()) {
+                        innerSeries.setDrilldown(item.getCategoryOid() + "_-1");
+                    }
+
+                    series.getData().add(innerSeries);
+                }
+            }
+
+            drilldownList.add(series);
+
+            for (User user : allUsers) {
+                // 再处理每个人的情况
+                series = new HightChartSeries();
+                series.setId(category.getKey().getCategoryOid() + "_" + user.getKey().getUserOid());
+                series.setName(user.getUserName());
+                series.setData(new ArrayList<HightChartSeries>());
+
+                for (CategoryConsumptionVo item : list) {
+                    if (category.getKey().getCategoryOid().equals(item.getParentOid())
+                            && user.getKey().getUserOid().equals(item.getUserOid())) {
+                        HightChartSeries innerSeries = new HightChartSeries();
+                        innerSeries.setName(item.getCategoryDesc());
+                        innerSeries.setY(item.getTotal());
+                        if (!item.getIsLeaf()) {
+                            innerSeries.setDrilldown(item.getCategoryOid() + "_" + user.getKey().getUserOid());
+                        }
+
+                        series.getData().add(innerSeries);
+                    }
+                }
+
+                drilldownList.add(series);
+            }
+        }
+
         return rlt;
     }
 

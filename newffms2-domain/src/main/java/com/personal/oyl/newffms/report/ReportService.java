@@ -19,6 +19,7 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionRepos;
 import com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo;
 import com.personal.oyl.newffms.incoming.domain.Incoming;
 import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
+import com.personal.oyl.newffms.incoming.domain.IncomingType;
 import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserRepos;
 
@@ -31,6 +32,49 @@ public class ReportService {
     private UserRepos userRepos;
     @Autowired
     private IncomingRepos incomingRepos;
+    
+    public HighChartResult queryTotalIncomingByType(Date start, Date end) {
+        List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
+        BigDecimal total = BigDecimal.ZERO;
+        Map<IncomingType, BigDecimal> typeAmt = IncomingType.initAmtMap();
+        
+        if (null != list) {
+            for (Incoming item : list) {
+                if (!item.getConfirmed()) {
+                    continue;
+                }
+
+                IncomingType key = item.getIncomingType();
+                BigDecimal amt = item.getAmount();
+                total = total.add(amt);
+                typeAmt.put(key, typeAmt.get(key).add(amt));
+            }
+        }
+
+        HighChartResult rlt = new HighChartResult();
+        rlt.setSeries(new ArrayList<HightChartSeries>());
+
+        HightChartSeries series = new HightChartSeries();
+        series.setName("分类收入情况");
+        series.setType("column");
+        series.setData(new ArrayList<HightChartSeries>());
+        rlt.getSeries().add(series);
+
+        series = new HightChartSeries();
+        series.setName("总收入");
+        series.setY(total);
+        rlt.getSeries().get(0).getData().add(series);
+
+        for (Map.Entry<IncomingType, BigDecimal> entry : typeAmt.entrySet()) {
+            series = new HightChartSeries();
+            series.setName(entry.getKey().getDesc());
+            series.setY(entry.getValue());
+
+            rlt.getSeries().get(0).getData().add(series);
+        }
+
+        return rlt;
+    }
     
     public HighChartResult queryTotalIncoming(Date start, Date end) {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
@@ -60,7 +104,7 @@ public class ReportService {
         rlt.setSeries(new ArrayList<HightChartSeries>());
 
         HightChartSeries series = new HightChartSeries();
-        series.setName("收入");
+        series.setName("各人收入情况");
         series.setType("column");
         series.setData(new ArrayList<HightChartSeries>());
         rlt.getSeries().add(series);

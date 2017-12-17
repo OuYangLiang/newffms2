@@ -24,36 +24,24 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-6">
         <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">总收入情况</h3>
-          </div>
-
           <div class="box-body">
             <div id="chartForTotalIncoming"></div>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-12">
+      <div class="col-lg-6">
         <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">成员收入情况</h3>
-          </div>
-
           <div class="box-body">
-            <div id="container"></div>
+            <div id="chartForTotalIncomingByType"></div>
           </div>
         </div>
       </div>
 
       <div class="col-lg-12">
         <div class="box box-primary">
-          <div class="box-header with-border">
-            <h3 class="box-title">分类收入情况</h3>
-          </div>
-
           <div class="box-body">
             <div id="container2"></div>
           </div>
@@ -105,6 +93,41 @@
           series: [],
           drilldown: {series:[]}
       };
+      
+      var options4TotalIncomingByType = {
+              chart: {
+                  type: "column"
+              },
+              title: {
+                  text: 'Title'
+              },
+              xAxis: {
+                  type:'category'
+              },
+              tooltip: {
+                  "pointFormat": "{series.name}: <b>{point.y:,.2f}</b>"
+              },
+              yAxis: {
+                  title: {
+                      text: ""
+                  }
+              },
+              plotOptions: {
+                  series: {
+                      borderWidth: 0,
+                      dataLabels: {
+                          enabled: false,
+                          "format": "{point.y:,.2f}"
+                      }
+                  }
+              },
+              dataLabels: {
+                  "enabled": true,
+                  "format": "<b>{point.name}</b>: {point.y:,.2f}"
+              },
+              series: [],
+              drilldown: {series:[]}
+          };
   	
       var selectYear = parseInt(moment().format("YYYY")); 
   	
@@ -112,6 +135,12 @@
           options4TotalIncoming.series = data.series;
           options4TotalIncoming.title.text = data.title;
           $('#chartForTotalIncoming').highcharts(options4TotalIncoming);
+      };
+      
+      var refreshTotalIncomingByType = function(data) {
+          options4TotalIncomingByType.series = data.series;
+          options4TotalIncomingByType.title.text = data.title;
+          $('#chartForTotalIncomingByType').highcharts(options4TotalIncomingByType);
       };
       
       doQuery = function() {
@@ -123,6 +152,16 @@
               async: true,
               success: function(data) {
                   refreshTotalIncoming(data);
+              }
+          });
+          
+          $.ajax({
+              cache: false,
+              url: '<c:url value="/report/queryTotalIncomingByType" />' + queryStr,
+              type: "POST",
+              async: true,
+              success: function(data) {
+                  refreshTotalIncomingByType(data);
               }
           });
       };

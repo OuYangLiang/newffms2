@@ -2,7 +2,6 @@ package com.personal.oyl.newffms.web.report;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -66,7 +65,17 @@ public class ReportController {
         Date startParam = DateUtil.getInstance().getFirstTimeOfYear(year);
         Date endParam = DateUtil.getInstance().getLastTimeOfYear(year);
         HighChartResult rlt = reportService.queryTotalIncoming(startParam, endParam);
-        rlt.setTitle(year + "年收入情况");
+        rlt.setTitle(year + "年各人收入汇总");
+        return rlt;
+    }
+    
+    @RequestMapping("/queryTotalIncomingByType")
+    @ResponseBody
+    public HighChartResult queryTotalIncomingByType(@RequestParam("year") String year) {
+        Date startParam = DateUtil.getInstance().getFirstTimeOfYear(year);
+        Date endParam = DateUtil.getInstance().getLastTimeOfYear(year);
+        HighChartResult rlt = reportService.queryTotalIncomingByType(startParam, endParam);
+        rlt.setTitle(year + "年分类别收入汇总");
         return rlt;
     }
 

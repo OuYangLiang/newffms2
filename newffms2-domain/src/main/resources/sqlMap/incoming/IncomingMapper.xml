@@ -136,4 +136,17 @@
             </if>
             LIMIT #{start}, #{sizePerPage}
     </select>
+    
+    <select id="selectByDateRange" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT <include refid="Base_Column_List" />
+        FROM INCOMING
+        <where>
+            <if test="from != null">
+              INCOMING_DATE >= #{from,jdbcType=TIMESTAMP}
+            </if>
+            <if test="to != null">
+              AND INCOMING_DATE <![CDATA[<=]]> #{to,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
 </mapper>

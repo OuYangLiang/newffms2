@@ -1,5 +1,6 @@
 package com.personal.oyl.newffms.incoming.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
@@ -72,4 +73,13 @@ public interface IncomingRepos {
      * @return 收入分页信息
      */
     Tuple<Integer, List<Incoming>> queryIncomings(IncomingCondition condition, PaginationParameter param);
+    
+    /**
+     * 根据日期范围查询收入
+     * 
+     * @param from 起始日期
+     * @param to 截止日期
+     * @return 收入实体集合
+     */
+    List<Incoming> queryIncomingsByDateRange(Date from, Date to);
 }

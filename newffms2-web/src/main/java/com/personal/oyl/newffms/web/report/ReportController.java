@@ -1,6 +1,8 @@
 package com.personal.oyl.newffms.web.report;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +48,28 @@ public class ReportController {
         return "/report/consumption";
     }
     
+    @RequestMapping("/incoming")
+    public String incoming(Model model) throws SQLException {
+        String[] years = new String[10];
+        for (int i = 0; i < 10; i++) {
+            years[i] = Integer.toString(2010 + i);
+        }
+
+        model.addAttribute("years", years);
+        model.addAttribute("curYear", DateUtil.getInstance().getYear(new Date()));
+        return "/report/incoming";
+    }
+    
+    @RequestMapping("/queryTotalIncoming")
+    @ResponseBody
+    public HighChartResult queryTotalIncoming(@RequestParam("year") String year) {
+        Date startParam = DateUtil.getInstance().getFirstTimeOfYear(year);
+        Date endParam = DateUtil.getInstance().getLastTimeOfYear(year);
+        HighChartResult rlt = reportService.queryTotalIncoming(startParam, endParam);
+        rlt.setTitle(year + "年收入情况");
+        return rlt;
+    }
+
     @RequestMapping("/queryUserAmtConsumption")
     @ResponseBody
     public HighChartResult queryUserAmtConsumption(

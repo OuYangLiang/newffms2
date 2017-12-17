@@ -20,4 +20,6 @@ public interface IncomingMapper {
     int getCountOfSummary(Map<String, Object> param);
 
     List<Incoming> getListOfSummary(Map<String, Object> param);
+    
+    List<Incoming> selectByDateRange(Map<String, Object> param);
 }

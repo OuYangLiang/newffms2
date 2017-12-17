@@ -17,6 +17,8 @@ import com.personal.oyl.newffms.category.domain.Category;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionRepos;
 import com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo;
+import com.personal.oyl.newffms.incoming.domain.Incoming;
+import com.personal.oyl.newffms.incoming.domain.IncomingRepos;
 import com.personal.oyl.newffms.user.domain.User;
 import com.personal.oyl.newffms.user.domain.UserRepos;
 
@@ -27,6 +29,63 @@ public class ReportService {
     private CategoryRepos categoryRepos;
     @Autowired
     private UserRepos userRepos;
+    @Autowired
+    private IncomingRepos incomingRepos;
+    
+    public HighChartResult queryTotalIncoming(Date start, Date end) {
+        List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
+        List<User> users = userRepos.queryAllUser();
+
+        BigDecimal total = BigDecimal.ZERO;
+        Map<BigDecimal, BigDecimal> userAmt = new HashMap<>();
+        if (null != list) {
+            for (Incoming item : list) {
+                if (!item.getConfirmed()) {
+                    continue;
+                }
+
+                BigDecimal key = item.getOwnerOid();
+                BigDecimal amt = item.getAmount();
+                total = total.add(amt);
+
+                if (userAmt.containsKey(key)) {
+                    userAmt.put(key, userAmt.get(key).add(amt));
+                } else {
+                    userAmt.put(key, amt);
+                }
+            }
+        }
+
+        HighChartResult rlt = new HighChartResult();
+        rlt.setSeries(new ArrayList<HightChartSeries>());
+
+        HightChartSeries series = new HightChartSeries();
+        series.setName("收入");
+        series.setType("column");
+        series.setData(new ArrayList<HightChartSeries>());
+        rlt.getSeries().add(series);
+
+        series = new HightChartSeries();
+        series.setName("总收入");
+        series.setY(total);
+        rlt.getSeries().get(0).getData().add(series);
+
+        for (User user : users) {
+            BigDecimal key = user.getKey().getUserOid();
+            BigDecimal amt = userAmt.get(key);
+            if (null == amt) {
+                amt = BigDecimal.ZERO;
+            }
+
+            series = new HightChartSeries();
+            series.setName(user.getUserName());
+            series.setY(amt);
+
+            rlt.getSeries().get(0).getData().add(series);
+        }
+
+        return rlt;
+    }
 
     public HighChartResult queryUserAmtConsumption(Date start, Date end, Set<BigDecimal> excludedRootCategories) {
         List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);

@@ -185,4 +185,18 @@ public class IncomingReposImpl implements IncomingRepos {
         return new Tuple<Integer, List<Incoming>>(count, list);
     }
 
+    @Override
+    public List<Incoming> queryIncomingsByDateRange(Date from, Date to) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("from", from);
+        param.put("to", to);
+        
+        List<Incoming> list = mapper.selectByDateRange(param);
+        if (null != list && !list.isEmpty()) {
+            return list;
+        }
+        
+        return null;
+    }
+
 }

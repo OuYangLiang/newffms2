@@ -43,7 +43,7 @@
       <div class="col-lg-12">
         <div class="box box-primary">
           <div class="box-body">
-            <div id="container2"></div>
+            <div id="chartForTotalIncomingByMonth"></div>
           </div>
         </div>
       </div>
@@ -53,8 +53,8 @@
   <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
-  <script src="<c:url value='/js/highcharts.src.js' />" charset="utf-8"></script>
-  <script src="<c:url value='/js/drilldown.src.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/js/highcharts.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/js/drilldown.js' />" charset="utf-8"></script>
   <script src="<c:url value='/js/moment.js' />" charset="utf-8"></script>
 
   <script>
@@ -128,6 +128,40 @@
               series: [],
               drilldown: {series:[]}
           };
+      
+      var options4TotalIncomingByMonth = {
+          chart: {
+              type: "spline"
+          },
+          title: {
+              text: 'Title'
+          },
+          xAxis: {
+              type:'category'
+          },
+          tooltip: {
+              "pointFormat": "{series.name}: <b>¥{point.y:,.2f}</b>"
+          },
+          yAxis: {
+              title: {
+                  text: ""
+              }
+          },
+          plotOptions: {
+              series: {
+                  borderWidth: 0,
+                  dataLabels: {
+                      enabled: false,
+                      "format": "{point.y:,.2f}"
+                  }
+              }
+          },
+          dataLabels: {
+              "enabled": true,
+              "format": "<b>{point.name}</b>:¥{point.y:,.2f}"
+          },
+          series: []
+      };
   	
       var selectYear = parseInt(moment().format("YYYY")); 
   	
@@ -141,6 +175,12 @@
           options4TotalIncomingByType.series = data.series;
           options4TotalIncomingByType.title.text = data.title;
           $('#chartForTotalIncomingByType').highcharts(options4TotalIncomingByType);
+      };
+      
+      var refreshTotalIncomingByMonth = function(data) {
+          options4TotalIncomingByMonth.series = data.series;
+          options4TotalIncomingByMonth.title.text = data.title;
+          $('#chartForTotalIncomingByMonth').highcharts(options4TotalIncomingByMonth);
       };
       
       doQuery = function() {
@@ -162,6 +202,16 @@
               async: true,
               success: function(data) {
                   refreshTotalIncomingByType(data);
+              }
+          });
+          
+          $.ajax({
+              cache: false,
+              url: '<c:url value="/report/queryIncomingByMonth" />' + queryStr,
+              type: "POST",
+              async: true,
+              success: function(data) {
+                  refreshTotalIncomingByMonth(data);
               }
           });
       };

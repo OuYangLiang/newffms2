@@ -3,6 +3,7 @@ package com.personal.oyl.newffms.report;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +33,51 @@ public class ReportService {
     private UserRepos userRepos;
     @Autowired
     private IncomingRepos incomingRepos;
+    
+    private String getMonth(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return Integer.toString(c.get(Calendar.MONTH) + 1);
+    }
+    
+    public HighChartResult queryIncomingByMonth(Date start, Date end) {
+        List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
+        List<User> users = userRepos.queryAllUser();
+        
+        Map<String, BigDecimal> map = new HashMap<>();
+        for (Incoming item : list) {
+            String month = this.getMonth(item.getIncomingDate());
+            String key = item.getOwnerOid() + "-" + month;
+            BigDecimal amt = item.getAmount();
+            
+            if (map.containsKey(key)) {
+                map.put(key, map.get(key).add(amt));
+            } else {
+                map.put(key, amt);
+            }
+        }
+
+        HighChartResult rlt = new HighChartResult();
+        rlt.setSeries(new ArrayList<HightChartSeries>());
+        
+        for (User user : users) {
+            HightChartSeries series = new HightChartSeries();
+            series.setName(user.getUserName());
+            //series.setType("column");
+            series.setData(new ArrayList<HightChartSeries>());
+            rlt.getSeries().add(series);
+            
+            for (int i = 1; i <= 12; i++) {
+                HightChartSeries inner = new HightChartSeries();
+                inner.setName(i + "月");
+                BigDecimal y = map.get(user.getKey().getUserOid() + "-" + i);
+                inner.setY(null == y ? BigDecimal.ZERO : y);
+                series.getData().add(inner);
+            }
+        }
+
+        return rlt;
+    }
     
     public HighChartResult queryTotalIncomingByType(Date start, Date end) {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);

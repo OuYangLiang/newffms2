@@ -152,6 +152,13 @@ public class DateUtil {
         return c.getTime();
     }
     
+    public String getMonth(Date date) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        
+        return Integer.toString(c.get(Calendar.MONTH) + 1);
+    }
+    
     public static void main(String[] args) {
         System.out.println(DateUtil.getInstance().getFirstTimeOfCurrentMonth());
         System.out.println(DateUtil.getInstance().getFirstTimeOfLastMonth());

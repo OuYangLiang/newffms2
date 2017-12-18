@@ -59,6 +59,16 @@ public class ReportController {
         return "/report/incoming";
     }
     
+    @RequestMapping("/queryIncomingByMonth")
+    @ResponseBody
+    public HighChartResult queryIncomingByMonth(@RequestParam("year") String year) {
+        Date startParam = DateUtil.getInstance().getFirstTimeOfYear(year);
+        Date endParam = DateUtil.getInstance().getLastTimeOfYear(year);
+        HighChartResult rlt = reportService.queryIncomingByMonth(startParam, endParam);
+        rlt.setTitle(year + "年收入明细");
+        return rlt;
+    }
+    
     @RequestMapping("/queryTotalIncoming")
     @ResponseBody
     public HighChartResult queryTotalIncoming(@RequestParam("year") String year) {

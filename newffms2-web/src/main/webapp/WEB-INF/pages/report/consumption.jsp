@@ -111,8 +111,8 @@
   <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
-  <script src="<c:url value='/js/highcharts.src.js' />" charset="utf-8"></script>
-  <script src="<c:url value='/js/drilldown.src.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/js/highcharts.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/js/drilldown.js' />" charset="utf-8"></script>
   <script src="<c:url value='/js/moment.js' />" charset="utf-8"></script>
 
   <script>

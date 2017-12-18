@@ -5,7 +5,7 @@
 CREATE TABLE ACCOUNT(
     ACNT_OID                    BIGINT          NOT NULL         AUTO_INCREMENT,
     ACNT_DESC                   NVARCHAR(30)    NOT NULL,
-    ACNT_TYPE                   ENUM('Cash', 'Bankcard', 'Creditcard', 'Alipay', 'Epp', 'Accumulation', 'MedicalInsurance', 'Other' )  NOT NULL,
+    ACNT_TYPE                   ENUM('Cash', 'Bankcard', 'Creditcard', 'Alipay', 'Epp', 'Accumulation', 'MedicalInsurance', 'Fund', 'Other' )  NOT NULL,
     BALANCE                     NUMERIC(15,2)   NOT NULL,
     QUOTA                       NUMERIC(15,2),
     DEBT                        NUMERIC(15,2),

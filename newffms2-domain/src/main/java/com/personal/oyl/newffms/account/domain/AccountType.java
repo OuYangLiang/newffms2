@@ -11,6 +11,7 @@ public enum AccountType {
     Epp("易付宝"),
     MedicalInsurance("医保"),
     Accumulation("公积金"),
+    Fund("基金"),
     Other("其它");
     
     private String desc;

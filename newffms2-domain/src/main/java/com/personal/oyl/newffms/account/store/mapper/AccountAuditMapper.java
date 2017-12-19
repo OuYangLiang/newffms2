@@ -1,5 +1,6 @@
 package com.personal.oyl.newffms.account.store.mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -16,4 +17,6 @@ public interface AccountAuditMapper {
     int getCountOfSummary(AccountKey key);
 
     List<AccountAuditVo> getListOfSummary(Map<String, Object> param);
+    
+    int invalidate(BigDecimal adtOid);
 }

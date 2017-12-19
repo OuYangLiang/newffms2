@@ -35,6 +35,12 @@
             </if>
         </where>
     </select>
+    
+    <update id="invalidate" parameterType="java.math.BigDecimal">
+        UPDATE ACCOUNT_AUDIT
+        SET ADT_TYPE = 'Rollback'
+        WHERE ADT_OID = #{adtOid,jdbcType=DECIMAL}
+    </update>
 
     <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo" >
         DELETE FROM ACCOUNT_AUDIT
@@ -84,7 +90,7 @@
         SELECT <include refid="Base_Column_List" />
             FROM ACCOUNT_AUDIT
         WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL}
-        ORDER BY ADT_TIME DESC
+        ORDER BY ADT_OID DESC
         LIMIT #{start}, #{sizePerPage}
     </select>
 </mapper>

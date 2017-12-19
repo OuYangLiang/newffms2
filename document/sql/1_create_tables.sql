@@ -98,7 +98,7 @@ CREATE TABLE ACCOUNT_CONSUMPTION(
 CREATE TABLE ACCOUNT_AUDIT(
     ADT_OID                     BIGINT          NOT NULL        AUTO_INCREMENT,
     ADT_DESC                    NVARCHAR(512)   NOT NULL,
-    ADT_TYPE                    ENUM('Add', 'Subtract', 'Change', 'Trans_add', 'Trans_subtract')   NOT NULL,
+    ADT_TYPE                    ENUM('Add', 'Subtract', 'Change', 'Trans_add', 'Trans_subtract', 'Rollback')   NOT NULL,
     ADT_TIME                    DATETIME        NOT NULL,
     BALANCE_AFTER               NUMERIC(10,2)   NOT NULL,
     CHG_AMT                     NUMERIC(10,2)   NOT NULL,

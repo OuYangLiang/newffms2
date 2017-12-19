@@ -103,6 +103,7 @@
                 <tr>
                   <th data-field="adtDesc">描述</th>
                   <th data-field="adtType">类型</th>
+                  <th data-formatter="balanceBefore" data-align="right">变化前余额</th>
                   <th data-field="chgAmt" data-align="right" data-formatter="amtFormatter">变化量</th>
                   <th data-field="balanceAfter" data-align="right" data-formatter="amtFormatter">变化后余额</th>
                   <th data-field="adtTime">发生时间</th>
@@ -135,6 +136,10 @@
 
   function amtFormatter(value) {
       return "¥" + parseFloat(value).toFixed(2);
+  }
+
+  function balanceBefore(val, row, idx) {
+      return amtFormatter(row.balanceAfter - row.chgAmt);
   }
 
   $( document ).ready(function() {

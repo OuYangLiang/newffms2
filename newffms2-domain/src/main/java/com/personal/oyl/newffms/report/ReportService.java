@@ -307,7 +307,7 @@ public class ReportService {
         
         for (Category category : allCategories) {
             //处理series
-            if (category.getCategoryLevel() == 0) {
+            if (category.getCategoryLevel() == Category.CATEGORY_ROOT_LEVEL) {
                 BigDecimal usedAmt = categoryConsumptionsMap.get(category.getKey().getCategoryOid() + "_-1").getTotal();
                 if (usedAmt.compareTo(BigDecimal.ZERO) == 0) {
                     //金额为0的不需要在pie图呈现。
@@ -389,7 +389,7 @@ public class ReportService {
         series.setName("全部");
         series.setData(new ArrayList<HightChartSeries>());
         for (Category category : allCategories) {
-            if (category.getCategoryLevel() == 0) {
+            if (category.getCategoryLevel() == Category.CATEGORY_ROOT_LEVEL) {
                 CategoryConsumptionVo categoryConsumption = categoryConsumptionsMap
                         .get(category.getKey().getCategoryOid() + "_-1");
                 HightChartSeries innerSeries = new HightChartSeries();
@@ -408,7 +408,7 @@ public class ReportService {
             series.setData(new ArrayList<HightChartSeries>());
 
             for (Category category : allCategories) {
-                if (category.getCategoryLevel() == 0) {
+                if (category.getCategoryLevel() == Category.CATEGORY_ROOT_LEVEL) {
                     CategoryConsumptionVo categoryConsumption = categoryConsumptionsMap
                             .get(category.getKey().getCategoryOid() + "_" + user.getKey().getUserOid());
                     HightChartSeries innerSeries = new HightChartSeries();

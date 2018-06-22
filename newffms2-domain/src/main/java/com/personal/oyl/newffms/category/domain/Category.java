@@ -26,6 +26,7 @@ import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorExceptio
 
 public class Category implements CategoryOperation, Serializable {
     private static final long serialVersionUID = 1L;
+    public static final Integer CATEGORY_ROOT_LEVEL = 0;
 
     private CategoryKey key;
     private String categoryDesc;

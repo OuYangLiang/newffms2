@@ -66,7 +66,7 @@ public class CategoryReposImpl implements CategoryRepos {
         }
 
         if (null == bean.getCategoryLevel()) {
-            bean.setCategoryLevel(Integer.valueOf(1));
+            bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
         }
 
         if (!bean.getLeaf() || bean.getCategoryLevel() != 0) {
@@ -170,7 +170,7 @@ public class CategoryReposImpl implements CategoryRepos {
     @Override
     public List<Category> rootCategories() {
         Category param = new Category();
-        param.setCategoryLevel(Integer.valueOf(0));
+        param.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 
         List<Category> list = mapper.select(param);
 

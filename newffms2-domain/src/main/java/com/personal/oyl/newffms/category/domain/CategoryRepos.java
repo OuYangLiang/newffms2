@@ -3,6 +3,7 @@ package com.personal.oyl.newffms.category.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryBudgetInvalidException;
@@ -92,4 +93,12 @@ public interface CategoryRepos {
      * @return 全量类别集合
      */
     Map<BigDecimal, Category> allCategoriesById();
+    
+    /**
+     * 查询所有类别
+     * 
+     * @param excludedRootCategories 指定需要排除的根类别
+     * @return 全量类别集合（无排序）
+     */
+    List<Category> allCategories(Set<BigDecimal> excludedRootCategories);
 }

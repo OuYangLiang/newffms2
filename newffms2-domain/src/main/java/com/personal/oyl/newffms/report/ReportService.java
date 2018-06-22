@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -282,7 +280,7 @@ public class ReportService {
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
         Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
-        List<Category> allCategories = categoryRepos.allCategories();
+        List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         
         Map<BigDecimal, BigDecimal> parentCategoryAmtMap = new HashMap<BigDecimal, BigDecimal>();
         for (CategoryConsumptionVo item : list) {
@@ -380,7 +378,7 @@ public class ReportService {
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
         Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
-        List<Category> allCategories = categoryRepos.allCategories();
+        List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         List<User> allUsers = userRepos.queryAllUser();
 
         // 初始化返回对象
@@ -548,25 +546,10 @@ public class ReportService {
         }
         return rlt;
     }
-
+    
     private List<CategoryConsumptionVo> initCategoryConsumption(Set<BigDecimal> excludedRootCategories) {
         List<User> allUsers = userRepos.queryAllUser();
-        List<Category> excludedCategories = categoryRepos.rootCategoriesCascaded();
-        if (null != excludedRootCategories) {
-            Iterator<Category> it = excludedCategories.iterator();
-            while (it.hasNext()) {
-                Category item = it.next();
-                if (excludedRootCategories.contains(item.getKey().getCategoryOid())) {
-                    it.remove();
-                }
-            }
-        }
-
-        List<Category> categoryList = new LinkedList<>();
-        for (Category item : excludedCategories) {
-            categoryList.addAll(item.toFlatList());
-        }
-
+        List<Category> categoryList = categoryRepos.allCategories(excludedRootCategories);
         List<CategoryConsumptionVo> rlt = new ArrayList<>();
         for (Category category : categoryList) {
             rlt.add(CategoryConsumptionVo.init(category));

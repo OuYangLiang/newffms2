@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -231,6 +234,27 @@ public class CategoryReposImpl implements CategoryRepos {
             rlt.put(item.getKey().getCategoryOid(), item);
         }
         return rlt;
+    }
+    
+    @Override
+    public List<Category> allCategories(Set<BigDecimal> excludedRootCategories) {
+        List<Category> excludedCategories = this.rootCategoriesCascaded();
+        if (null != excludedRootCategories) {
+            Iterator<Category> it = excludedCategories.iterator();
+            while (it.hasNext()) {
+                Category item = it.next();
+                if (excludedRootCategories.contains(item.getKey().getCategoryOid())) {
+                    it.remove();
+                }
+            }
+        }
+
+        List<Category> categoryList = new LinkedList<>();
+        for (Category item : excludedCategories) {
+            categoryList.addAll(item.toFlatList());
+        }
+        
+        return categoryList;
     }
 
 }

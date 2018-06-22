@@ -45,15 +45,17 @@ public class ReportService {
         List<User> users = userRepos.queryAllUser();
         
         Map<String, BigDecimal> map = new HashMap<>();
-        for (Incoming item : list) {
-            String month = this.getMonth(item.getIncomingDate());
-            String key = item.getOwnerOid() + "-" + month;
-            BigDecimal amt = item.getAmount();
-            
-            if (map.containsKey(key)) {
-                map.put(key, map.get(key).add(amt));
-            } else {
-                map.put(key, amt);
+        if (null != list) {
+            for (Incoming item : list) {
+                String month = this.getMonth(item.getIncomingDate());
+                String key = item.getOwnerOid() + "-" + month;
+                BigDecimal amt = item.getAmount();
+                
+                if (map.containsKey(key)) {
+                    map.put(key, map.get(key).add(amt));
+                } else {
+                    map.put(key, amt);
+                }
             }
         }
 
@@ -248,26 +250,30 @@ public class ReportService {
             }
         }
 
-        //初始化返回对象
+        // 初始化返回对象
         HighChartResult rlt = new HighChartResult();
         List<HightChartSeries> seriesList = new ArrayList<HightChartSeries>();
         rlt.setSeries(seriesList);
-        
+
         HightChartSeries series = new HightChartSeries();
         series.setName("消费比");
         series.setType("pie");
         series.setData(new ArrayList<HightChartSeries>());
         seriesList.add(series);
-        
-        for (Map.Entry<String, BigDecimal> entry : userAmtMapping.entrySet() ) {
+
+        for (Map.Entry<String, BigDecimal> entry : userAmtMapping.entrySet()) {
             HightChartSeries innerSeries = new HightChartSeries();
             innerSeries.setName(entry.getKey());
             innerSeries.setType("pie");
-            innerSeries.setY(entry.getValue().divide(total, 4, RoundingMode.HALF_UP));
-            
+            if (BigDecimal.ZERO.compareTo(total) == 0) {
+                innerSeries.setY(BigDecimal.ZERO);
+            } else {
+                innerSeries.setY(entry.getValue().divide(total, 4, RoundingMode.HALF_UP));
+            }
+
             series.getData().add(innerSeries);
         }
-        
+
         return rlt;
     }
     

@@ -107,8 +107,8 @@ public class ReportController {
             title = year + "年" + month + "月";
         } else if ("annually".equals(mode)) {
             title = Integer.toString(year) + "年";
-            startParam = DateUtil.getInstance().getFirstTimeOfYear(title);
-            endParam = DateUtil.getInstance().getLastTimeOfYear(title);
+            startParam = DateUtil.getInstance().getFirstTimeOfYear(Integer.toString(year));
+            endParam = DateUtil.getInstance().getLastTimeOfYear(Integer.toString(year));
         } else {
             throw new Exception("不可识别的参数mode: " + mode);
         }
@@ -146,8 +146,8 @@ public class ReportController {
             title = year + "年" + month + "月";
         } else if ("annually".equals(mode)) {
             title = Integer.toString(year) + "年";
-            startParam = DateUtil.getInstance().getFirstTimeOfYear(title);
-            endParam = DateUtil.getInstance().getLastTimeOfYear(title);
+            startParam = DateUtil.getInstance().getFirstTimeOfYear(Integer.toString(year));
+            endParam = DateUtil.getInstance().getLastTimeOfYear(Integer.toString(year));
         } else {
             throw new Exception("不可识别的参数mode: " + mode);
         }
@@ -185,8 +185,8 @@ public class ReportController {
             title = year + "年" + month + "月";
         } else if ("annually".equals(mode)) {
             title = Integer.toString(year) + "年";
-            startParam = DateUtil.getInstance().getFirstTimeOfYear(title);
-            endParam = DateUtil.getInstance().getLastTimeOfYear(title);
+            startParam = DateUtil.getInstance().getFirstTimeOfYear(Integer.toString(year));
+            endParam = DateUtil.getInstance().getLastTimeOfYear(Integer.toString(year));
         } else {
             throw new Exception("不可识别的参数mode: " + mode);
         }
@@ -224,8 +224,8 @@ public class ReportController {
             title = year + "年" + month + "月";
         } else if ("annually".equals(mode)) {
             title = Integer.toString(year) + "年";
-            startParam = DateUtil.getInstance().getFirstTimeOfYear(title);
-            endParam = DateUtil.getInstance().getLastTimeOfYear(title);
+            startParam = DateUtil.getInstance().getFirstTimeOfYear(Integer.toString(year));
+            endParam = DateUtil.getInstance().getLastTimeOfYear(Integer.toString(year));
         } else {
             throw new Exception("不可识别的参数mode: " + mode);
         }

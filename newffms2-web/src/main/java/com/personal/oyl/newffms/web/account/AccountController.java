@@ -234,15 +234,16 @@ public class AccountController extends BaseController {
                     BigDecimal totalBal = BigDecimal.ZERO;
                     BigDecimal totalDept= BigDecimal.ZERO;
                     Integer numOfAccounts = 0;
-                    
+
                     if (null != accounts) {
                         numOfAccounts = accounts.size();
                         for (Account account : accounts) {
                             acnts.add(new AccountDto(account));
                             if (AccountType.Creditcard.equals(account.getAcntType())) {
                                 totalDept = totalDept.add(account.getDebt());
+                            } else {
+                                totalBal = totalBal.add(account.getBalance());
                             }
-                            totalBal = totalBal.add(account.getBalance());
                         }
                     }
                     

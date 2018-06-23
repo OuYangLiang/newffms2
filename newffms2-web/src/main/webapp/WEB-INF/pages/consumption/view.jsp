@@ -229,7 +229,7 @@
               async: true,
               success: function(data) {
                   if (data.success) {
-                      window.location.href = "<c:url value='/consumption/view' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+                      window.location.href = "<c:url value='/consumption/summary?keepSp=Y'/>";
                   } else {
                       $('#alertMsg').text(data.errCode + ", " + data.errMsg);
                       $('#alertModal').modal('show')
@@ -254,7 +254,7 @@
               async: true,
               success: function(data) {
                   if (data.success) {
-                      window.location.href = "<c:url value='/consumption/view' />?cpnOid=<c:out value='${cpnForm.cpnOid}' />";
+                      window.location.href = "<c:url value='/consumption/summary?keepSp=Y'/>";
                   } else {
                       $('#alertMsg').text(data.errCode + ", " + data.errMsg);
                       $('#alertModal').modal('show')

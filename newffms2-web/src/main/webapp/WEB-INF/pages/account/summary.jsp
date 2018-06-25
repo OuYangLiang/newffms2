@@ -30,7 +30,7 @@
 
     <div class="row">
       <div class="col-xs-10 col-xs-offset-1">
-        <div id="myCarousel" class="carousel slide" wrap="false">
+        <div id="myCarousel" class="carousel slide" wrap="false" data-interval="false">
           <ol class="carousel-indicators" id="carouselSlide">
           </ol>
           <div class="carousel-inner" id="carouselInner"></div>

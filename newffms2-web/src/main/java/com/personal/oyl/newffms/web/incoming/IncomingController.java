@@ -307,7 +307,7 @@ public class IncomingController extends BaseController {
         Incoming oldObj = incomingRepos.incomingOfId(newObj.getKey());
         newObj.setSeqNo(oldObj.getSeqNo());
         try {
-            newObj.updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
+            newObj.getProxy().updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());
@@ -333,7 +333,7 @@ public class IncomingController extends BaseController {
             throws NoOperatorException, IncomingAlreadyConfirmedException, NewffmsSystemException,
             IncomingKeyEmptyException {
         Incoming incoming = incomingRepos.incomingOfId(new IncomingKey(incomingOid));
-        incoming.confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        incoming.getProxy().confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
         return "redirect:/incoming/summary?keepSp=Y";
     }
 
@@ -342,7 +342,7 @@ public class IncomingController extends BaseController {
             throws IncomingKeyEmptyException, NoOperatorException, IncomingNotConfirmedException,
             NewffmsSystemException {
         Incoming incoming = incomingRepos.incomingOfId(new IncomingKey(incomingOid));
-        incoming.unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+        incoming.getProxy().unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
         return "redirect:/incoming/summary?keepSp=Y";
     }
 }

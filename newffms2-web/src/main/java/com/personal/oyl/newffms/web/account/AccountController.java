@@ -184,7 +184,7 @@ public class AccountController extends BaseController {
         Account target = acntRepos.accountOfId(new AccountKey(form.getTarget().getAcntOid()));
 
         try {
-            source.transfer(target, form.getPayment(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+            source.getProxy().transfer(target, form.getPayment(), SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());

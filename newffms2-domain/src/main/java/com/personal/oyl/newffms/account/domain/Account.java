@@ -160,6 +160,7 @@ public class Account implements AccountOperation, Serializable {
         this.seqNo = seqNo;
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void changeDesc(String newDesc, String operator)
             throws AccountDescEmptyException, NoOperatorException, AccountDescTooLongException {

@@ -189,13 +189,13 @@ public class AccountTest extends TestCase {
         bean2.setOwner(new UserKey(BigDecimal.ONE));
         repos.add(bean2, "喻敏");
 
-        List<Account> accounts = repos.accountsOfUser(new UserKey(BigDecimal.ONE));
+        List<Account> accounts = repos.accountsOfUser(new UserKey(BigDecimal.ONE), false);
         assertNotNull(accounts);
         assertEquals(2, accounts.size());
         assertEquals("招商银行1", accounts.get(0).getAcntDesc());
         assertEquals("招商银行2", accounts.get(1).getAcntDesc());
 
-        accounts = repos.accountsOfUser(new UserKey(BigDecimal.valueOf(2)));
+        accounts = repos.accountsOfUser(new UserKey(BigDecimal.valueOf(2)), false);
         assertNull(accounts);
 
         bean.transfer(bean2, BigDecimal.valueOf(30), "欧");

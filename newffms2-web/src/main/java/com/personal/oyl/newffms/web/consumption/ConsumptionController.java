@@ -401,7 +401,7 @@ public class ConsumptionController extends BaseController {
         form.setSeqNo(oldObj.getSeqNo());
         
         try {
-            form.toConsumption().updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
+            form.toConsumption().getProxy().updateAll(SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());
@@ -428,7 +428,7 @@ public class ConsumptionController extends BaseController {
             throws ConsumptionKeyEmptyException {
         Consumption cpn = consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid));
         try {
-            cpn.confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+            cpn.getProxy().confirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             return new AjaxResult<>(false, e.getErrorCode(), e.getMessage());
         }
@@ -442,7 +442,7 @@ public class ConsumptionController extends BaseController {
             throws ConsumptionKeyEmptyException {
         Consumption cpn = consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid));
         try {
-            cpn.unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
+            cpn.getProxy().unconfirm(SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             return new AjaxResult<>(false, e.getErrorCode(), e.getMessage());
         }

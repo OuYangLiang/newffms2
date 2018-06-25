@@ -9,6 +9,7 @@
         <result column="QUOTA" property="quota" jdbcType="DECIMAL" />
         <result column="DEBT" property="debt" jdbcType="DECIMAL" />
         <result column="OWNER_OID" property="owner.userOid" jdbcType="DECIMAL" />
+        <result column="DISABLED" property="disabled" jdbcType="BIT" />
         <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
         <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
@@ -18,7 +19,7 @@
 
 
 	<sql id="Base_Column_List">
-        ACNT_OID, ACNT_DESC, ACNT_TYPE, BALANCE, QUOTA, DEBT, OWNER_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
+        ACNT_OID, ACNT_DESC, ACNT_TYPE, BALANCE, QUOTA, DEBT, OWNER_OID, DISABLED, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
 	</sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.Account">
@@ -33,6 +34,9 @@
             </if>
             <if test="owner != null">
                 AND OWNER_OID = #{owner.userOid,jdbcType=DECIMAL}
+            </if>
+            <if test="disabled != null">
+                AND DISABLED = #{disabled,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -53,6 +57,7 @@
             BALANCE,
             QUOTA, DEBT,
             OWNER_OID,
+            DISABLED,
             CREATE_TIME,
             CREATE_BY)
         VALUES (
@@ -62,6 +67,7 @@
             #{quota,jdbcType=DECIMAL},
             #{debt,jdbcType=DECIMAL},
             #{owner.userOid,jdbcType=DECIMAL},
+            #{disabled,jdbcType=BIT},
             #{createTime,jdbcType=TIMESTAMP}, 
             #{createBy,jdbcType=NVARCHAR})
     </insert>

@@ -34,6 +34,7 @@ public class Account implements AccountOperation, Serializable {
     private BigDecimal quota;
     private BigDecimal debt;
     private UserKey owner;
+    private Boolean disabled;
 
     private Date createTime;
     private Date updateTime;
@@ -109,6 +110,14 @@ public class Account implements AccountOperation, Serializable {
 
     public void setOwner(UserKey owner) {
         this.owner = owner;
+    }
+
+    public Boolean getDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 
     public Date getCreateTime() {

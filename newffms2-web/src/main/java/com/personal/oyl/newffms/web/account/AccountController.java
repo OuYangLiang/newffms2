@@ -224,7 +224,7 @@ public class AccountController extends BaseController {
         if (null != users) {
             for (User user : users) {
                 try {
-                    List<Account> accounts = acntRepos.accountsOfUser(user.getKey());
+                    List<Account> accounts = acntRepos.accountsOfUser(user.getKey(), false);
                     List<AccountDto> acnts = new LinkedList<>();
                     
                     Map<String, Object> item = new HashMap<>();
@@ -267,7 +267,7 @@ public class AccountController extends BaseController {
         List<User> userList = userRepos.queryAllUser();
         if (null != userList) {
             for (User user : userList) {
-                List<Account> acntList = acntRepos.accountsOfUser(user.getKey());
+                List<Account> acntList = acntRepos.accountsOfUser(user.getKey(), false);
                 if (null != acntList) {
                     for (Account acnt : acntList) {
                         AccountDto item = new AccountDto(acnt);

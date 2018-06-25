@@ -182,26 +182,16 @@ public class AccountReposImpl implements AccountRepos {
     }
 
     @Override
-    public List<Account> accountsOfUser(UserKey key) throws AccountOwnerEmptyException {
+    public List<Account> accountsOfUser(UserKey key, Boolean disabled) throws AccountOwnerEmptyException {
         if (null == key || null == key.getUserOid()) {
             throw new AccountOwnerEmptyException();
         }
 
         Account param = new Account();
         param.setOwner(key);
+        param.setDisabled(disabled);
 
         List<Account> list = mapper.select(param);
-
-        if (null == list || list.isEmpty()) {
-            return null;
-        }
-
-        return list;
-    }
-
-    @Override
-    public List<Account> queryAll() {
-        List<Account> list = mapper.select(null);
 
         if (null == list || list.isEmpty()) {
             return null;

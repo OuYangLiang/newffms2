@@ -241,7 +241,8 @@ public class AccountController extends BaseController {
                             acnts.add(new AccountDto(account));
                             if (AccountType.Creditcard.equals(account.getAcntType())) {
                                 totalDept = totalDept.add(account.getDebt());
-                            } else {
+                            } else if (!AccountType.MedicalInsurance.equals(account.getAcntType())
+                                    && !AccountType.Accumulation.equals(account.getAcntType())) {
                                 totalBal = totalBal.add(account.getBalance());
                             }
                         }

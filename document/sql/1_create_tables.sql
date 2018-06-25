@@ -10,6 +10,7 @@ CREATE TABLE ACCOUNT(
     QUOTA                       NUMERIC(15,2),
     DEBT                        NUMERIC(15,2),
     OWNER_OID                   BIGINT          NOT NULL,
+    DISABLED                    BIT             NOT NULL,
     CREATE_TIME                 DATETIME        NOT NULL,
     UPDATE_TIME                 DATETIME,
     CREATE_BY                   NVARCHAR(6)     NOT NULL,

@@ -1,6 +1,7 @@
 package com.personal.oyl.newffms.consumption.domain;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -230,6 +231,8 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
         List<ConsumptionItemPaginationVo> list = null;
         if (count > 0) {
             list = itemMapper.getListOfSummary(querys);
+        } else {
+            list = Collections.emptyList();
         }
 
         return new Tuple<Integer, List<ConsumptionItemPaginationVo>>(count, list);

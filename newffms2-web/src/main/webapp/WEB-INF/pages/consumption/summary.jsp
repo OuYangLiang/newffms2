@@ -33,7 +33,7 @@
                     <div class='input-group date' id='cpnTimeFromInputPicker'>
                       <input id="cpnTimeFromInput" class="form-control" value="<fmt:formatDate value='${SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM.cpnTimeFrom }' pattern="yyyy-MM-dd" />" type="text" name="cpnTimeFrom" />
                       <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
+                        <span class="fa fa-calendar-o"></span>
                       </span>
                     </div>
                   </div>
@@ -43,7 +43,7 @@
                     <div class='input-group date' id='cpnTimeToInputPicker'>
                       <input id="cpnTimeToInput" class="form-control" value="<fmt:formatDate value='${SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM.cpnTimeTo }' pattern="yyyy-MM-dd" />" type="text" name="cpnTimeTo" />
                       <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
+                        <span class="fa fa-calendar-o"></span>
                       </span>
                     </div>
                   </div>
@@ -78,7 +78,7 @@
                       <input id="categoryDescInput" class="form-control" value="<c:out value='${SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM.categoryDesc }' />" readonly="true" type="text" name="categoryDesc" data-toggle="modal" data-target="#categorySelectModal" />
                       <input value="<c:out value='${SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM.categoryOid }' />" type="hidden" name="categoryOid" id="categoryOid" />
                       <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar" id="btn-clear-category"></span>
+                        <span class="fa fa-trash-o" id="btn-clear-category"></span>
                       </span>
                     </div>
                   </div>

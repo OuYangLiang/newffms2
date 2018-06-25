@@ -217,14 +217,14 @@ public class AccountController extends BaseController {
 
     @RequestMapping("/alaxGetAllAccountsByUser")
     @ResponseBody
-    public List<Map<String, Object>> alaxGetAllAccountsByUser() {
-        List<Map<String, Object>> rlt = new LinkedList<>();
+    public List<Map<String, Object>> alaxGetAllAccountsByUser(@RequestParam(value = "includeDisabled", required = true) boolean includeDisabled) {
         
+        List<Map<String, Object>> rlt = new LinkedList<>();
         List<User> users = userRepos.queryAllUser();
         if (null != users) {
             for (User user : users) {
                 try {
-                    List<Account> accounts = acntRepos.accountsOfUser(user.getKey(), false);
+                    List<Account> accounts = acntRepos.accountsOfUser(user.getKey(), includeDisabled);
                     List<AccountDto> acnts = new LinkedList<>();
                     
                     Map<String, Object> item = new HashMap<>();

@@ -91,11 +91,14 @@ public class AccountReposImpl implements AccountRepos {
 
         if (bean.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new AccountBalanceInvalidException();
-
         }
 
         if (null == bean.getOwner()) {
             throw new AccountOwnerEmptyException();
+        }
+        
+        if (null == bean.getDisabled()) {
+            bean.setDisabled(false);
         }
 
         if (AccountType.Creditcard.equals(bean.getAcntType())) {
@@ -182,14 +185,16 @@ public class AccountReposImpl implements AccountRepos {
     }
 
     @Override
-    public List<Account> accountsOfUser(UserKey key, Boolean disabled) throws AccountOwnerEmptyException {
+    public List<Account> accountsOfUser(UserKey key, boolean includesDisabled) throws AccountOwnerEmptyException {
         if (null == key || null == key.getUserOid()) {
             throw new AccountOwnerEmptyException();
         }
 
         Account param = new Account();
         param.setOwner(key);
-        param.setDisabled(disabled);
+        if (!includesDisabled) {
+            param.setDisabled(false);
+        }
 
         List<Account> list = mapper.select(param);
 

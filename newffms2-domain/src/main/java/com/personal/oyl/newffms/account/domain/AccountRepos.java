@@ -47,11 +47,11 @@ public interface AccountRepos {
      * 根据用户标识查询账户集合
      * 
      * @param key 用户标识
-     * @param disabled 禁用标识
+     * @param includesDisabled 是否包含禁用账户标识
      * @return 账户实体集合
      * @throws AccountOwnerEmptyException
      */
-    List<Account> accountsOfUser(UserKey key, Boolean disabled) throws AccountOwnerEmptyException;
+    List<Account> accountsOfUser(UserKey key, boolean includesDisabled) throws AccountOwnerEmptyException;
     
     /**
      * 创建新的账户

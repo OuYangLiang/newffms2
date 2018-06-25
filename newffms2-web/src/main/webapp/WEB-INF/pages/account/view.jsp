@@ -41,6 +41,13 @@
           <div class="box-body">
             <div class="form-horizontal">
               <div class="form-group">
+                <label for="userNameInput" class="col-xs-4 col-sm-2 control-label">账户状态</label>
+                <div class="col-xs-7 col-sm-4">
+                  <div class="form-control" style="BORDER-STYLE: none;" id="userNameInput"><c:if test="${acntForm.disabled }">已禁用</c:if><c:if test="${!acntForm.disabled }">生效</c:if></div>
+                </div>
+              </div>
+            
+              <div class="form-group">
                 <label for="userNameInput" class="col-xs-4 col-sm-2 control-label">账户所有人</label>
                 <div class="col-xs-7 col-sm-4">
                   <div class="form-control" style="BORDER-STYLE: none;" id="userNameInput">${acntForm.owner.userName }</div>

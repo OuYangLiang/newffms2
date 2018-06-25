@@ -18,6 +18,7 @@ public class AccountDto implements Serializable {
     private BigDecimal quota;
     private BigDecimal debt;
     private UserDto owner;
+    private boolean disabled;
     private AccountDto target;
     private BigDecimal payment;
 
@@ -32,6 +33,7 @@ public class AccountDto implements Serializable {
         this.setBalance(acnt.getBalance());
         this.setQuota(acnt.getQuota());
         this.setDebt(acnt.getDebt());
+        this.setDisabled(acnt.getDisabled());
 
         UserDto owner = new UserDto();
         owner.setUserOid(acnt.getOwner().getUserOid());
@@ -47,6 +49,7 @@ public class AccountDto implements Serializable {
         acnt.setQuota(this.getQuota());
         acnt.setDebt(this.getDebt());
         acnt.setOwner(new UserKey(this.getOwner().getUserOid()));
+        acnt.setDisabled(disabled);
         return acnt;
     }
 
@@ -109,6 +112,14 @@ public class AccountDto implements Serializable {
 
     public void setOwner(UserDto owner) {
         this.owner = owner;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     public AccountDto getTarget() {

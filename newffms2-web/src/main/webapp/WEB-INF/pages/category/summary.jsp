@@ -62,12 +62,12 @@
   function levelFormatter(val) {
   	return (val+1);
   }
-	        
+
   function statusFormatter(value) {
       if (value) {
-          return "<span class=\"glyphicon glyphicon-ok-circle\"></span>";
+          return "<span class=\"label label-success\">叶子节点</span>";
       } else {
-          return "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
+          return "<span class=\"label label-info\">父节点</span>";
       }
   }
 	        

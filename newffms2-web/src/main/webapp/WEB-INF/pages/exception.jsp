@@ -2,20 +2,16 @@
 <%@ include file="/WEB-INF/pages/taglibs-include.jsp"%>
 <!doctype html>
 <html>
-    <body>
-        <div class="content-header ui-widget-header">
-            信息
+<body>
+    <section class="content">
+        <div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-triangle fa-2x" aria-hidden="true"></i><br/>
+            <p><br/>出错啦，请把错误码<strong>[<c:out value="${tickNo }" />]</strong>发送给管理员。</p>
         </div>
-        
-        <div class="contentWrapper">
-            <div class="mainArea">
-                <div class="ui-widget">
-                    <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                        出错啦，请把错误码<strong>[<c:out value="${tickNo }" />]</strong>发送给管理员。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
+    </section>
+    
+    <script src="<c:url value='/js/jquery-1.11.1.min.js' />" charset="utf-8"></script>
+    <script src="<c:url value='/bootstrap-3.3.5-dist/js/bootstrap.min.js' />" charset="utf-8"></script>
+    <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
+</body>
 </html>

@@ -59,20 +59,6 @@
   <script src="<c:url value='/js/common.js' />" charset="utf-8"></script>
 
   <script>
-  function rowStyle(row, index) {
-      var classes = ['active', 'success', 'info', 'warning', 'danger'];
-      if (index % 2 === 0 && index / 2 < classes.length) {
-          return {
-              classes: classes[index / 2]
-          };
-      }
-      return {};
-  }
-
-  function amtFormatter(value) {
-      return "¥" + parseFloat(value).toFixed(2);
-  }
-
   function levelFormatter(val) {
   	return (val+1);
   }

@@ -238,7 +238,7 @@
                   <th data-field="owner.userName">所有人</th>
                   <th data-field="acntTypeDesc">账户类型</th>
                   <th data-field="acntHumanDesc" data-formatter="accountFormatter">描述</th>
-                  <th data-field="balance">可用余额</th>
+                  <th data-field="balance" data-formatter="amtFormatter">可用余额</th>
                 </tr>
               </thead>
             </table>

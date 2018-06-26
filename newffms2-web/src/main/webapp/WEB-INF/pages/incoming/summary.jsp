@@ -127,29 +127,15 @@
   <script src="<c:url value='/bootstrap-table-1.10.1/bootstrap-table.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/bootstrap-table-1.10.1/locale/bootstrap-table-zh-CN.min.js' />" charset="utf-8"></script>
   <script src="<c:url value='/AdminLTE2/js/app.min.js' />" charset="utf-8"></script>
+  <script src="<c:url value='/js/common.js' />" charset="utf-8"></script>
 
   <script>
-  function rowStyle(row, index) {
-      var classes = ['active', 'success', 'info', 'warning', 'danger'];
-      
-      if (index % 2 === 0 && index / 2 < classes.length) {
-          return {
-              classes: classes[index / 2]
-          };
-      }
-      return {};
-  }
-      
   function oprFormatter(val, row, idx) {
       var url = '<c:url value='/incoming/view' />' + '?incomingOid=' + row.incomingOid;
       var href = 'javascript:window.location.href="' + url + '"';
       return "<a href='" + href + "'>查看</a>";
   }
       
-  function amtFormatter(value) {
-      return "¥" + parseFloat(value).toFixed(2);
-  }
-  
   function dateFormatter(value) {
       return value.substr(0, 10);
   }

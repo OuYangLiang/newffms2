@@ -186,25 +186,10 @@
   <script src="<c:url value='/js/common.js' />" charset="utf-8"></script>
 
   <script>
-  function rowStyle(row, index) {
-      var classes = ['active', 'success', 'info', 'warning', 'danger'];
-
-      if (index % 2 === 0 && index / 2 < classes.length) {
-          return {
-              classes: classes[index / 2]
-          };
-      }
-      return {};
-  }
-  
   function oprFormatter(val, row, idx) {
       var url = '<c:url value='/consumption/view' />' + '?cpnOid=' + row.cpnOid;
       var href = 'javascript:window.location.href="' + url + '"';
       return "<a href='" + href + "'>查看</a>";
-  }
-  
-  function amtFormatter(value) {
-      return "¥" + parseFloat(value).toFixed(2);
   }
   
   function dateFormatter(value) {

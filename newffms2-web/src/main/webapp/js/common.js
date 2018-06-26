@@ -28,3 +28,18 @@ function arrRemove(arr,item) {
 			arr.splice(i,1); 
 	}  
 }
+
+function rowStyle(row, index) {
+	var classes = ['success', 'info', 'warning', 'danger'];
+    
+    if (index % 2 === 0) {
+        return {
+            classes: classes[(index % 8) / 2]
+        };
+    }
+    return {};
+}
+
+function amtFormatter(value) {
+    return "¥" + parseFloat(value).toFixed(2);
+}

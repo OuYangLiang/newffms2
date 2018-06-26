@@ -141,11 +141,11 @@
   }
       
   function statusFormatter(value) {
-  	if (value) {
-  		return "<span class=\"glyphicon glyphicon-ok-circle\"></span>";
-  	} else {
-  		return "<span class=\"glyphicon glyphicon-remove-circle\"></span>";
-  	}
+      if (value) {
+          return "<span class=\"label label-success\">已确认</span>";
+      } else {
+          return "<span class=\"label label-warning\">待确认</span>";
+      }
   }
       
   $( document ).ready(function() {

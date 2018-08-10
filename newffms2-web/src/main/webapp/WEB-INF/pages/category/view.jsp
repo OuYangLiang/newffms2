@@ -17,16 +17,16 @@
     <div class="row">
       <div class="col-sm-12">
         <div style="padding-left: 20px; padding-bottom: 20px;">
-          <button type="button" class="btn btn-default" id="btn-back">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-back">
             <i class="glyphicon glyphicon-arrow-left"></i>
           </button>
 
-          <button type="button" class="btn btn-default" id="btn-edit">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-edit">
             <i class="glyphicon glyphicon-edit"></i>
           </button>
 
           <c:if test="${ removable && catForm.leaf }">
-            <button type="button" class="btn btn-default" id="btn-delete" data-toggle="modal" data-target="#deleteModal">
+            <button type="button" class="btn btn-primary btn-flat" id="btn-delete" data-toggle="modal" data-target="#deleteModal">
               <i class="glyphicon glyphicon-remove"></i>
             </button>
           </c:if>

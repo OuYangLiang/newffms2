@@ -16,29 +16,29 @@
     <div class="row">
       <div class="col-sm-12">
         <div style="padding-left: 20px; padding-bottom: 20px;">
-          <button type="button" class="btn btn-default" id="btn-back">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-back">
             <i class="glyphicon glyphicon-arrow-left"></i>
           </button>
 
           <c:if test="${!incomingForm.confirmed }">
-            <button type="button" class="btn btn-default" id="btn-edit">
+            <button type="button" class="btn btn-primary btn-flat" id="btn-edit">
               <i class="glyphicon glyphicon-edit"></i>
             </button>
 
-            <button type="button" class="btn btn-default"
+            <button type="button" class="btn btn-primary btn-flat"
               id="btn-delete" data-toggle="modal"
               data-target="#deleteModal">
               <i class="glyphicon glyphicon-remove"></i>
             </button>
 
-            <button type="button" class="btn btn-default"
+            <button type="button" class="btn btn-primary btn-flat"
               id="btn-confirm">
               <i class="glyphicon glyphicon-ok-circle"></i>
             </button>
           </c:if>
 
           <c:if test="${incomingForm.confirmed }">
-            <button type="button" class="btn btn-default"
+            <button type="button" class="btn btn-primary btn-flat"
               id="btn-rollback">
               <i class="glyphicon glyphicon-remove-circle"></i>
             </button>
@@ -112,8 +112,8 @@
           <div class="container lead">确定要删除吗?</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-danger" id="btn-delete-confirm" data-dismiss="modal">删除</button>
+          <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-danger btn-flat" id="btn-delete-confirm" data-dismiss="modal">删除</button>
         </div>
       </div>
     </div>

@@ -21,11 +21,11 @@
         <div class="box box-primary">
           <div class="box-body">
             <div id="search-toolbar" class="btn-group">
-              <button type="button" class="btn btn-default" id="btn-add">
+              <button type="button" class="btn btn-primary btn-flat" id="btn-add">
                 <i class="glyphicon glyphicon-plus"></i>
               </button>
 
-              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#searchModal">
+              <button type="button" class="btn btn-primary btn-flat" data-toggle="modal" data-target="#searchModal">
                 <i class="glyphicon glyphicon-search"></i>
               </button>
             </div>
@@ -115,8 +115,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-default" id="btn-query" data-dismiss="modal">查询</button>
+          <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary btn-flat" id="btn-query" data-dismiss="modal">查询</button>
         </div>
       </div>
     </div>

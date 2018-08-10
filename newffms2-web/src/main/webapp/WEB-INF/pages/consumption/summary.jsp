@@ -91,7 +91,7 @@
 
                 <div class="row">
                   <div class="col-sm-offset-2 col-sm-3">
-                    <button type="button" class="btn btn-default" id="btn-query">查询</button>
+                    <button type="button" class="btn btn-primary btn-flat" id="btn-query">查询</button>
                   </div>
                 </div>
               </form>
@@ -106,11 +106,11 @@
         <div class="box box-primary">
           <div class="box-body">
             <div id="search-toolbar" class="btn-group">
-              <button type="button" class="btn btn-default" id="btn-add">
+              <button type="button" class="btn btn-primary btn-flat" id="btn-add">
                 <i class="glyphicon glyphicon-plus"></i>
               </button>
 
-              <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#searchCollapse">
+              <button type="button" class="btn btn-primary btn-flat" data-toggle="collapse" data-target="#searchCollapse">
                 <i class="glyphicon glyphicon-search"></i>
               </button>
             </div>

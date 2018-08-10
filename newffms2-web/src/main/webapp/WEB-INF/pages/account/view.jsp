@@ -18,17 +18,17 @@
     <div class="row">
       <div class="col-sm-12">
         <div style="padding-left: 20px; padding-bottom: 20px;">
-          <button type="button" class="btn btn-default" id="btn-back">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-back">
             <i class="glyphicon glyphicon-arrow-left"></i>
           </button>
 
           <c:if test="${acntForm.balance > 0 }">
-            <button type="button" class="btn btn-default" id="btn-transfer">
+            <button type="button" class="btn btn-primary btn-flat" id="btn-transfer">
               <i class="glyphicon glyphicon-transfer"></i>
             </button>
           </c:if>
 
-          <button type="button" class="btn btn-default" id="btn-viewDetail">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-viewDetail">
             <i class="glyphicon glyphicon-list"></i>
           </button>
         </div>

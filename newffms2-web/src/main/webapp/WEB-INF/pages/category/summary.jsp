@@ -21,12 +21,12 @@
           <div class="box-body">
             <div id="search-toolbar" class="btn-group">
               <c:if test="${parentOid != null }">
-                <button type="button" class="btn btn-default" id="btn-back">
+                <button type="button" class="btn btn-primary btn-flat" id="btn-back">
                   <i class="glyphicon glyphicon-arrow-left"></i>
                 </button>
               </c:if>
 
-              <button type="button" class="btn btn-default" id="btn-add">
+              <button type="button" class="btn btn-primary btn-flat" id="btn-add">
                 <i class="glyphicon glyphicon-plus"></i>
               </button>
             </div>

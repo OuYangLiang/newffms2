@@ -14,21 +14,10 @@
 
   <section class="content">
     <div class="row" style="padding-left: 20px; padding-bottom: 20px;">
-      <div class="col-xs-6 col-md-2">
-        <button type="button" class="btn btn-primary btn-block" id="btn-previous">上一月</button>
-      </div>
-
-      <div class="col-xs-6 col-md-2">
-        <button type="button" class="btn btn-primary btn-block" id="btn-next">下一月</button>
-      </div>
-
-      <div class="col-xs-6 col-md-2">
-        <button type="button" class="btn btn-primary btn-block" id="btn-mode-toggle">按年查询</button>
-      </div>
-
-      <div class="col-xs-6 col-md-2">
-        <a class="btn btn-primary btn-block" data-toggle="modal" data-target="#categoryExcludingModal">排除类别</a>
-      </div>
+      <button type="button" class="btn btn-primary btn-flat" id="btn-previous">上一月</button>
+      <button type="button" class="btn btn-primary btn-flat" id="btn-next">下一月</button>
+      <button type="button" class="btn btn-primary btn-flat" id="btn-mode-toggle">按年查询</button>
+      <a class="btn btn-primary btn-flat" data-toggle="modal" data-target="#categoryExcludingModal">排除类别</a>
     </div>
 
     <div class="row">
@@ -102,7 +91,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary btn-flat" data-dismiss="modal">关闭</button>
         </div>
       </div>
     </div>

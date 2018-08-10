@@ -18,11 +18,11 @@
     <div class="row">
       <div class="col-sm-12">
         <div style="padding-left: 20px; padding-bottom: 20px;">
-          <button type="button" class="btn btn-default" id="btn-save">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-save">
             <i class="glyphicon glyphicon-ok"></i>
           </button>
 
-          <button type="button" class="btn btn-default" id="btn-cancel">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-cancel">
             <i class="glyphicon glyphicon-arrow-left"></i>
           </button>
         </div>

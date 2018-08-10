@@ -13,15 +13,15 @@
     <div class="row">
       <div class="col-sm-12">
         <div style="padding-left: 20px; padding-bottom: 20px;">
-          <button type="button" class="btn btn-default" id="btn-add">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-add">
             <i class="glyphicon glyphicon-plus"></i>
           </button>
           
-          <button type="button" class="btn btn-default" id="btn-display-active" style="display:none">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-display-active" style="display:none">
             <i class="fa fa-search-minus"></i>
           </button>
           
-          <button type="button" class="btn btn-default" id="btn-display-all">
+          <button type="button" class="btn btn-primary btn-flat" id="btn-display-all">
             <i class="fa fa-search-plus"></i>
           </button>
         </div>

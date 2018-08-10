@@ -14,13 +14,8 @@
 
   <section class="content">
     <div class="row" style="padding-left: 20px; padding-bottom: 20px;">
-      <div class="col-xs-6 col-md-2">
-        <button type="button" class="btn btn-default btn-block" id="btn-previous">上一年</button>
-      </div>
-
-      <div class="col-xs-6 col-md-2">
-        <button type="button" class="btn btn-default btn-block" id="btn-next">下一年</button>
-      </div>
+      <button type="button" class="btn btn-primary btn-flat" id="btn-previous">上一年</button>
+      <button type="button" class="btn btn-primary btn-flat" id="btn-next">下一年</button>
     </div>
 
     <div class="row">

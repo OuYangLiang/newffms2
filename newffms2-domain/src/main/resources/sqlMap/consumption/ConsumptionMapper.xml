@@ -77,4 +77,13 @@
         WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
     </update>
     
+    <select id="queryConsumptionTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
+        <![CDATA[
+        SELECT SUM(AMOUNT) AS TOTAL
+        FROM CONSUMPTION
+        WHERE CONFIRMED = TRUE
+        AND CPN_TIME >= #{start,jdbcType=TIMESTAMP}
+        AND CPN_TIME <= #{end,jdbcType=TIMESTAMP}
+        ]]>
+  </select>
 </mapper>

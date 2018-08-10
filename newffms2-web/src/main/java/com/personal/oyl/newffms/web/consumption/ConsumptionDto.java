@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.personal.oyl.newffms.common.DateUtil;
 import com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo;
 import com.personal.oyl.newffms.consumption.domain.Consumption;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionKey;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionType;
-import com.personal.oyl.newffms.util.DateUtil;
 import com.personal.oyl.newffms.web.account.AccountDto;
 
 public class ConsumptionDto {

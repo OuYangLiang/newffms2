@@ -30,6 +30,7 @@ import com.personal.oyl.newffms.account.domain.AccountRepos;
 import com.personal.oyl.newffms.category.domain.CategoryException.CategoryKeyEmptyException;
 import com.personal.oyl.newffms.category.domain.CategoryKey;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
+import com.personal.oyl.newffms.common.DateUtil;
 import com.personal.oyl.newffms.common.NewffmsDomainException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.Tuple;
@@ -49,7 +50,6 @@ import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.user.domain.UserRepos;
 import com.personal.oyl.newffms.util.AjaxResult;
 import com.personal.oyl.newffms.util.BootstrapTableJsonRlt;
-import com.personal.oyl.newffms.util.DateUtil;
 import com.personal.oyl.newffms.util.SessionUtil;
 import com.personal.oyl.newffms.web.BaseController;
 import com.personal.oyl.newffms.web.account.AccountDto;
@@ -448,5 +448,14 @@ public class ConsumptionController extends BaseController {
         }
 
         return new AjaxResult<>(true);
+    }
+    
+    @RequestMapping("/monthlyConsumptionTotal")
+    @ResponseBody
+    public AjaxResult<?> monthlyConsumptionTotal()
+            throws ConsumptionKeyEmptyException {
+        BigDecimal total = consumptionRepos.queryMonthlyConsumptionTotal();
+
+        return new AjaxResult<>(true, total);
     }
 }

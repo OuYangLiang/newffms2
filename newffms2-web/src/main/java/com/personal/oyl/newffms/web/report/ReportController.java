@@ -20,7 +20,7 @@ import com.personal.oyl.newffms.category.domain.Category;
 import com.personal.oyl.newffms.category.domain.CategoryRepos;
 import com.personal.oyl.newffms.report.HighChartResult;
 import com.personal.oyl.newffms.report.ReportService;
-import com.personal.oyl.newffms.util.DateUtil;
+import com.personal.oyl.newffms.common.DateUtil;
 import com.personal.oyl.newffms.web.category.CategoryDto;
 
 @Controller

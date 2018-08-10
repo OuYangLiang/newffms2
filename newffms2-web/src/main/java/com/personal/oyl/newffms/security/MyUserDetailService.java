@@ -40,6 +40,7 @@ public class MyUserDetailService implements UserDetailsService {
 
         List<GrantedAuthority> AUTHORITIES = new ArrayList<GrantedAuthority>();
         AUTHORITIES.add(new SimpleGrantedAuthority("/accessDenied"));
+        AUTHORITIES.add(new SimpleGrantedAuthority("/consumption/monthlyConsumptionTotal"));
         AUTHORITIES.add(new SimpleGrantedAuthority("/profile/initEdit"));
         AUTHORITIES.add(new SimpleGrantedAuthority("/profile/confirmEdit"));
         AUTHORITIES.add(new SimpleGrantedAuthority("/profile/saveEdit"));

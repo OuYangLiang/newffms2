@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.personal.oyl.newffms.common.NewffmsDomainException.NewffmsSystemException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.DateUtil;
 import com.personal.oyl.newffms.common.Tuple;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAlreadyConfirmedException;
 import com.personal.oyl.newffms.consumption.domain.ConsumptionException.ConsumptionAmountNotMatchException;
@@ -245,6 +246,16 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
         param.put("end", end);
 
         return itemMapper.queryPersonalConsumption(param);
+    }
+
+    @Override
+    public BigDecimal queryMonthlyConsumptionTotal() {
+        Map<String, Object> param = new HashMap<>();
+        param.put("start", DateUtil.getInstance().getFirstTimeOfCurrentMonth());
+        param.put("end", DateUtil.getInstance().getLastTimeOfCurrentMonth());
+
+        BigDecimal rlt = mapper.queryConsumptionTotal(param);
+        return null == rlt ? BigDecimal.ZERO : rlt;
     }
 
 }

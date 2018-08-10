@@ -1,4 +1,4 @@
-package com.personal.oyl.newffms.util;
+package com.personal.oyl.newffms.common;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

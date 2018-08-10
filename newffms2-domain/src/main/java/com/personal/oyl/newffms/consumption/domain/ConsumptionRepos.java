@@ -1,5 +1,6 @@
 package com.personal.oyl.newffms.consumption.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -92,4 +93,12 @@ public interface ConsumptionRepos {
      * @return 用户消费金额，包括类别明细
      */
     public List<PersonalConsumptionVo> queryPersonalConsumption(Date start, Date end);
+    
+    
+    /**
+     * 查询当月消费总额
+     * 
+     * @return 当月消费总额
+     */
+    public BigDecimal queryMonthlyConsumptionTotal();
 }

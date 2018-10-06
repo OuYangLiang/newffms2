@@ -116,11 +116,11 @@
             <if test="ownerOid != null">
                 AND I.OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
             </if>
-            <if test="sortField == null" >
-                ORDER BY C.CPN_TIME DESC
-            </if>
             <if test="categoryOid != null">
                 AND I.CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL}
+            </if>
+            <if test="sortField == null" >
+                ORDER BY C.CPN_TIME DESC
             </if>
             <if test="sortField != null" >
                 ORDER BY ${sortField} ${sortDir}

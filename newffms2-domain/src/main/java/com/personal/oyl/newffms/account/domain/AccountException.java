@@ -125,4 +125,10 @@ public class AccountException {
         }
     }
     
+    public static class AccountTypeInvalidException extends NewffmsDomainException {
+        public AccountTypeInvalidException() {
+            super("EFFMS121", "账号类型不合法。");
+        }
+    }
+    
 }

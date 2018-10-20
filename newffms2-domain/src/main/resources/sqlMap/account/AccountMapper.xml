@@ -93,4 +93,14 @@
         WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
     </update>
     
+    <update id="increseQuota" parameterType="java.util.Map">
+        UPDATE ACCOUNT SET
+            BALANCE = #{balance,jdbcType=DECIMAL},
+            QUOTA = #{quota,jdbcType=DECIMAL},
+            SEQ_NO = SEQ_NO + 1,
+            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
+            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
+        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+    </update>
+    
 </mapper>

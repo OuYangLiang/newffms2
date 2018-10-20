@@ -16,4 +16,6 @@ public interface AccountMapper {
     int changeAccountDesc(Map<String, Object> param);
 
     int updateBalance(Map<String, Object> param);
+    
+    int increseQuota(Map<String, Object> param);
 }

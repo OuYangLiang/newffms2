@@ -16,10 +16,12 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmpty
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTransferToSelfException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeInvalidException;
 import com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper;
 import com.personal.oyl.newffms.account.store.mapper.AccountMapper;
 import com.personal.oyl.newffms.common.AppContext;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
+import com.personal.oyl.newffms.common.Util;
 import com.personal.oyl.newffms.user.domain.UserKey;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountAmountInvalidException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountBalanceInsufficiencyException;
@@ -386,6 +388,67 @@ public class Account implements AccountOperation, Serializable {
         if (AccountType.Creditcard.equals(this.getAcntType())) {
             this.setDebt(this.debt.subtract(chgAmt));
         }
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Override
+    public void adjustQuota(BigDecimal change, String operator)
+            throws AccountAmountInvalidException, NoOperatorException, AccountTypeInvalidException, AccountBalanceInsufficiencyException {
+        if (null == change || BigDecimal.ZERO.compareTo(change) == 0) {
+            throw new AccountAmountInvalidException();
+        }
+
+        if (null == operator || operator.trim().isEmpty()) {
+            throw new NoOperatorException();
+        }
+        
+        if (!AccountType.Creditcard.equals(this.getAcntType())) {
+            throw new AccountException.AccountTypeInvalidException();
+        }
+        
+        if (this.getBalance().compareTo(change) < 0) {
+            throw new AccountBalanceInsufficiencyException();
+        }
+        
+        Date now = new Date();
+
+        Map<String, Object> param = new HashMap<String, Object>();
+
+        param.put("seqNo", this.getSeqNo());
+        param.put("acntOid", this.getKey().getAcntOid());
+        param.put("updateBy", operator);
+        param.put("updateTime", now);
+        param.put("balance", this.getBalance().add(change));
+        param.put("quota", this.getQuota().add(change));
+        
+        int n = mapper.increseQuota(param);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        AccountAuditVo audit = new AccountAuditVo();
+        audit.setAdtDesc("调整限额，原始限额：" + this.getQuota() + "，现限额：" + param.get("quota"));
+        audit.setAdtTime(now);
+        audit.setAdtType(AccountAuditType.Change);
+        audit.setBalanceAfter(this.getBalance().add(change));
+        audit.setChgAmt(change);
+        audit.setAcntOid(this.getKey().getAcntOid());
+        audit.setBatchNum(Util.getInstance().generateBatchNum());
+        audit.setCreateBy(operator);
+        audit.setCreateTime(now);
+
+        n = auditMapper.insert(audit);
+
+        if (1 != n) {
+            throw new IllegalStateException();
+        }
+
+        this.setSeqNo(this.getSeqNo() + 1);
+        this.setUpdateBy(operator);
+        this.setUpdateTime(now);
+        this.setBalance(this.getBalance().add(change));
+        this.setQuota(this.getQuota().add(change));
     }
 
 }

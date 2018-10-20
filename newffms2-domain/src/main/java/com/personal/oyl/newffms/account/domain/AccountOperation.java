@@ -9,6 +9,7 @@ import com.personal.oyl.newffms.account.domain.AccountException.AccountDescEmpty
 import com.personal.oyl.newffms.account.domain.AccountException.AccountDescTooLongException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountOperationDescException;
 import com.personal.oyl.newffms.account.domain.AccountException.AccountTransferToSelfException;
+import com.personal.oyl.newffms.account.domain.AccountException.AccountTypeInvalidException;
 import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorException;
 
 public interface AccountOperation {
@@ -68,4 +69,17 @@ public interface AccountOperation {
      */
     public void transfer(Account target, BigDecimal amount, String operator)
             throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, NoOperatorException, AccountTransferToSelfException;
+    
+    /**
+     * 调整信用卡限额
+     * 
+     * @param change 变化金额
+     * @param operator 操作人
+     * @throws AccountAmountInvalidException
+     * @throws NoOperatorException
+     * @throws AccountTypeInvalidException
+     * @throws AccountBalanceInsufficiencyException
+     */
+    public void adjustQuota(BigDecimal change, String operator) throws AccountAmountInvalidException,
+            NoOperatorException, AccountTypeInvalidException, AccountBalanceInsufficiencyException;
 }

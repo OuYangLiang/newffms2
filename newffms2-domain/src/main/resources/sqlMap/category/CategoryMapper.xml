@@ -1,99 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.personal.oyl.newffms.category.store.mapper.CategoryMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.category.domain.Category">
-		<id column="CATEGORY_OID" property="key.categoryOid" jdbcType="DECIMAL" />
-		<result column="CATEGORY_DESC" property="categoryDesc" jdbcType="NVARCHAR" />
-		<result column="MONTHLY_BUDGET" property="monthlyBudget" jdbcType="DECIMAL" />
-		<result column="CATEGORY_LEVEL" property="categoryLevel" jdbcType="DECIMAL" />
-		<result column="IS_LEAF" property="leaf" jdbcType="BIT" />
-        <result column="PARENT_OID" property="parentKey.categoryOid" jdbcType="DECIMAL" />
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
-        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
-	</resultMap>
+<mapper
+    namespace="com.personal.oyl.newffms.category.store.mapper.CategoryMapper">
+    <resultMap id="BaseResultMap"
+        type="com.personal.oyl.newffms.category.domain.Category">
+        <id column="category_oid" property="key.categoryOid" jdbcType="DECIMAL" />
+        <result column="category_desc" property="categoryDesc" jdbcType="NVARCHAR" />
+        <result column="monthly_budget" property="monthlyBudget" jdbcType="DECIMAL" />
+        <result column="category_level" property="categoryLevel" jdbcType="DECIMAL" />
+        <result column="is_leaf" property="leaf" jdbcType="BIT" />
+        <result column="parent_oid" property="parentKey.categoryOid" jdbcType="DECIMAL" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+        <result column="update_by" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="DECIMAL" />
+    </resultMap>
 
 
-	<sql id="Base_Column_List">
-        CATEGORY_OID, CATEGORY_DESC, MONTHLY_BUDGET, CATEGORY_LEVEL, IS_LEAF, PARENT_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-	</sql>
+    <sql id="Base_Column_List">
+        category_oid, category_desc, monthly_budget,
+        category_level, is_leaf, parent_oid, create_time, update_time,
+        create_by, update_by, seq_no
+    </sql>
 
 
-    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.category.domain.Category">
-        SELECT <include refid="Base_Column_List" />
-        FROM CATEGORY
+    <select id="select" resultMap="BaseResultMap"
+        parameterType="com.personal.oyl.newffms.category.domain.Category">
+        select
+        <include refid="Base_Column_List" />
+        from category
         <where>
-			<if test="key != null and key.categoryOid != null">
-                CATEGORY_OID = #{key.categoryOid,jdbcType=DECIMAL}
+            <if test="key != null and key.categoryOid != null">
+                category_oid =
+                #{key.categoryOid,jdbcType=DECIMAL}
             </if>
-			<if test="categoryDesc != null">
-				AND CATEGORY_DESC = #{categoryDesc,jdbcType=NVARCHAR}
-			</if>
-			<if test="parentKey != null and parentKey.categoryOid != null">
-				AND PARENT_OID = #{parentKey.categoryOid,jdbcType=DECIMAL}
-			</if>
-			<if test="categoryLevel != null ">
-                AND CATEGORY_LEVEL = #{categoryLevel,jdbcType=DECIMAL}
+            <if test="categoryDesc != null">
+                and category_desc = #{categoryDesc,jdbcType=NVARCHAR}
+            </if>
+            <if test="parentKey != null and parentKey.categoryOid != null">
+                and parent_oid = #{parentKey.categoryOid,jdbcType=DECIMAL}
+            </if>
+            <if test="categoryLevel != null ">
+                and category_level =
+                #{categoryLevel,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
 
 
-    <delete id="delete" parameterType="com.personal.oyl.newffms.category.domain.CategoryKey" >
-        DELETE FROM CATEGORY
+    <delete id="delete"
+        parameterType="com.personal.oyl.newffms.category.domain.CategoryKey">
+        delete from category
         <where>
             <if test="categoryOid != null">
-                CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL}
+                category_oid = #{categoryOid,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
-    
-    
-    <insert id="insert" parameterType="com.personal.oyl.newffms.category.domain.Category" useGeneratedKeys="true" keyProperty="key.categoryOid">
-        INSERT INTO CATEGORY(
-            CATEGORY_DESC, 
-            MONTHLY_BUDGET, 
-            CATEGORY_LEVEL, 
-            IS_LEAF, 
-            PARENT_OID, 
-            CREATE_TIME, 
-            CREATE_BY) 
-        VALUES (
-            #{categoryDesc,jdbcType=NVARCHAR}, 
-            #{monthlyBudget,jdbcType=DECIMAL}, 
-            #{categoryLevel,jdbcType=DECIMAL}, 
-            #{leaf,jdbcType=BOOLEAN},
-            <if test="parentKey != null and parentKey.categoryOid != null">
-                #{parentKey.categoryOid,jdbcType=DECIMAL},
-            </if>
-            <if test="parentKey == null or parentKey.categoryOid == null">
-                null,
-            </if>
-            #{createTime,jdbcType=TIMESTAMP}, 
-            #{createBy,jdbcType=NVARCHAR})
+
+
+    <insert id="insert"
+        parameterType="com.personal.oyl.newffms.category.domain.Category"
+        useGeneratedKeys="true" keyProperty="key.categoryOid">
+        insert into category(
+        category_desc,
+        monthly_budget,
+        category_level,
+        is_leaf,
+        parent_oid,
+        create_time,
+        create_by)
+        values (
+        #{categoryDesc,jdbcType=NVARCHAR},
+        #{monthlyBudget,jdbcType=DECIMAL},
+        #{categoryLevel,jdbcType=DECIMAL},
+        #{leaf,jdbcType=BOOLEAN},
+        <if test="parentKey != null and parentKey.categoryOid != null">
+            #{parentKey.categoryOid,jdbcType=DECIMAL},
+        </if>
+        <if test="parentKey == null or parentKey.categoryOid == null">
+            null,
+        </if>
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createBy,jdbcType=NVARCHAR})
     </insert>
-    
+
     <update id="changeCategoryDesc" parameterType="java.util.Map">
-        UPDATE CATEGORY SET
-            SEQ_NO = SEQ_NO + 1,
-            CATEGORY_DESC = #{categoryDesc,jdbcType=NVARCHAR},
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = current_timestamp
-        WHERE CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update category
+        set
+        seq_no = seq_no + 1,
+        category_desc = #{categoryDesc,jdbcType=NVARCHAR},
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+        update_time = current_timestamp
+        where category_oid = #{categoryOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
-    
+
     <update id="changeBudget" parameterType="java.util.Map">
-        UPDATE CATEGORY SET
-            SEQ_NO = SEQ_NO + 1,
-            MONTHLY_BUDGET = #{monthlyBudget,jdbcType=DECIMAL},
-            <if test="leaf != null">
-                IS_LEAF = #{leaf,jdbcType=BOOLEAN},
-            </if>
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = current_timestamp
-        WHERE CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update category set
+        seq_no = seq_no + 1,
+        monthly_budget = #{monthlyBudget,jdbcType=DECIMAL},
+        <if test="leaf != null">
+            is_leaf = #{leaf,jdbcType=BOOLEAN},
+        </if>
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+        update_time = current_timestamp
+        where category_oid = #{categoryOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
-    
+
 </mapper>
+

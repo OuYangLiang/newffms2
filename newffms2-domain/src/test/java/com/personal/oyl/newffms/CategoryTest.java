@@ -38,7 +38,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
@@ -53,7 +53,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
@@ -78,7 +78,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(100));
 		
@@ -106,7 +106,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(1000));
 		
@@ -120,7 +120,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(child.getKey().getCategoryOid());
 		assertEquals("伙食", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -131,7 +131,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -142,7 +142,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(child.getKey().getCategoryOid());
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -153,7 +153,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(800).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -164,7 +164,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -178,7 +178,7 @@ public class CategoryTest extends TestCase {
 		assertEquals(secondChildKey.getCategoryOid(), child.getKey().getCategoryOid());
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -189,7 +189,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(0).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertTrue(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -202,7 +202,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(1000));
 		
@@ -216,7 +216,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(child.getKey().getCategoryOid());
 		assertEquals("伙食", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -227,7 +227,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -238,7 +238,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(child.getKey().getCategoryOid());
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(300).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -251,7 +251,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(850).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -262,7 +262,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(350).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertFalse(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -276,7 +276,7 @@ public class CategoryTest extends TestCase {
 		assertEquals(secondChildKey.getCategoryOid(), child.getKey().getCategoryOid());
 		assertEquals("酒水", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(350).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -287,7 +287,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(bean.getKey().getCategoryOid());
 		assertEquals("日常消费", bean.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(0).compareTo(bean.getMonthlyBudget()));
-		assertEquals(1, bean.getCategoryLevel().intValue());
+		assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 		assertTrue(bean.getLeaf());
 		assertNull(bean.getParentKey());
 		assertEquals("欧阳亮", bean.getCreateBy());
@@ -302,7 +302,7 @@ public class CategoryTest extends TestCase {
 		
 		Category bean = new Category();
 		bean.setCategoryDesc("日常消费");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(1000));
 		
@@ -316,7 +316,7 @@ public class CategoryTest extends TestCase {
 		assertNotNull(child.getKey().getCategoryOid());
 		assertEquals("伙食", child.getCategoryDesc());
 		assertTrue(0 == BigDecimal.valueOf(500).compareTo(child.getMonthlyBudget()));
-		assertEquals(2, child.getCategoryLevel().intValue());
+		assertEquals(1, child.getCategoryLevel().intValue());
 		assertTrue(child.getLeaf());
 		assertEquals(bean.getKey().getCategoryOid(), child.getParentKey().getCategoryOid());
 		assertEquals("欧阳亮", child.getCreateBy());
@@ -326,7 +326,7 @@ public class CategoryTest extends TestCase {
 		
 		bean = new Category();
 		bean.setCategoryDesc("汽车");
-		bean.setCategoryLevel(Integer.valueOf(1));
+		bean.setCategoryLevel(Category.CATEGORY_ROOT_LEVEL);
 		bean.setLeaf(true);
 		bean.setMonthlyBudget(BigDecimal.valueOf(2500));
 		
@@ -344,7 +344,7 @@ public class CategoryTest extends TestCase {
 			assertEquals(parentOid1, bean.getKey().getCategoryOid());
 			assertEquals("日常消费", bean.getCategoryDesc());
 			assertTrue(0 == BigDecimal.valueOf(800).compareTo(bean.getMonthlyBudget()));
-			assertEquals(1, bean.getCategoryLevel().intValue());
+			assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 			assertFalse(bean.getLeaf());
 			assertNull(bean.getParentKey());
 			assertEquals("欧阳亮", bean.getCreateBy());
@@ -355,7 +355,7 @@ public class CategoryTest extends TestCase {
 			assertEquals(parentOid2, bean.getKey().getCategoryOid());
 			assertEquals("汽车", bean.getCategoryDesc());
 			assertTrue(0 == BigDecimal.valueOf(2500).compareTo(bean.getMonthlyBudget()));
-			assertEquals(1, bean.getCategoryLevel().intValue());
+			assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 			assertTrue(bean.getLeaf());
 			assertNull(bean.getParentKey());
 			assertEquals("喻敏", bean.getCreateBy());
@@ -367,7 +367,7 @@ public class CategoryTest extends TestCase {
 			assertEquals(parentOid1, bean.getKey().getCategoryOid());
 			assertEquals("日常消费", bean.getCategoryDesc());
 			assertTrue(0 == BigDecimal.valueOf(800).compareTo(bean.getMonthlyBudget()));
-			assertEquals(1, bean.getCategoryLevel().intValue());
+			assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 			assertFalse(bean.getLeaf());
 			assertNull(bean.getParentKey());
 			assertEquals("欧阳亮", bean.getCreateBy());
@@ -378,7 +378,7 @@ public class CategoryTest extends TestCase {
 			assertEquals(parentOid2, bean.getKey().getCategoryOid());
 			assertEquals("汽车", bean.getCategoryDesc());
 			assertTrue(0 == BigDecimal.valueOf(2500).compareTo(bean.getMonthlyBudget()));
-			assertEquals(1, bean.getCategoryLevel().intValue());
+			assertEquals(Category.CATEGORY_ROOT_LEVEL, bean.getCategoryLevel());
 			assertTrue(bean.getLeaf());
 			assertNull(bean.getParentKey());
 			assertEquals("喻敏", bean.getCreateBy());

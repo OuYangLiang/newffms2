@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum IncomingType {
-    Salary("工资"), Bonus("奖金"), Cash("礼金"), Investment("投资收益"), Accumulation("公积金"), Other("其它");
+    salary("工资"), bonus("奖金"), cash("礼金"), investment("投资收益"), accumulation("公积金"), other("其它");
 
     private String desc;
 

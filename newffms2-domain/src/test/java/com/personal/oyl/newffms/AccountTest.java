@@ -64,7 +64,7 @@ public class AccountTest extends TestCase {
 
         Account bean = new Account();
         bean.setAcntDesc("招商银行");
-        bean.setAcntType(AccountType.Bankcard);
+        bean.setAcntType(AccountType.bankcard);
         bean.setBalance(BigDecimal.valueOf(100));
         bean.setOwner(new UserKey(BigDecimal.ONE));
 
@@ -98,7 +98,7 @@ public class AccountTest extends TestCase {
 
         Account bean = new Account();
         bean.setAcntDesc("招商银行");
-        bean.setAcntType(AccountType.Bankcard);
+        bean.setAcntType(AccountType.bankcard);
         bean.setBalance(BigDecimal.valueOf(100));
         bean.setOwner(new UserKey(BigDecimal.ONE));
 
@@ -137,7 +137,7 @@ public class AccountTest extends TestCase {
 
         Account bean = new Account();
         bean.setAcntDesc("招商银行");
-        bean.setAcntType(AccountType.Bankcard);
+        bean.setAcntType(AccountType.bankcard);
         bean.setBalance(BigDecimal.valueOf(100));
         bean.setOwner(new UserKey(BigDecimal.ONE));
 
@@ -177,14 +177,14 @@ public class AccountTest extends TestCase {
 
         Account bean = new Account();
         bean.setAcntDesc("招商银行1");
-        bean.setAcntType(AccountType.Bankcard);
+        bean.setAcntType(AccountType.bankcard);
         bean.setBalance(BigDecimal.valueOf(100));
         bean.setOwner(new UserKey(BigDecimal.ONE));
         repos.add(bean, "欧阳亮");
 
         Account bean2 = new Account();
         bean2.setAcntDesc("招商银行2");
-        bean2.setAcntType(AccountType.Bankcard);
+        bean2.setAcntType(AccountType.bankcard);
         bean2.setBalance(BigDecimal.valueOf(100));
         bean2.setOwner(new UserKey(BigDecimal.ONE));
         repos.add(bean2, "喻敏");

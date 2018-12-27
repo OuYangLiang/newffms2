@@ -1,11 +1,11 @@
-CREATE UNIQUE INDEX IDX_LOGIN_ID_UNIQUE ON USER_PROFILE(LOGIN_ID);
+create unique index idx_login_id_unique on user_profile(login_id);
 
-CREATE INDEX IDX_CPN_TIME ON CONSUMPTION(CPN_TIME);
+create index idx_cpn_time on consumption(cpn_time);
 
-CREATE INDEX IDX_INCOMING_DATE ON INCOMING(INCOMING_DATE);
+create index idx_incoming_date on incoming(incoming_date);
 
-CREATE UNIQUE INDEX UDX_INCOMING_BATCHNUM ON INCOMING(BATCH_NUM);
+create unique index udx_incoming_batchnum on incoming(batch_num);
 
-CREATE UNIQUE INDEX UDX_CONSUMPTION_BATCHNUM ON CONSUMPTION(BATCH_NUM);
+create unique index udx_consumption_batchnum on consumption(batch_num);
 
-CREATE INDEX IDX_ACCOUNT_AUDIT_BATCHNUM ON ACCOUNT_AUDIT(BATCH_NUM);
+create index idx_account_audit_batchnum on account_audit(batch_num);

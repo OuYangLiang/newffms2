@@ -77,14 +77,14 @@
 			                        </div>
 			                    </div>
 			                    
-			                    <div class="form-group" id="quota" <c:if test="${acntForm.acntType != \"Creditcard\" }" >style="display:none;"</c:if>>
+			                    <div class="form-group" id="quota" <c:if test="${acntForm.acntType != \"creditcard\" }" >style="display:none;"</c:if>>
 			                        <label for="quotaInput" class="col-xs-4 col-sm-2 control-label">限定额度</label>
 			                        <div class="col-xs-7 col-sm-4">
 			                            <spring:input path="quota" class="form-control" onBlur="javascript:checkAmount(this);" maxlength="11" id="quotaInput"/>
 			                        </div>
 			                    </div>
 			                    
-			                    <div class="form-group" id="debt" <c:if test="${acntForm.acntType != \"Creditcard\" }" >style="display:none;"</c:if>>
+			                    <div class="form-group" id="debt" <c:if test="${acntForm.acntType != \"creditcard\" }" >style="display:none;"</c:if>>
 			                        <label for="debtInput" class="col-xs-4 col-sm-2 control-label">初始欠款额度</label>
 			                        <div class="col-xs-7 col-sm-4">
 			                            <spring:input path="debt" class="form-control" onBlur="javascript:checkAmount(this);" maxlength="11" id="debtInput"/>

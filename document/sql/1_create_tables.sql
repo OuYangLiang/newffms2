@@ -1,274 +1,274 @@
 -- 
--- TABLE: ACCOUNT
+-- table: account
 --
 
-CREATE TABLE ACCOUNT(
-    ACNT_OID                    BIGINT          NOT NULL         AUTO_INCREMENT,
-    ACNT_DESC                   NVARCHAR(30)    NOT NULL,
-    ACNT_TYPE                   ENUM('Cash', 'Bankcard', 'Creditcard', 'Alipay', 'Epp', 'Accumulation', 'MedicalInsurance', 'Fund', 'Other' )  NOT NULL,
-    BALANCE                     NUMERIC(15,2)   NOT NULL,
-    QUOTA                       NUMERIC(15,2),
-    DEBT                        NUMERIC(15,2),
-    OWNER_OID                   BIGINT          NOT NULL,
-    DISABLED                    BIT             NOT NULL,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    UPDATE_TIME                 DATETIME,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    UPDATE_BY                   NVARCHAR(6),
-    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
-    PRIMARY KEY (ACNT_OID)
-)ENGINE=INNODB;
+create table account(
+    acnt_oid                    bigint          not null         auto_increment,
+    acnt_desc                   nvarchar(30)    not null,
+    acnt_type                   enum('cash', 'bankcard', 'creditcard', 'alipay', 'epp', 'accumulation', 'medicalinsurance', 'fund', 'other' )  not null,
+    balance                     numeric(15,2)   not null,
+    quota                       numeric(15,2),
+    debt                        numeric(15,2),
+    owner_oid                   bigint          not null,
+    disabled                    bit             not null,
+    create_time                 datetime        not null,
+    update_time                 datetime,
+    create_by                   nvarchar(6)     not null,
+    update_by                   nvarchar(6),
+    seq_no                      int             not null        default 1,
+    primary key (acnt_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: CATEGORY
+-- table: category
 --
 
-CREATE TABLE CATEGORY(
-    CATEGORY_OID                BIGINT          NOT NULL        AUTO_INCREMENT,
-    CATEGORY_DESC               NVARCHAR(10)    NOT NULL,
-    MONTHLY_BUDGET              NUMERIC(15,2)   NOT NULL,
-    CATEGORY_LEVEL              SMALLINT        NOT NULL,
-    IS_LEAF                     BOOLEAN         NOT NULL,
-    PARENT_OID                  BIGINT,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    UPDATE_TIME                 DATETIME,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    UPDATE_BY                   NVARCHAR(6),
-    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
-    PRIMARY KEY (CATEGORY_OID)
-)ENGINE=INNODB;
+create table category(
+    category_oid                bigint          not null        auto_increment,
+    category_desc               nvarchar(10)    not null,
+    monthly_budget              numeric(15,2)   not null,
+    category_level              smallint        not null,
+    is_leaf                     boolean         not null,
+    parent_oid                  bigint,
+    create_time                 datetime        not null,
+    update_time                 datetime,
+    create_by                   nvarchar(6)     not null,
+    update_by                   nvarchar(6),
+    seq_no                      int             not null        default 1,
+    primary key (category_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: CONSUMPTION
+-- table: consumption
 --
 
-CREATE TABLE CONSUMPTION(
-    CPN_OID                     BIGINT          NOT NULL        AUTO_INCREMENT,
-    CPN_TYPE                    ENUM('Supermarket', 'Online', 'Store', 'Other')     NOT NULL,
-    AMOUNT                      NUMERIC(15,2)   NOT NULL,
-    CPN_TIME                    DATETIME        NOT NULL,
-    BATCH_NUM                   CHAR(32)        NOT NULL,
-    CONFIRMED                   BOOLEAN         NOT NULL,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    UPDATE_TIME                 DATETIME,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    UPDATE_BY                   NVARCHAR(6),
-    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
-    PRIMARY KEY (CPN_OID)
-)ENGINE=INNODB;
+create table consumption(
+    cpn_oid                     bigint          not null        auto_increment,
+    cpn_type                    enum('supermarket', 'online', 'store', 'other')     not null,
+    amount                      numeric(15,2)   not null,
+    cpn_time                    datetime        not null,
+    batch_num                   char(32)        not null,
+    confirmed                   boolean         not null,
+    create_time                 datetime        not null,
+    update_time                 datetime,
+    create_by                   nvarchar(6)     not null,
+    update_by                   nvarchar(6),
+    seq_no                      int             not null        default 1,
+    primary key (cpn_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: CONSUMPTION_ITEM
+-- table: consumption_item
 --
 
-CREATE TABLE CONSUMPTION_ITEM(
-    ITEM_OID                    BIGINT          NOT NULL        AUTO_INCREMENT,
-    ITEM_DESC                   NVARCHAR(30)    NOT NULL,
-    AMOUNT                      NUMERIC(15,2)   NOT NULL,
-    OWNER_OID                   BIGINT          NOT NULL,
-    CPN_OID                     BIGINT          NOT NULL,
-    CATEGORY_OID                BIGINT          NOT NULL,
-    PRIMARY KEY (ITEM_OID)
-)ENGINE=INNODB;
+create table consumption_item(
+    item_oid                    bigint          not null        auto_increment,
+    item_desc                   nvarchar(30)    not null,
+    amount                      numeric(15,2)   not null,
+    owner_oid                   bigint          not null,
+    cpn_oid                     bigint          not null,
+    category_oid                bigint          not null,
+    primary key (item_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: ACCOUNT_CONSUMPTION
+-- table: account_consumption
 --
 
-CREATE TABLE ACCOUNT_CONSUMPTION(
-    ACNT_OID                    BIGINT          NOT NULL,
-    CPN_OID                     BIGINT          NOT NULL,
-    AMOUNT                      NUMERIC(15,2)   NOT NULL,
-    PRIMARY KEY (ACNT_OID, CPN_OID)
-)ENGINE=INNODB;
+create table account_consumption(
+    acnt_oid                    bigint          not null,
+    cpn_oid                     bigint          not null,
+    amount                      numeric(15,2)   not null,
+    primary key (acnt_oid, cpn_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: ACCOUNT_AUDIT
+-- table: account_audit
 --
 
-CREATE TABLE ACCOUNT_AUDIT(
-    ADT_OID                     BIGINT          NOT NULL        AUTO_INCREMENT,
-    ADT_DESC                    NVARCHAR(512)   NOT NULL,
-    ADT_TYPE                    ENUM('Add', 'Subtract', 'Change', 'Trans_add', 'Trans_subtract', 'Rollback')   NOT NULL,
-    ADT_TIME                    DATETIME        NOT NULL,
-    BALANCE_AFTER               NUMERIC(10,2)   NOT NULL,
-    CHG_AMT                     NUMERIC(10,2)   NOT NULL,
-    ACNT_OID                    BIGINT          NOT NULL,
-    BATCH_NUM                   CHAR(32)        NOT NULL,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    PRIMARY KEY (ADT_OID)
-)ENGINE=INNODB;
+create table account_audit(
+    adt_oid                     bigint          not null        auto_increment,
+    adt_desc                    nvarchar(512)   not null,
+    adt_type                    enum('add', 'subtract', 'change', 'trans_add', 'trans_subtract', 'rollback')   not null,
+    adt_time                    datetime        not null,
+    balance_after               numeric(10,2)   not null,
+    chg_amt                     numeric(10,2)   not null,
+    acnt_oid                    bigint          not null,
+    batch_num                   char(32)        not null,
+    create_time                 datetime        not null,
+    create_by                   nvarchar(6)     not null,
+    primary key (adt_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: INCOMING
+-- table: incoming
 --
 
-CREATE TABLE INCOMING(
-    INCOMING_OID                BIGINT          NOT NULL        AUTO_INCREMENT,
-    INCOMING_DESC               NVARCHAR(30)    NOT NULL,
-    AMOUNT                      NUMERIC(15,2)   NOT NULL,
-    INCOMING_TYPE               ENUM('Salary', 'Bonus', 'Cash', 'Investment', 'Accumulation', 'Other')    NOT NULL,
-    CONFIRMED                   BOOLEAN         NOT NULL,
-    OWNER_OID                   BIGINT          NOT NULL,
-    INCOMING_DATE               DATE            NOT NULL,
-    BATCH_NUM                   CHAR(32)        NOT NULL,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    UPDATE_TIME                 DATETIME,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    UPDATE_BY                   NVARCHAR(6),
-    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
-    PRIMARY KEY (INCOMING_OID)
-)ENGINE=INNODB;
+create table incoming(
+    incoming_oid                bigint          not null        auto_increment,
+    incoming_desc               nvarchar(30)    not null,
+    amount                      numeric(15,2)   not null,
+    incoming_type               enum('salary', 'bonus', 'cash', 'investment', 'accumulation', 'other')    not null,
+    confirmed                   boolean         not null,
+    owner_oid                   bigint          not null,
+    incoming_date               date            not null,
+    batch_num                   char(32)        not null,
+    create_time                 datetime        not null,
+    update_time                 datetime,
+    create_by                   nvarchar(6)     not null,
+    update_by                   nvarchar(6),
+    seq_no                      int             not null        default 1,
+    primary key (incoming_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: ACCOUNT_INCOMING
+-- table: account_incoming
 --
 
-CREATE TABLE ACCOUNT_INCOMING(
-    ACNT_OID                    BIGINT          NOT NULL,
-    INCOMING_OID                BIGINT          NOT NULL,
-    PRIMARY KEY (ACNT_OID, INCOMING_OID)
-)ENGINE=INNODB;
+create table account_incoming(
+    acnt_oid                    bigint          not null,
+    incoming_oid                bigint          not null,
+    primary key (acnt_oid, incoming_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: USER_PROFILE
+-- table: user_profile
 --
 
-CREATE TABLE USER_PROFILE(
-    USER_OID                    BIGINT          NOT NULL        AUTO_INCREMENT,
-    USER_NAME                   NVARCHAR(6)     NOT NULL,
-    USER_ALIAS                  NVARCHAR(10)    NOT NULL,
-    GENDER                      ENUM('Male', 'Female')  NOT NULL,
-    PHONE                       VARCHAR(11)     NOT NULL,
-    EMAIL                       VARCHAR(50)     NOT NULL,
-    ICON                        VARCHAR(50)     NOT NULL,
-    REMARKS                     VARCHAR(128)    NOT NULL,
-    LOGIN_ID                    VARCHAR(10)     NOT NULL,
-    LOGIN_PWD                   VARCHAR(128)    NOT NULL,
-    USER_TYPE_OID               BIGINT          NOT NULL,
-    CREATE_TIME                 DATETIME        NOT NULL,
-    UPDATE_TIME                 DATETIME,
-    CREATE_BY                   NVARCHAR(6)     NOT NULL,
-    UPDATE_BY                   NVARCHAR(6),
-    SEQ_NO                      INT             NOT NULL        DEFAULT 1,
-    PRIMARY KEY (USER_OID)
-)ENGINE=INNODB;
+create table user_profile(
+    user_oid                    bigint          not null        auto_increment,
+    user_name                   nvarchar(6)     not null,
+    user_alias                  nvarchar(10)    not null,
+    gender                      enum('male', 'female')  not null,
+    phone                       varchar(11)     not null,
+    email                       varchar(50)     not null,
+    icon                        varchar(50)     not null,
+    remarks                     varchar(128)    not null,
+    login_id                    varchar(10)     not null,
+    login_pwd                   varchar(128)    not null,
+    user_type_oid               bigint          not null,
+    create_time                 datetime        not null,
+    update_time                 datetime,
+    create_by                   nvarchar(6)     not null,
+    update_by                   nvarchar(6),
+    seq_no                      int             not null        default 1,
+    primary key (user_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: USER_TYPE
+-- table: user_type
 --
 
-CREATE TABLE USER_TYPE(
-    USER_TYPE_OID               BIGINT          NOT NULL,
-    USER_TYPE_DESC              NVARCHAR(10)    NOT NULL,
-    PRIMARY KEY (USER_TYPE_OID)
-)ENGINE=INNODB;
+create table user_type(
+    user_type_oid               bigint          not null,
+    user_type_desc              nvarchar(10)    not null,
+    primary key (user_type_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: ROLE_PROFILE
+-- table: role_profile
 --
 
-CREATE TABLE ROLE_PROFILE(
-    ROLE_OID                    BIGINT          NOT NULL        AUTO_INCREMENT,
-    ROLE_DESC                   NVARCHAR(10)    NOT NULL,
-    USER_TYPE_OID               BIGINT          NOT NULL,
-    PRIMARY KEY (ROLE_OID)
-)ENGINE=INNODB;
+create table role_profile(
+    role_oid                    bigint          not null        auto_increment,
+    role_desc                   nvarchar(10)    not null,
+    user_type_oid               bigint          not null,
+    primary key (role_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: USER_ROLE
+-- table: user_role
 --
 
-CREATE TABLE USER_ROLE(
-    USER_OID                    BIGINT          NOT NULL,
-    ROLE_OID                    BIGINT          NOT NULL,
-    PRIMARY KEY (USER_OID, ROLE_OID)
-)ENGINE=INNODB;
+create table user_role(
+    user_oid                    bigint          not null,
+    role_oid                    bigint          not null,
+    primary key (user_oid, role_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: MODULE
+-- table: module
 --
 
-CREATE TABLE MODULE(
-    MODULE_OID                  BIGINT          NOT NULL,
-    MODULE_DESC                 NVARCHAR(10)    NOT NULL,
-    MODULE_LEVEL                SMALLINT        NOT NULL,
-    SHOW_ORDER                  SMALLINT        NOT NULL,
-    MODULE_LINK                 VARCHAR(50),
-    PARENT_OID                  BIGINT,
-    PRIMARY KEY (MODULE_OID)
-)ENGINE=INNODB;
+create table module(
+    module_oid                  bigint          not null,
+    module_desc                 nvarchar(10)    not null,
+    module_level                smallint        not null,
+    show_order                  smallint        not null,
+    module_link                 varchar(50),
+    parent_oid                  bigint,
+    primary key (module_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: OPERATION
+-- table: operation
 --
 
-CREATE TABLE OPERATION(
-    OPN_OID                     BIGINT          NOT NULL,
-    OPN_DESC                    NVARCHAR(10)    NOT NULL,
-    MODULE_OID                  BIGINT          NOT NULL,
-    PRIMARY KEY (OPN_OID)
-)ENGINE=INNODB;
+create table operation(
+    opn_oid                     bigint          not null,
+    opn_desc                    nvarchar(10)    not null,
+    module_oid                  bigint          not null,
+    primary key (opn_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: OPERATION_URL
+-- table: operation_url
 --
 
-CREATE TABLE OPERATION_URL(
-    OPN_OID                     BIGINT          NOT NULL,
-    OPN_URL                     VARCHAR(50)     NOT NULL,
-    PRIMARY KEY (OPN_OID, OPN_URL)
-)ENGINE=INNODB;
+create table operation_url(
+    opn_oid                     bigint          not null,
+    opn_url                     varchar(50)     not null,
+    primary key (opn_oid, opn_url)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: ROLE_OPERATION
+-- table: role_operation
 --
 
-CREATE TABLE ROLE_OPERATION(
-    ROLE_OID                    BIGINT          NOT NULL,
-    OPN_OID                     BIGINT          NOT NULL,
-    PRIMARY KEY (ROLE_OID, OPN_OID)
-)ENGINE=INNODB;
+create table role_operation(
+    role_oid                    bigint          not null,
+    opn_oid                     bigint          not null,
+    primary key (role_oid, opn_oid)
+)engine=innodb;
 
 
 
 -- 
--- TABLE: USER_TYPE_OPERATION
+-- table: user_type_operation
 --
 
-CREATE TABLE USER_TYPE_OPERATION(
-    USER_TYPE_OID               BIGINT          NOT NULL,
-    OPN_OID                     BIGINT          NOT NULL,
-    PRIMARY KEY (USER_TYPE_OID, OPN_OID)
-)ENGINE=INNODB;
+create table user_type_operation(
+    user_type_oid               bigint          not null,
+    opn_oid                     bigint          not null,
+    primary key (user_type_oid, opn_oid)
+)engine=innodb;

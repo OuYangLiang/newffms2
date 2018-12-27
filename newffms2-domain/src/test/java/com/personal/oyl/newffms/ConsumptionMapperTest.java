@@ -36,7 +36,7 @@ public class ConsumptionMapperTest extends TestCase {
 		ConsumptionMapper mapper = ctx.getBean(ConsumptionMapper.class);
 		
 		Consumption bean = new Consumption();
-		bean.setCpnType(ConsumptionType.Online);
+		bean.setCpnType(ConsumptionType.online);
 		bean.setCpnTime(new Date());
 		bean.setConfirmed(false);
 		bean.setAmount(BigDecimal.valueOf(1));

@@ -72,7 +72,7 @@
                 </div>
               </div>
 
-              <c:if test="${acntForm.acntType == \"Creditcard\" }">
+              <c:if test="${acntForm.acntType == \"creditcard\" }">
                 <div class="form-group" id="quota">
                   <label for="quotaInput" class="col-xs-4 col-sm-2 control-label">限定额度</label>
                   <div class="col-xs-7 col-sm-4">

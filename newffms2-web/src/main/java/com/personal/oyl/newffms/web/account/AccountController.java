@@ -239,10 +239,10 @@ public class AccountController extends BaseController {
                         numOfAccounts = accounts.size();
                         for (Account account : accounts) {
                             acnts.add(new AccountDto(account));
-                            if (AccountType.Creditcard.equals(account.getAcntType())) {
+                            if (AccountType.creditcard.equals(account.getAcntType())) {
                                 totalDept = totalDept.add(account.getDebt());
-                            } else if (!AccountType.MedicalInsurance.equals(account.getAcntType())
-                                    && !AccountType.Accumulation.equals(account.getAcntType())) {
+                            } else if (!AccountType.medicalinsurance.equals(account.getAcntType())
+                                    && !AccountType.accumulation.equals(account.getAcntType())) {
                                 totalBal = totalBal.add(account.getBalance());
                             }
                         }

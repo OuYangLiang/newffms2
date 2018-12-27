@@ -38,7 +38,7 @@ public class AccountAuditMapperTest extends TestCase {
 		AccountAuditVo bean = new AccountAuditVo();
 		bean.setAdtDesc("desc");
 		bean.setAdtTime(new Date());
-		bean.setAdtType(AccountAuditType.Add);
+		bean.setAdtType(AccountAuditType.add);
 		bean.setBalanceAfter(BigDecimal.valueOf(100));
 		bean.setChgAmt(BigDecimal.valueOf(100));
 		bean.setAcntOid(BigDecimal.ONE);

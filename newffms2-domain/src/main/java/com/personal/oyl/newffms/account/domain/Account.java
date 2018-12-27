@@ -216,7 +216,7 @@ public class Account implements AccountOperation, Serializable {
             throw new NoOperatorException();
         }
 
-        this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Subtract);
+        this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.subtract);
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
@@ -235,7 +235,7 @@ public class Account implements AccountOperation, Serializable {
             throw new NoOperatorException();
         }
 
-        this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.Add);
+        this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.add);
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
@@ -261,8 +261,8 @@ public class Account implements AccountOperation, Serializable {
         Date now = new Date();
         String batchNum = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
         this.subtract(amount, "转账至：" + target.getAcntDesc(), batchNum, now, now, operator,
-                AccountAuditType.Trans_subtract);
-        target.increase(amount, "进账自：" + this.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.Trans_add);
+                AccountAuditType.trans_subtract);
+        target.increase(amount, "进账自：" + this.getAcntDesc(), batchNum, now, now, operator, AccountAuditType.trans_add);
     }
 
     private void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, Date now, String operator,
@@ -274,7 +274,7 @@ public class Account implements AccountOperation, Serializable {
         param.put("updateBy", operator);
         param.put("updateTime", now);
         param.put("balance", this.getBalance().subtract(amount));
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             param.put("debt", this.getDebt().add(amount));
         }
 
@@ -305,7 +305,7 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateBy(operator);
         this.setUpdateTime(now);
         this.setBalance(this.getBalance().subtract(amount));
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             this.setDebt(this.debt.add(amount));
         }
     }
@@ -319,7 +319,7 @@ public class Account implements AccountOperation, Serializable {
         param.put("updateBy", operator);
         param.put("updateTime", now);
         param.put("balance", this.getBalance().add(amount));
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             param.put("debt", this.getDebt().subtract(amount));
         }
 
@@ -350,7 +350,7 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateBy(operator);
         this.setUpdateTime(now);
         this.setBalance(this.getBalance().add(amount));
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             this.setDebt(this.debt.subtract(amount));
         }
     }
@@ -371,7 +371,7 @@ public class Account implements AccountOperation, Serializable {
         param.put("updateBy", operator);
         param.put("updateTime", now);
         param.put("balance", newBalance);
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             param.put("debt", this.getDebt().subtract(chgAmt));
         }
 
@@ -385,7 +385,7 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateBy(operator);
         this.setUpdateTime(now);
         this.setBalance(newBalance);
-        if (AccountType.Creditcard.equals(this.getAcntType())) {
+        if (AccountType.creditcard.equals(this.getAcntType())) {
             this.setDebt(this.debt.subtract(chgAmt));
         }
     }
@@ -402,7 +402,7 @@ public class Account implements AccountOperation, Serializable {
             throw new NoOperatorException();
         }
         
-        if (!AccountType.Creditcard.equals(this.getAcntType())) {
+        if (!AccountType.creditcard.equals(this.getAcntType())) {
             throw new AccountException.AccountTypeInvalidException();
         }
         
@@ -430,7 +430,7 @@ public class Account implements AccountOperation, Serializable {
         AccountAuditVo audit = new AccountAuditVo();
         audit.setAdtDesc("调整限额，原始限额：" + this.getQuota() + "，现限额：" + param.get("quota"));
         audit.setAdtTime(now);
-        audit.setAdtType(AccountAuditType.Change);
+        audit.setAdtType(AccountAuditType.change);
         audit.setBalanceAfter(this.getBalance().add(change));
         audit.setChgAmt(change);
         audit.setAcntOid(this.getKey().getAcntOid());

@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         for (AccountAuditVo audit : audits) {
-            if (AccountAuditType.Rollback.equals(audit.getAdtType())) {
+            if (AccountAuditType.rollback.equals(audit.getAdtType())) {
                 continue;
             }
             Account acnt = repos.accountOfId(new AccountKey(audit.getAcntOid()));

@@ -21,7 +21,7 @@ public class AccountAuditVo implements Serializable {
     public AccountAuditVo genRollbackRecord(BigDecimal balance, String operator) {
         AccountAuditVo rlt = new AccountAuditVo();
         rlt.setAdtDesc("回滚：" + this.getAdtDesc());
-        rlt.setAdtType(AccountAuditType.Rollback);
+        rlt.setAdtType(AccountAuditType.rollback);
         rlt.setAdtTime(this.getAdtTime());
         rlt.setBalanceAfter(balance);
         rlt.setChgAmt(this.getChgAmt().negate());

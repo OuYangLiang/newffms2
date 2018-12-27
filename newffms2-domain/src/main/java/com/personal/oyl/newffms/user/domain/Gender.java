@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Gender {
-    Male("男"),
-    Female("女");
+    male("男"),
+    female("女");
     
     private String desc;
 

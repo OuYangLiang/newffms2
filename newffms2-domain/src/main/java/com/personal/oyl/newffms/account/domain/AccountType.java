@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum AccountType {
-    Cash("现金"),
-    Bankcard("银行卡"),
-    Creditcard("信用卡"),
-    Alipay("支付宝"),
-    Epp("易付宝"),
-    MedicalInsurance("医保"),
-    Accumulation("公积金"),
-    Fund("基金"),
-    Other("其它");
+    cash("现金"),
+    bankcard("银行卡"),
+    creditcard("信用卡"),
+    alipay("支付宝"),
+    epp("易付宝"),
+    medicalinsurance("医保"),
+    accumulation("公积金"),
+    fund("基金"),
+    other("其它");
     
     private String desc;
 

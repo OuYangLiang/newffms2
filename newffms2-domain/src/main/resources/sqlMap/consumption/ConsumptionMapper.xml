@@ -1,89 +1,90 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.consumption.store.mapper.ConsumptionMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.Consumption">
-		<id column="CPN_OID" property="key.cpnOid" jdbcType="DECIMAL" />
-		<result column="CPN_TYPE" property="cpnType" jdbcType="VARCHAR" />
-		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
-		<result column="CPN_TIME" property="cpnTime" jdbcType="TIMESTAMP" />
-		<result column="BATCH_NUM" property="batchNum" jdbcType="VARCHAR" />
-		<result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
-		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
-        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
-	</resultMap>
+    <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.Consumption">
+        <id column="cpn_oid" property="key.cpnOid" jdbcType="DECIMAL" />
+        <result column="cpn_type" property="cpnType" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="cpn_time" property="cpnTime" jdbcType="TIMESTAMP" />
+        <result column="batch_num" property="batchNum" jdbcType="VARCHAR" />
+        <result column="confirmed" property="confirmed" jdbcType="BIT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+        <result column="update_by" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="DECIMAL" />
+    </resultMap>
 
-	<sql id="Base_Column_List">
-        CPN_OID, CPN_TYPE, AMOUNT, CPN_TIME, BATCH_NUM, CONFIRMED, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-	</sql>
+    <sql id="Base_Column_List">
+        cpn_oid, cpn_type, amount, cpn_time, batch_num, confirmed, create_time, update_time, create_by, update_by, seq_no
+    </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.consumption.domain.Consumption">
-        SELECT <include refid="Base_Column_List" />
-        FROM CONSUMPTION
+        select <include refid="Base_Column_List" />
+        from consumption
         <where>
-			<if test="key != null and key.cpnOid != null">
-				CPN_OID = #{key.cpnOid,jdbcType=DECIMAL}
-			</if>
+        <if test="key != null and key.cpnOid != null">
+            cpn_oid = #{key.cpnOid,jdbcType=DECIMAL}
+        </if>
         </where>
     </select>
 
     <delete id="delete" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionKey" >
-        DELETE FROM CONSUMPTION
+        delete from consumption
         <where>
             <if test="cpnOid != null">
-                CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+                cpn_oid = #{cpnOid,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
     
     <insert id="insert" parameterType="com.personal.oyl.newffms.consumption.domain.Consumption" useGeneratedKeys="true" keyProperty="key.cpnOid">
-        INSERT INTO CONSUMPTION(
-            CPN_TYPE,
-            AMOUNT,
-            CPN_TIME,
-            BATCH_NUM,
-            CONFIRMED,
-            CREATE_TIME,
-            CREATE_BY)
-        VALUES (
+        insert into consumption(
+            cpn_type,
+            amount,
+            cpn_time,
+            batch_num,
+            confirmed,
+            create_time,
+            create_by)
+        values (
             #{cpnType,jdbcType=VARCHAR},
             #{amount,jdbcType=DECIMAL},
             #{cpnTime,jdbcType=TIMESTAMP},
             #{batchNum,jdbcType=VARCHAR},
             #{confirmed,jdbcType=BIT},
-            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createTime,jdbcType=TIMESTAMP},
             #{createBy,jdbcType=NVARCHAR})
     </insert>
     
     <update id="updateStatus" parameterType="java.util.Map">
-        UPDATE CONSUMPTION SET
-            CONFIRMED = #{confirmed,jdbcType=BIT},
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update consumption set
+            confirmed = #{confirmed,jdbcType=BIT},
+            seq_no = seq_no + 1,
+            update_by = #{updateBy,jdbcType=NVARCHAR},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where cpn_oid = #{cpnOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
     
     <update id="updateInfo" parameterType="java.util.Map">
-        UPDATE CONSUMPTION SET
-            CPN_TYPE = #{cpnType, jdbcType=VARCHAR},
-            AMOUNT = #{amount, jdbcType=DECIMAL},
-            CPN_TIME = #{cpnTime, jdbcType=TIMESTAMP},
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE CPN_OID = #{cpnOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update consumption set
+            cpn_type = #{cpnType, jdbcType=VARCHAR},
+            amount = #{amount, jdbcType=DECIMAL},
+            cpn_time = #{cpnTime, jdbcType=TIMESTAMP},
+            seq_no = seq_no + 1,
+            update_by = #{updateBy,jdbcType=NVARCHAR},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where cpn_oid = #{cpnOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
     
     <select id="queryConsumptionTotal" parameterType="java.util.Map" resultType="java.math.BigDecimal">
         <![CDATA[
-        SELECT SUM(AMOUNT) AS TOTAL
-        FROM CONSUMPTION
-        WHERE CONFIRMED = TRUE
-        AND CPN_TIME >= #{start,jdbcType=TIMESTAMP}
-        AND CPN_TIME <= #{end,jdbcType=TIMESTAMP}
+        select sum(amount) as total
+        from consumption
+        where confirmed = true
+        and cpn_time >= #{start,jdbcType=TIMESTAMP}
+        and cpn_time <= #{end,jdbcType=TIMESTAMP}
         ]]>
-  </select>
+    </select>
 </mapper>
+

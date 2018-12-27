@@ -101,7 +101,7 @@ public class AccountReposImpl implements AccountRepos {
             bean.setDisabled(false);
         }
 
-        if (AccountType.Creditcard.equals(bean.getAcntType())) {
+        if (AccountType.creditcard.equals(bean.getAcntType())) {
             if (null == bean.getQuota()) {
                 throw new AccountQuotaEmptyException();
             }

@@ -63,7 +63,8 @@ public class IncomingReposImpl implements IncomingRepos {
         return bean;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Incoming bean, String operator)
             throws IncomingDescEmptyException, NoOperatorException, IncomingDescInvalidException,
@@ -137,7 +138,8 @@ public class IncomingReposImpl implements IncomingRepos {
         bean.setSeqNo(1);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(IncomingKey key) throws IncomingKeyEmptyException, IncomingNotExistException,
             IncomingAlreadyConfirmedException, NewffmsSystemException {

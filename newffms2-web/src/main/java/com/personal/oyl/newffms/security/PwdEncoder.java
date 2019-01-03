@@ -9,6 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class PwdEncoder implements PasswordEncoder {
     
+    private static final int Num_16 = 0x10;
+    private static final int Num_255 = 0xff;
+
     private String algorithm;
     
     private static final Logger log = LoggerFactory.getLogger(PwdEncoder.class);
@@ -32,24 +35,24 @@ public class PwdEncoder implements PasswordEncoder {
     }
     
     private String encodePassword(byte[] data) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance(algorithm);  
+        MessageDigest md = MessageDigest.getInstance(algorithm);
       
-        md.reset();  
-        md.update(data);  
+        md.reset();
+        md.update(data);
       
-        byte[] rlt = md.digest();  
+        byte[] rlt = md.digest();
       
-        StringBuffer buf = new StringBuffer();  
+        StringBuffer buf = new StringBuffer();
       
-        for (int i = 0; i < rlt.length; i++) {  
-            if ((rlt[i] & 0xff) < 0x10) {  
-                buf.append("0");  
-            }  
+        for (int i = 0; i < rlt.length; i++) {
+            if ((rlt[i] & Num_255) < Num_16) {
+                buf.append("0");
+            }
       
-            buf.append(Integer.toHexString(rlt[i] & 0xff));  
-        }  
+            buf.append(Integer.toHexString(rlt[i] & Num_255));
+        }
       
-        return buf.toString();  
+        return buf.toString();
     }
 
     

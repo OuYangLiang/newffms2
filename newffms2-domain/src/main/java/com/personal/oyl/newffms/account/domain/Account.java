@@ -45,9 +45,9 @@ public class Account implements AccountOperation, Serializable {
     private Integer seqNo;
 
     @Autowired
-    private AccountMapper mapper;
+    private transient AccountMapper mapper;
     @Autowired
-    private AccountAuditMapper auditMapper;
+    private transient AccountAuditMapper auditMapper;
 
     public Account() {
         AppContext.getContext().getAutowireCapableBeanFactory().autowireBean(this);
@@ -162,7 +162,8 @@ public class Account implements AccountOperation, Serializable {
         this.seqNo = seqNo;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void changeDesc(String newDesc, String operator)
             throws AccountDescEmptyException, NoOperatorException, AccountDescTooLongException {
@@ -195,7 +196,8 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateBy(operator);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void subtract(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
             throws AccountAmountInvalidException, AccountBalanceInsufficiencyException, AccountOperationDescException,
@@ -219,7 +221,8 @@ public class Account implements AccountOperation, Serializable {
         this.subtract(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.subtract);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void increase(BigDecimal amount, String desc, String batchNum, Date eventTime, String operator)
             throws AccountAmountInvalidException, AccountOperationDescException, NoOperatorException {
@@ -238,7 +241,8 @@ public class Account implements AccountOperation, Serializable {
         this.increase(amount, desc, batchNum, eventTime, new Date(), operator, AccountAuditType.add);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void transfer(Account target, BigDecimal amount, String operator) throws AccountAmountInvalidException,
             AccountBalanceInsufficiencyException, NoOperatorException, AccountTransferToSelfException {
@@ -306,7 +310,7 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateTime(now);
         this.setBalance(this.getBalance().subtract(amount));
         if (AccountType.creditcard.equals(this.getAcntType())) {
-            this.setDebt(this.debt.add(amount));
+            this.setDebt(this.getDebt().add(amount));
         }
     }
 
@@ -351,7 +355,7 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateTime(now);
         this.setBalance(this.getBalance().add(amount));
         if (AccountType.creditcard.equals(this.getAcntType())) {
-            this.setDebt(this.debt.subtract(amount));
+            this.setDebt(this.getDebt().subtract(amount));
         }
     }
 
@@ -386,14 +390,15 @@ public class Account implements AccountOperation, Serializable {
         this.setUpdateTime(now);
         this.setBalance(newBalance);
         if (AccountType.creditcard.equals(this.getAcntType())) {
-            this.setDebt(this.debt.subtract(chgAmt));
+            this.setDebt(this.getDebt().subtract(chgAmt));
         }
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
-    public void adjustQuota(BigDecimal change, String operator)
-            throws AccountAmountInvalidException, NoOperatorException, AccountTypeInvalidException, AccountBalanceInsufficiencyException {
+    public void adjustQuota(BigDecimal change, String operator) throws AccountAmountInvalidException,
+            NoOperatorException, AccountTypeInvalidException, AccountBalanceInsufficiencyException {
         if (null == change || BigDecimal.ZERO.compareTo(change) == 0) {
             throw new AccountAmountInvalidException();
         }

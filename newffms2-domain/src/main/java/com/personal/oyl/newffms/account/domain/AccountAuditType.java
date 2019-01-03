@@ -8,7 +8,7 @@ public enum AccountAuditType {
 
     private String desc;
 
-    private AccountAuditType(String desc) {
+    AccountAuditType(String desc) {
         this.desc = desc;
     }
 

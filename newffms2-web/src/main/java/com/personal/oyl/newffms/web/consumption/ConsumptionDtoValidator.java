@@ -59,7 +59,7 @@ public class ConsumptionDtoValidator implements Validator {
             /*
              * try { Account dbAcnt = accountService.selectByKey(new
              * AccountKey(acnt.getAcntOid()));
-             * 
+             *
              * if (acnt.getPayment() != null) { if
              * (dbAcnt.getBalance().compareTo(acnt.getPayment()) < 0) {
              * errors.reject(null, "账户[ " + dbAcnt.getAcntHumanDesc() +

@@ -11,24 +11,20 @@ public enum ConsumptionType {
     
     private String desc;
 
-    private ConsumptionType(String desc)
-    {
+    ConsumptionType(String desc) {
         this.desc = desc;
     }
 
-    public String getDesc()
-    {
+    public String getDesc() {
         return desc;
     }
-    
-    public static Map<String, String> toMapValue()
-    {
-        Map<String,String> rlt = new HashMap<String,String>();
-        for (ConsumptionType ms : ConsumptionType.values())
-        {
+
+    public static Map<String, String> toMapValue() {
+        Map<String, String> rlt = new HashMap<String, String>();
+        for (ConsumptionType ms : ConsumptionType.values()) {
             rlt.put(ms.name(), ms.getDesc());
         }
-        
+
         return rlt;
     }
 }

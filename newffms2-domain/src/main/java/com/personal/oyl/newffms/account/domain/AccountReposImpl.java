@@ -65,7 +65,8 @@ public class AccountReposImpl implements AccountRepos {
         return list.get(0);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Account bean, String operator)
             throws AccountDescEmptyException, AccountTypeEmptyException, NoOperatorException,
@@ -157,7 +158,8 @@ public class AccountReposImpl implements AccountRepos {
         return list;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(AccountKey key) throws AccountKeyEmptyException, AccountNotExistException {
         if (null == key || null == key.getAcntOid()) {

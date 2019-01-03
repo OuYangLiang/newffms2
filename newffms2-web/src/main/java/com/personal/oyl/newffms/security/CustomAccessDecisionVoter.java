@@ -33,8 +33,9 @@ public class CustomAccessDecisionVoter implements AccessDecisionVoter<FilterInvo
         while (it.hasNext()) {
             GrantedAuthority authority = it.next();
 
-            if (url.contains(authority.getAuthority()))
+            if (url.contains(authority.getAuthority())) {
                 return ACCESS_GRANTED;
+            }
         }
 
         log.warn("Url [" + url + "] is not permitted.");

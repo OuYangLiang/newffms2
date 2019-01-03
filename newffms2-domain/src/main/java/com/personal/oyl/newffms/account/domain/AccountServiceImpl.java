@@ -21,7 +21,8 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountAuditMapper auditMapper;
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void rollback(String batchNum, String operator) throws AccountKeyEmptyException,
             AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {

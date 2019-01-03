@@ -50,7 +50,8 @@ public class CategoryReposImpl implements CategoryRepos {
         return list.get(0);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Category bean, String operator) throws CategoryDescEmptyException, CategoryDescTooLongException,
             NoOperatorException, CategoryNotRootException, CategoryBudgetEmptyException, CategoryBudgetInvalidException,
@@ -100,7 +101,8 @@ public class CategoryReposImpl implements CategoryRepos {
         bean.setSeqNo(1);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(CategoryKey key, String operator) throws CategoryKeyEmptyException, NoOperatorException,
             CategoryNotLeafException, CategoryNotExistException, NewffmsSystemException {

@@ -177,7 +177,8 @@ public class Incoming implements IncomingOperation, Serializable {
         this.acntRel = acntRel;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void confirm(String operator)
             throws NoOperatorException, IncomingAlreadyConfirmedException, NewffmsSystemException {
@@ -230,7 +231,8 @@ public class Incoming implements IncomingOperation, Serializable {
         this.setConfirmed(true);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void unconfirm(String operator)
             throws NoOperatorException, IncomingNotConfirmedException, NewffmsSystemException {
@@ -270,7 +272,8 @@ public class Incoming implements IncomingOperation, Serializable {
         this.setConfirmed(false);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void updateAll(String operator) throws NoOperatorException, IncomingAlreadyConfirmedException,
             NewffmsSystemException, IncomingDescInvalidException, IncomingAmountInvalidException {

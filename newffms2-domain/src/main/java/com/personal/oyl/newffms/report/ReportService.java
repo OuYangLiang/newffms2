@@ -285,7 +285,7 @@ public class ReportService {
         Map<BigDecimal, BigDecimal> parentCategoryAmtMap = new HashMap<BigDecimal, BigDecimal>();
         for (CategoryConsumptionVo item : list) {
             if (BigDecimal.valueOf(-1).equals(item.getUserOid())) {
-                BigDecimal key = item.getCategoryLevel() == 0 ? key = BigDecimal.valueOf(-1) : item.getParentOid();
+                BigDecimal key = item.getCategoryLevel() == 0 ? BigDecimal.valueOf(-1) : item.getParentOid();
                 if (parentCategoryAmtMap.containsKey(key)) {
                     BigDecimal oldSum = parentCategoryAmtMap.get(key);
                     oldSum = oldSum.add(item.getTotal());
@@ -334,7 +334,8 @@ public class ReportService {
             
             //处理drilldown
             if (!category.getLeaf()) {
-                if (categoryConsumptionsMap.get(category.getKey().getCategoryOid() + "_-1").getTotal().compareTo(BigDecimal.ZERO) == 0) {
+                if (categoryConsumptionsMap.get(category.getKey().getCategoryOid() + "_-1").getTotal()
+                        .compareTo(BigDecimal.ZERO) == 0) {
                     continue;
                 }
                 
@@ -345,14 +346,16 @@ public class ReportService {
                 drillDownSeries.setData(new ArrayList<HightChartSeries>());
                 
                 for (CategoryConsumptionVo item : list) {
-                    if (category.getKey().getCategoryOid().equals(item.getParentOid()) && BigDecimal.valueOf(-1).equals(item.getUserOid())) {
+                    if (category.getKey().getCategoryOid().equals(item.getParentOid())
+                            && BigDecimal.valueOf(-1).equals(item.getUserOid())) {
                         BigDecimal usedAmt = item.getTotal();
                         if (usedAmt.compareTo(BigDecimal.ZERO) == 0) {
                             //金额为0的不需要在pie图呈现。
                             continue;
                         }
                         
-                        BigDecimal totalAmt = parentCategoryAmtMap.get((item.getParentOid() == null ? BigDecimal.valueOf(-1) : item.getParentOid()));
+                        BigDecimal totalAmt = parentCategoryAmtMap
+                                .get((item.getParentOid() == null ? BigDecimal.valueOf(-1) : item.getParentOid()));
                         BigDecimal percent  = usedAmt.divide(totalAmt, 4, RoundingMode.HALF_UP);
                         
                         HightChartSeries innerSeries = new HightChartSeries();
@@ -435,7 +438,7 @@ public class ReportService {
          * innerSeries.setName(category.getCategoryDesc());
          * innerSeries.setY(category.getMonthlyBudget());
          * innerSeries.setDrilldown(category.getCategoryOid().toString());
-         * 
+         *
          * series.getData().add(innerSeries); } } seriesList.add(series); }
          */
 
@@ -451,7 +454,7 @@ public class ReportService {
              * series.setId(category.getCategoryOid().toString());
              * series.setName("预算"); series.setData(new
              * ArrayList<HightChartSeries>());
-             * 
+             *
              * for (Category inner : allCategories) { if
              * (category.getCategoryOid().equals(inner.getParentOid())) {
              * HightChartSeries innerSeries = new HightChartSeries();
@@ -460,7 +463,7 @@ public class ReportService {
              * innerSeries.setY(inner.getMonthlyBudget()); if
              * (!inner.getIsLeaf()) {
              * innerSeries.setDrilldown(inner.getCategoryOid().toString()); }
-             * 
+             *
              * series.getData().add(innerSeries); } } drilldownList.add(series);
              * }
              */

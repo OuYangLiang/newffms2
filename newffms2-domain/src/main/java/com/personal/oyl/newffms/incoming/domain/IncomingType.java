@@ -9,7 +9,7 @@ public enum IncomingType {
 
     private String desc;
 
-    private IncomingType(String desc) {
+    IncomingType(String desc) {
         this.desc = desc;
     }
 

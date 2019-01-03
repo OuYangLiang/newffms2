@@ -95,7 +95,8 @@ public class ConsumptionController extends BaseController {
         model.addAttribute("users", userList);
 
         // 设置默认查询条件值，并放入session中
-        ConsumptionCondition searchParam = (ConsumptionCondition) session.getAttribute(SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM);
+        ConsumptionCondition searchParam =
+                (ConsumptionCondition) session.getAttribute(SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM);
 
         if (null == searchParam) {
             searchParam = new ConsumptionCondition();
@@ -132,11 +133,11 @@ public class ConsumptionController extends BaseController {
 
     @RequestMapping("/listOfSummary")
     @ResponseBody
-    public BootstrapTableJsonRlt listOfSummary(
-            @RequestParam(value = "offset", required = true) int offset,
+    public BootstrapTableJsonRlt listOfSummary(@RequestParam(value = "offset", required = true) int offset,
             @RequestParam(value = "limit", required = true) int limit,
             @RequestParam(value = "sort", required = true) String sort,
-            @RequestParam(value = "order", required = true) String order, HttpSession session) throws CategoryKeyEmptyException {
+            @RequestParam(value = "order", required = true) String order, HttpSession session)
+            throws CategoryKeyEmptyException {
 
         int sizePerPage = limit;
         int requestPage = offset / limit + 1;
@@ -144,7 +145,8 @@ public class ConsumptionController extends BaseController {
         String sortDir = order;
 
         // 从session中取出查询对象并查询
-        ConsumptionCondition searchParam = (ConsumptionCondition) session.getAttribute(SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM);
+        ConsumptionCondition searchParam = (ConsumptionCondition) session
+                .getAttribute(SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM);
         searchParam.initPaginationParam(requestPage, sizePerPage, sortField, sortDir);
         session.setAttribute(SESSION_KEY_SEARCH_PARAM_CONSUMPTIONITEM, searchParam);
 
@@ -157,13 +159,14 @@ public class ConsumptionController extends BaseController {
             }
         }
         
-        if (null != tuple.second) {
-            for (ConsumptionItemPaginationVo item : tuple.second) {
+        if (null != tuple.getSecond()) {
+            for (ConsumptionItemPaginationVo item : tuple.getSecond()) {
                 item.setOwnerName(group.get(item.getOwnerOid()).getUserName());
-                item.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(item.getCategoryOid())).getCategoryDesc());
+                item.setCategoryDesc(categoryRepos.categoryOfId(
+                        new CategoryKey(item.getCategoryOid())).getCategoryDesc());
             }
         }
-        return new BootstrapTableJsonRlt(tuple.first, tuple.second);
+        return new BootstrapTableJsonRlt(tuple.getFirst(), tuple.getSecond());
     }
     
     @RequestMapping("/initAdd")
@@ -317,7 +320,8 @@ public class ConsumptionController extends BaseController {
             form = new ConsumptionDto(consumptionRepos.consumptionOfId(new ConsumptionKey(cpnOid)));
             for (ConsumptionItemDto dto : form.getItems()) {
                 dto.setOwnerName(group.get(dto.getOwnerOid()).getUserName());
-                dto.setCategoryDesc(categoryRepos.categoryOfId(new CategoryKey(dto.getCategoryOid())).getCategoryDesc());
+                dto.setCategoryDesc(
+                        categoryRepos.categoryOfId(new CategoryKey(dto.getCategoryOid())).getCategoryDesc());
             }
 
             List<AccountDto> list = new ArrayList<>(form.getPayments().size());

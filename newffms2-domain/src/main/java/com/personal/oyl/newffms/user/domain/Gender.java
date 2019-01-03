@@ -9,21 +9,17 @@ public enum Gender {
     
     private String desc;
 
-    private Gender(String desc)
-    {
+    Gender(String desc) {
         this.desc = desc;
     }
 
-    public String getDesc()
-    {
+    public String getDesc() {
         return desc;
     }
-    
-    public static Map<String, String> toMapValue()
-    {
-        Map<String,String> rlt = new HashMap<String,String>();
-        for (Gender ms : Gender.values())
-        {
+
+    public static Map<String, String> toMapValue() {
+        Map<String, String> rlt = new HashMap<String, String>();
+        for (Gender ms : Gender.values()) {
             rlt.put(ms.name(), ms.getDesc());
         }
         

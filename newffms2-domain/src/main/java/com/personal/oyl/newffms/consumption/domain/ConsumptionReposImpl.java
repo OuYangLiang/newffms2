@@ -46,7 +46,8 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
     @Autowired
     private AccountConsumptionMapper paymentMapper;
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void add(Consumption bean, String operator) throws ConsumptionTypeEmptyException,
             ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException, ConsumptionAlreadyConfirmedException,
@@ -182,7 +183,8 @@ public class ConsumptionReposImpl implements ConsumptionRepos {
         return bean;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void remove(ConsumptionKey key) throws ConsumptionKeyEmptyException, ConsumptionNotExistException,
             ConsumptionAlreadyConfirmedException, NewffmsSystemException {

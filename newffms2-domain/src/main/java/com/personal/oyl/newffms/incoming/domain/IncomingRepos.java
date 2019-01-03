@@ -23,16 +23,14 @@ import com.personal.oyl.newffms.incoming.domain.IncomingException.IncomingTypeEm
 public interface IncomingRepos {
     /**
      * 根据收入标识查询收入
-     * 
      * @param key 账户标识
      * @return 账户实体
      * @throws IncomingKeyEmptyException
      */
     Incoming incomingOfId(IncomingKey key) throws IncomingKeyEmptyException;
-	
+
     /**
      * 创建新的收入
-     * 
      * @param bean 收入实体
      * @param operator 操作人
      * @throws IncomingDescEmptyException
@@ -48,14 +46,14 @@ public interface IncomingRepos {
      * @throws IncomingAccountEmptyException
      * @throws IncomingBatchNumEmptyException
      */
-    void add(Incoming bean, String operator) throws IncomingDescEmptyException, NoOperatorException,
-            IncomingDescInvalidException, IncomingAmountEmptyException, IncomingAmountInvalidException,
-            IncomingTypeEmptyException, IncomingAlreadyConfirmedException, IncomingOwnerEmptyException,
-            IncomingDateEmptyException, NewffmsSystemException, IncomingAccountEmptyException, IncomingBatchNumEmptyException;
-	
+    void add(Incoming bean, String operator)
+            throws IncomingDescEmptyException, NoOperatorException, IncomingDescInvalidException,
+            IncomingAmountEmptyException, IncomingAmountInvalidException, IncomingTypeEmptyException,
+            IncomingAlreadyConfirmedException, IncomingOwnerEmptyException, IncomingDateEmptyException,
+            NewffmsSystemException, IncomingAccountEmptyException, IncomingBatchNumEmptyException;
+
     /**
      * 删除收入
-     * 
      * @param key 待删除收入标识
      * @throws IncomingKeyEmptyException
      * @throws IncomingNotExistException
@@ -67,7 +65,6 @@ public interface IncomingRepos {
     
     /**
      * 根据指定条件查询收入
-     * 
      * @param condition 查询条件
      * @param param 分页信息
      * @return 收入分页信息
@@ -76,7 +73,6 @@ public interface IncomingRepos {
     
     /**
      * 根据日期范围查询收入
-     * 
      * @param from 起始日期
      * @param to 截止日期
      * @return 收入实体集合

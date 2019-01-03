@@ -35,9 +35,9 @@ public class AccountDto implements Serializable {
         this.setDebt(acnt.getDebt());
         this.setDisabled(acnt.getDisabled());
 
-        UserDto owner = new UserDto();
-        owner.setUserOid(acnt.getOwner().getUserOid());
-        this.setOwner(owner);
+        UserDto userDto = new UserDto();
+        userDto.setUserOid(acnt.getOwner().getUserOid());
+        this.setOwner(userDto);
     }
 
     public Account toAccount() {

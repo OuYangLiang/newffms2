@@ -3,7 +3,7 @@ package com.personal.oyl.newffms.util;
 import java.util.List;
 
 public class BootstrapTableJsonRlt {
-    private int total;// total records from this query
+    private int total;
     private List<?> rows;
     
     public BootstrapTableJsonRlt(int total, List<?> rows) {

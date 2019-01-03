@@ -19,7 +19,7 @@ import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorExceptio
 public interface CategoryRepos {
     /**
      * 根据类别标识查询类别
-     * 
+     *
      * @param key 类别标识
      * @return 类别实体
      * @throws CategoryKeyEmptyException
@@ -28,7 +28,7 @@ public interface CategoryRepos {
 
     /**
      * 创建新的类别（仅限根类别）
-     * 
+     *
      * @param bean 待创建类别实体
      * @param operator 操作人
      * @throws CategoryDescEmptyException
@@ -45,7 +45,7 @@ public interface CategoryRepos {
 
     /**
      * 删除类别（必须为叶子类别）
-     * 
+     *
      * @param key 待删除类别标识
      * @param operator 操作人
      * @throws CategoryKeyEmptyException
@@ -59,7 +59,7 @@ public interface CategoryRepos {
 
     /**
      * 根据父类别标识查询子类别
-     * 
+     *
      * @param parentKey 父类别标识
      * @return 子类别集合（无排序）
      * @throws CategoryKeyEmptyException
@@ -68,35 +68,35 @@ public interface CategoryRepos {
 
     /**
      * 级联查询所有根类别
-     * 
+     *
      * @return 根类别集合，包括子类别（无排序）
      */
     List<Category> rootCategoriesCascaded();
     
     /**
      * 查询所有根类别
-     * 
+     *
      * @return 根类别集合（无排序）
      */
     List<Category> rootCategories();
     
     /**
      * 查询所有类别
-     * 
+     *
      * @return 全量类别集合（无排序）
      */
     List<Category> allCategories();
     
     /**
      * 查询所有类别
-     * 
+     *
      * @return 全量类别集合
      */
     Map<BigDecimal, Category> allCategoriesById();
     
     /**
      * 查询所有类别
-     * 
+     *
      * @param excludedRootCategories 指定需要排除的根类别
      * @return 全量类别集合（无排序）
      */

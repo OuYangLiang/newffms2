@@ -16,21 +16,17 @@ public enum AccountType {
     
     private String desc;
 
-    private AccountType(String desc)
-    {
+    AccountType(String desc) {
         this.desc = desc;
     }
 
-    public String getDesc()
-    {
+    public String getDesc() {
         return desc;
     }
     
-    public static Map<String, String> toMapValue()
-    {
-        Map<String,String> rlt = new HashMap<String,String>();
-        for (AccountType ms : AccountType.values())
-        {
+    public static Map<String, String> toMapValue() {
+        Map<String, String> rlt = new HashMap<String, String>();
+        for (AccountType ms : AccountType.values()) {
             rlt.put(ms.name(), ms.getDesc());
         }
         

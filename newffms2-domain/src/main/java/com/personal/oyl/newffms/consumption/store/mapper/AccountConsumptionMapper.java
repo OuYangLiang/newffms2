@@ -5,9 +5,9 @@ import java.util.List;
 import com.personal.oyl.newffms.consumption.domain.AccountConsumptionVo;
 
 public interface AccountConsumptionMapper {
-	List<AccountConsumptionVo> select(AccountConsumptionVo param);
-	
-	int insert(AccountConsumptionVo param);
-	
-	int delete(AccountConsumptionVo param);
+    List<AccountConsumptionVo> select(AccountConsumptionVo param);
+
+    int insert(AccountConsumptionVo param);
+
+    int delete(AccountConsumptionVo param);
 }

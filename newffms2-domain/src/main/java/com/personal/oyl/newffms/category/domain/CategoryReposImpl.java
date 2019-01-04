@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -199,28 +199,12 @@ public class CategoryReposImpl implements CategoryRepos {
     @Override
     public List<Category> rootCategoriesCascaded() {
         List<Category> list = this.allCategories();
-        Map<BigDecimal, List<Category>> catMap = new HashMap<>();
-
-        BigDecimal key = null;
-        for (Category cat : list) {
-            key = null == cat.getParentKey() ? BigDecimal.valueOf(-1) : cat.getParentKey().getCategoryOid();
-
-            if (catMap.containsKey(key)) {
-                List<Category> cList = catMap.get(key);
-                cList.add(cat);
-            } else {
-                List<Category> cList = new ArrayList<>();
-                cList.add(cat);
-                catMap.put(key, cList);
-            }
-        }
-
-        for (Category cat : list) {
-            if (!cat.getLeaf()) {
-                cat.setSubCategories(catMap.get(cat.getKey().getCategoryOid()));
-            }
-        }
-
+        Map<BigDecimal, List<Category>> catMap = list.stream().collect(Collectors.groupingBy(
+                cat -> null == cat.getParentKey() ? BigDecimal.valueOf(-1) : cat.getParentKey().getCategoryOid()));
+        
+        list.stream().filter((cat -> !cat.getLeaf()))
+            .forEach(cat -> cat.setSubCategories(catMap.get(cat.getKey().getCategoryOid())));
+        
         List<Category> rlt = new ArrayList<>();
         for (Category root : catMap.get(BigDecimal.valueOf(-1))) {
             rlt.add(root);
@@ -241,20 +225,15 @@ public class CategoryReposImpl implements CategoryRepos {
     @Override
     public List<Category> allCategories(Set<BigDecimal> excludedRootCategories) {
         List<Category> excludedCategories = this.rootCategoriesCascaded();
+        
         if (null != excludedRootCategories) {
-            Iterator<Category> it = excludedCategories.iterator();
-            while (it.hasNext()) {
-                Category item = it.next();
-                if (excludedRootCategories.contains(item.getKey().getCategoryOid())) {
-                    it.remove();
-                }
-            }
+            excludedCategories = excludedCategories.stream()
+                    .filter(item -> !excludedRootCategories.contains(item.getKey().getCategoryOid()))
+                    .collect(Collectors.toList());
         }
-
+        
         List<Category> categoryList = new LinkedList<>();
-        for (Category item : excludedCategories) {
-            categoryList.addAll(item.toFlatList());
-        }
+        excludedCategories.stream().forEach(item -> categoryList.addAll(item.toFlatList()));
         
         return categoryList;
     }

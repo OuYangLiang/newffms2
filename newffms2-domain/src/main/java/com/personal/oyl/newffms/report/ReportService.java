@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,19 +43,13 @@ public class ReportService {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
         List<User> users = userRepos.queryAllUser();
         
-        Map<String, BigDecimal> map = new HashMap<>();
-        if (null != list) {
-            for (Incoming item : list) {
-                String month = this.getMonth(item.getIncomingDate());
-                String key = item.getOwnerOid() + "-" + month;
-                BigDecimal amt = item.getAmount();
-                
-                if (map.containsKey(key)) {
-                    map.put(key, map.get(key).add(amt));
-                } else {
-                    map.put(key, amt);
-                }
-            }
+        Map<String, BigDecimal> map = null;
+        if (null == list) {
+            map = new HashMap<>();
+        } else {
+            map = list.stream().collect(
+                    Collectors.groupingBy((item) -> item.getOwnerOid() + "-" + this.getMonth(item.getIncomingDate()), 
+                            Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
         }
 
         HighChartResult rlt = new HighChartResult();
@@ -82,21 +77,21 @@ public class ReportService {
     public HighChartResult queryTotalIncomingByType(Date start, Date end) {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
         BigDecimal total = BigDecimal.ZERO;
-        Map<IncomingType, BigDecimal> typeAmt = IncomingType.initAmtMap();
-        
-        if (null != list) {
-            for (Incoming item : list) {
-                if (!item.getConfirmed()) {
-                    continue;
-                }
-
-                IncomingType key = item.getIncomingType();
-                BigDecimal amt = item.getAmount();
-                total = total.add(amt);
-                typeAmt.put(key, typeAmt.get(key).add(amt));
-            }
+        Map<IncomingType, BigDecimal> typeAmt = null;
+        if (null == list) {
+            typeAmt = IncomingType.initAmtMap();
+        } else {
+            typeAmt = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .collect(Collectors.groupingBy(Incoming::getIncomingType, 
+                            Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
+            
+            total = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .map(item -> item.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
-
+        
         HighChartResult rlt = new HighChartResult();
         rlt.setSeries(new ArrayList<HightChartSeries>());
 
@@ -110,7 +105,7 @@ public class ReportService {
         series.setName("总收入");
         series.setY(total);
         rlt.getSeries().get(0).getData().add(series);
-
+        
         for (Map.Entry<IncomingType, BigDecimal> entry : typeAmt.entrySet()) {
             series = new HightChartSeries();
             series.setName(entry.getKey().getDesc());
@@ -127,23 +122,20 @@ public class ReportService {
         List<User> users = userRepos.queryAllUser();
 
         BigDecimal total = BigDecimal.ZERO;
-        Map<BigDecimal, BigDecimal> userAmt = new HashMap<>();
-        if (null != list) {
-            for (Incoming item : list) {
-                if (!item.getConfirmed()) {
-                    continue;
-                }
-
-                BigDecimal key = item.getOwnerOid();
-                BigDecimal amt = item.getAmount();
-                total = total.add(amt);
-
-                if (userAmt.containsKey(key)) {
-                    userAmt.put(key, userAmt.get(key).add(amt));
-                } else {
-                    userAmt.put(key, amt);
-                }
-            }
+        
+        Map<BigDecimal, BigDecimal> userAmt = null;
+        if (null == list) {
+            userAmt = new HashMap<>();
+        } else {
+            userAmt = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .collect(Collectors.groupingBy(Incoming::getOwnerOid,
+                                    Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
+            
+            total = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .map(item -> item.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
         HighChartResult rlt = new HighChartResult();
@@ -522,7 +514,7 @@ public class ReportService {
             List<PersonalConsumptionVo> personalConsumptionVos) {
         Map<BigDecimal, Category> catMap = categoryRepos.allCategoriesById();
         Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(categoryConsumptionVos);
-
+        
         for (PersonalConsumptionVo personalConsumption : personalConsumptionVos) {
             BigDecimal key = personalConsumption.getCategoryOid();
 
@@ -554,6 +546,7 @@ public class ReportService {
         List<User> allUsers = userRepos.queryAllUser();
         List<Category> categoryList = categoryRepos.allCategories(excludedRootCategories);
         List<CategoryConsumptionVo> rlt = new ArrayList<>();
+        
         for (Category category : categoryList) {
             rlt.add(CategoryConsumptionVo.init(category));
             for (User user : allUsers) {

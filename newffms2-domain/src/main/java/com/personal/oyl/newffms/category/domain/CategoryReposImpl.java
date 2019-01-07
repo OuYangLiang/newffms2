@@ -3,7 +3,6 @@ package com.personal.oyl.newffms.category.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -212,16 +211,6 @@ public class CategoryReposImpl implements CategoryRepos {
         return rlt;
     }
 
-    @Override
-    public Map<BigDecimal, Category> allCategoriesById() {
-        List<Category> list = this.allCategories();
-        Map<BigDecimal, Category> rlt = new HashMap<>();
-        for (Category item : list) {
-            rlt.put(item.getKey().getCategoryOid(), item);
-        }
-        return rlt;
-    }
-    
     @Override
     public List<Category> allCategories(Set<BigDecimal> excludedRootCategories) {
         List<Category> excludedCategories = this.rootCategoriesCascaded();

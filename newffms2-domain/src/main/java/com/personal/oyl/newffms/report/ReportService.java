@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,7 +272,8 @@ public class ReportService {
         List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = list.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
         List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         
         Map<BigDecimal, BigDecimal> parentCategoryAmtMap = new HashMap<BigDecimal, BigDecimal>();
@@ -372,7 +374,8 @@ public class ReportService {
         List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = list.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
         List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         List<User> allUsers = userRepos.queryAllUser();
 
@@ -512,8 +515,10 @@ public class ReportService {
 
     private void merge(List<CategoryConsumptionVo> categoryConsumptionVos,
             List<PersonalConsumptionVo> personalConsumptionVos) {
-        Map<BigDecimal, Category> catMap = categoryRepos.allCategoriesById();
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(categoryConsumptionVos);
+        Map<BigDecimal, Category> catMap = categoryRepos.allCategories().stream().collect(
+                Collectors.toMap(cat -> cat.getKey().getCategoryOid(), Function.identity()));
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = categoryConsumptionVos.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
         
         for (PersonalConsumptionVo personalConsumption : personalConsumptionVos) {
             BigDecimal key = personalConsumption.getCategoryOid();
@@ -534,14 +539,6 @@ public class ReportService {
         }
     }
 
-    private Map<String, CategoryConsumptionVo> group(List<CategoryConsumptionVo> param) {
-        Map<String, CategoryConsumptionVo> rlt = new HashMap<>();
-        for (CategoryConsumptionVo item : param) {
-            rlt.put(item.getCategoryOid() + "_" + item.getUserOid(), item);
-        }
-        return rlt;
-    }
-    
     private List<CategoryConsumptionVo> initCategoryConsumption(Set<BigDecimal> excludedRootCategories) {
         List<User> allUsers = userRepos.queryAllUser();
         List<Category> categoryList = categoryRepos.allCategories(excludedRootCategories);

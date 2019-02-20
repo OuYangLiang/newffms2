@@ -14,21 +14,21 @@ public interface CategoryOperation {
     
     /**
      * 变更当前类别名称
-     * 
+     *
      * @param newDesc 新的名称
      * @param operator 操作人
      * @throws CategoryDescEmptyException
      * @throws CategoryDescTooLongException
      * @throws NoOperatorException
      */
-    public void changeCategoryDesc(String newDesc, String operator)
+    void changeCategoryDesc(String newDesc, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException;
     
     /**
      * 创建当前类别的子类别
-     * 
+     *
      * @param desc 子类别名称
-     * @param budget 月度预算   
+     * @param budget 月度预算
      * @param operator 操作人
      * @return 子类别
      * @throws CategoryDescEmptyException
@@ -38,18 +38,18 @@ public interface CategoryOperation {
      * @throws CategoryBudgetInvalidException
      * @throws NewffmsSystemException
      */
-    public Category addChild(String desc, BigDecimal budget, String operator)
+    Category addChild(String desc, BigDecimal budget, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
             CategoryBudgetEmptyException, CategoryBudgetInvalidException, NewffmsSystemException;
     
     /**
      * 变更当前类别的月度预算（当前类别必须为叶子类别）
-     * 
+     *
      * @param newBudget 新的预算
      * @param operator 操作人
-     * @throws CategoryNotLeafException 
-     * @throws NoOperatorException 
+     * @throws CategoryNotLeafException
+     * @throws NoOperatorException
      */
-    public void changeBudget(BigDecimal newBudget, String operator)
+    void changeBudget(BigDecimal newBudget, String operator)
             throws CategoryNotLeafException, NoOperatorException, NewffmsSystemException;
 }

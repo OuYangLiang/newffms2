@@ -27,7 +27,7 @@ public interface AccountRepos {
 
     /**
      * 根据账户标识查询账户
-     * 
+     *
      * @param key 账户标识
      * @return 账户实体
      * @throws AccountKeyEmptyException
@@ -36,7 +36,7 @@ public interface AccountRepos {
     
     /**
      * 根据收入标识查询账户
-     * 
+     *
      * @param key 收入标识
      * @return 账户实体
      * @throws IncomingKeyEmptyException
@@ -45,7 +45,7 @@ public interface AccountRepos {
     
     /**
      * 根据用户标识查询账户集合
-     * 
+     *
      * @param key 用户标识
      * @param includesDisabled 是否包含禁用账户标识
      * @return 账户实体集合
@@ -55,7 +55,7 @@ public interface AccountRepos {
     
     /**
      * 创建新的账户
-     * 
+     *
      * @param bean 账户实体
      * @param operator 操作人
      * @throws AccountDescEmptyException
@@ -78,7 +78,7 @@ public interface AccountRepos {
 
     /**
      * 根据流水号查询账户明细
-     * 
+     *
      * @param batchNum 流水号
      * @return 账户明细
      */
@@ -87,18 +87,19 @@ public interface AccountRepos {
     
     /**
      * 根据账户查询流水
-     * 
+     *
      * @param key 账户标识
      * @param page 页数
      * @param sizePerPage 每页记录数
      * @return 账户流水分页信息
      * @throws AccountKeyEmptyException
      */
-    Tuple<Integer, List<AccountAuditVo>> auditsOfAccount(AccountKey key, int page, int sizePerPage) throws AccountKeyEmptyException;
+    Tuple<Integer, List<AccountAuditVo>> auditsOfAccount(AccountKey key, int page, int sizePerPage)
+            throws AccountKeyEmptyException;
 
     /**
      * 删除账户
-     * 
+     *
      * @param key 待删除账户标识
      * @throws AccountKeyEmptyException
      * @throws AccountNotExistException

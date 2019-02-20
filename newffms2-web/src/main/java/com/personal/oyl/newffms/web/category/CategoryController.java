@@ -108,7 +108,8 @@ public class CategoryController extends BaseController {
                 categoryRepos.add(form.toCategory(), SessionUtil.getInstance().getLoginUser(session).getUserName());
             } else {
                 Category parent = categoryRepos.categoryOfId(new CategoryKey(form.getParentOid()));
-                parent.addChild(form.getCategoryDesc(), form.getMonthlyBudget(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+                parent.addChild(form.getCategoryDesc(),
+                        form.getMonthlyBudget(), SessionUtil.getInstance().getLoginUser(session).getUserName());
             }
         } catch (NewffmsDomainException e) {
             model.addAttribute("validation", false);

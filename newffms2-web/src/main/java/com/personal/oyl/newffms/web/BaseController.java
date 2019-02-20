@@ -15,9 +15,9 @@ public abstract class BaseController {
 
     }
 
-    protected final void clearSearchParameter(HttpServletRequest request, HttpSession session, String sessionKey_) {
+    protected final void clearSearchParameter(HttpServletRequest request, HttpSession session, String sessionKey) {
         if (!isKeepSearchParameter(request)) {
-            session.removeAttribute(sessionKey_);
+            session.removeAttribute(sessionKey);
         }
     }
 

@@ -1,66 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.user.store.mapper.UserMapper">
-	<resultMap id="UserResultMap" type="com.personal.oyl.newffms.user.domain.User">
-		<id column="USER_OID" property="key.userOid" jdbcType="DECIMAL" />
-		<result column="USER_NAME" property="userName" jdbcType="NVARCHAR" />
-		<result column="USER_ALIAS" property="userAlias" jdbcType="NVARCHAR" />
-		<result column="GENDER" property="gender" jdbcType="VARCHAR" />
-		<result column="PHONE" property="phone" jdbcType="VARCHAR" />
-		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
-		<result column="ICON" property="icon" jdbcType="VARCHAR" />
-		<result column="REMARKS" property="remarks" jdbcType="VARCHAR" />
-		<result column="LOGIN_ID" property="loginId" jdbcType="VARCHAR" />
-		<result column="LOGIN_PWD" property="loginPwd" jdbcType="CHAR" />
-		<result column="USER_TYPE_OID" property="userTypeOid" jdbcType="DECIMAL" />
-		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-		<result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
-		<result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-		<result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
-		<result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
-	</resultMap>
+    <resultMap id="UserResultMap" type="com.personal.oyl.newffms.user.domain.User">
+        <id column="user_oid" property="key.userOid" jdbcType="DECIMAL" />
+        <result column="user_name" property="userName" jdbcType="NVARCHAR" />
+        <result column="user_alias" property="userAlias" jdbcType="NVARCHAR" />
+        <result column="gender" property="gender" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="email" property="email" jdbcType="VARCHAR" />
+        <result column="icon" property="icon" jdbcType="VARCHAR" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="login_id" property="loginId" jdbcType="VARCHAR" />
+        <result column="login_pwd" property="loginPwd" jdbcType="CHAR" />
+        <result column="user_type_oid" property="userTypeOid" jdbcType="DECIMAL" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+        <result column="update_by" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="DECIMAL" />
+    </resultMap>
 
     <select id="select" resultMap="UserResultMap" parameterType="com.personal.oyl.newffms.user.domain.User">
-        SELECT USER_OID, USER_NAME, USER_ALIAS, GENDER, PHONE, EMAIL, ICON, REMARKS, LOGIN_ID, LOGIN_PWD, USER_TYPE_OID, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-        FROM USER_PROFILE
+        select user_oid, user_name, user_alias, gender, phone, email, icon, remarks, login_id, login_pwd, user_type_oid, create_time, update_time, create_by, update_by, seq_no
+        from user_profile
         <where>
             <if test="key != null and key.userOid != null">
-                USER_OID = #{key.userOid,jdbcType=DECIMAL}
+                user_oid = #{key.userOid,jdbcType=DECIMAL}
             </if>
-			<if test="loginId != null">
-				AND LOGIN_ID = #{loginId,jdbcType=VARCHAR}
-			</if>
+            <if test="loginId != null">
+                and login_id = #{loginId,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
     
     <resultMap id="ModuleResultMap" type="com.personal.oyl.newffms.user.domain.Module">
-        <id column="MODULE_OID" property="key.moduleOid" jdbcType="DECIMAL" />
-        <result column="MODULE_DESC" property="moduleDesc" jdbcType="NVARCHAR" />
-        <result column="MODULE_LEVEL" property="moduleLevel" jdbcType="DECIMAL" />
-        <result column="SHOW_ORDER" property="showOrder" jdbcType="DECIMAL" />
-        <result column="MODULE_LINK" property="moduleLink" jdbcType="VARCHAR" />
-        <result column="PARENT_OID" property="parentOid" jdbcType="DECIMAL" />
+        <id column="module_oid" property="key.moduleOid" jdbcType="DECIMAL" />
+        <result column="module_desc" property="moduleDesc" jdbcType="NVARCHAR" />
+        <result column="module_level" property="moduleLevel" jdbcType="DECIMAL" />
+        <result column="show_order" property="showOrder" jdbcType="DECIMAL" />
+        <result column="module_link" property="moduleLink" jdbcType="VARCHAR" />
+        <result column="parent_oid" property="parentOid" jdbcType="DECIMAL" />
     </resultMap>
     
     <select id="selectMenusByUser" resultMap="ModuleResultMap" parameterType="com.personal.oyl.newffms.user.domain.UserKey">
-        SELECT MODULE_OID, MODULE_DESC, MODULE_LEVEL, SHOW_ORDER, MODULE_LINK, PARENT_OID
-        FROM MODULE
-        WHERE MODULE_OID IN (
-            SELECT MODULE_OID
-                FROM OPERATION OPN, ROLE_OPERATION RO, USER_ROLE UR
-                WHERE UR.USER_OID = #{userOid,jdbcType=DECIMAL}
-                AND UR.ROLE_OID = RO.ROLE_OID
-                AND RO.OPN_OID = OPN.OPN_OID
+        select module_oid, module_desc, module_level, show_order, module_link, parent_oid
+        from module
+        where module_oid in (
+            select module_oid
+                from operation opn, role_operation ro, user_role ur
+                where ur.user_oid = #{userOid,jdbcType=DECIMAL}
+                and ur.role_oid = ro.role_oid
+                and ro.opn_oid = opn.opn_oid
         )
-        ORDER BY SHOW_ORDER
+        order by show_order
     </select>
     
     <select id="selectUrlsByUser" resultType="java.lang.String" parameterType="com.personal.oyl.newffms.user.domain.UserKey">
-        SELECT OPN_URL 
-        FROM OPERATION_URL URL, OPERATION OPN, ROLE_OPERATION RO, USER_ROLE UR
-        WHERE UR.USER_OID = #{userOid,jdbcType=DECIMAL}
-        AND UR.ROLE_OID = RO.ROLE_OID
-        AND RO.OPN_OID = OPN.OPN_OID
-        AND OPN.OPN_OID = URL.OPN_OID
+        select opn_url
+        from operation_url url, operation opn, role_operation ro, user_role ur
+        where ur.user_oid = #{userOid,jdbcType=DECIMAL}
+        and ur.role_oid = ro.role_oid
+        and ro.opn_oid = opn.opn_oid
+        and opn.opn_oid = url.opn_oid
     </select>
 </mapper>
+

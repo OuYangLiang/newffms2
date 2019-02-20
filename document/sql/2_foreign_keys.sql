@@ -1,124 +1,124 @@
-ALTER TABLE USER_PROFILE ADD 
-    FOREIGN KEY (USER_TYPE_OID)
-    REFERENCES USER_TYPE(USER_TYPE_OID)
+alter table user_profile add 
+    foreign key (user_type_oid)
+    references user_type(user_type_oid)
 ;
 
-ALTER TABLE ROLE_PROFILE ADD 
-    FOREIGN KEY (USER_TYPE_OID)
-    REFERENCES USER_TYPE(USER_TYPE_OID)
+alter table role_profile add 
+    foreign key (user_type_oid)
+    references user_type(user_type_oid)
 ;
 
-ALTER TABLE USER_ROLE ADD 
-    FOREIGN KEY (USER_OID)
-    REFERENCES USER_PROFILE(USER_OID)
+alter table user_role add 
+    foreign key (user_oid)
+    references user_profile(user_oid)
 ;
 
-ALTER TABLE USER_ROLE ADD 
-    FOREIGN KEY (ROLE_OID)
-    REFERENCES ROLE_PROFILE(ROLE_OID)
+alter table user_role add 
+    foreign key (role_oid)
+    references role_profile(role_oid)
 ;
 
-ALTER TABLE MODULE ADD 
-    FOREIGN KEY (PARENT_OID)
-    REFERENCES MODULE(MODULE_OID)
+alter table module add 
+    foreign key (parent_oid)
+    references module(module_oid)
 ;
 
-ALTER TABLE OPERATION ADD 
-    FOREIGN KEY (MODULE_OID)
-    REFERENCES MODULE(MODULE_OID)
+alter table operation add 
+    foreign key (module_oid)
+    references module(module_oid)
 ;
 
-ALTER TABLE OPERATION_URL ADD 
-    FOREIGN KEY (OPN_OID)
-    REFERENCES OPERATION(OPN_OID)
+alter table operation_url add 
+    foreign key (opn_oid)
+    references operation(opn_oid)
 ;
 
-ALTER TABLE ROLE_OPERATION ADD 
-    FOREIGN KEY (ROLE_OID)
-    REFERENCES ROLE_PROFILE(ROLE_OID)
+alter table role_operation add 
+    foreign key (role_oid)
+    references role_profile(role_oid)
 ;
 
-ALTER TABLE ROLE_OPERATION ADD 
-    FOREIGN KEY (OPN_OID)
-    REFERENCES OPERATION(OPN_OID)
+alter table role_operation add 
+    foreign key (opn_oid)
+    references operation(opn_oid)
 ;
 
-ALTER TABLE USER_TYPE_OPERATION ADD 
-    FOREIGN KEY (USER_TYPE_OID)
-    REFERENCES USER_TYPE(USER_TYPE_OID)
+alter table user_type_operation add 
+    foreign key (user_type_oid)
+    references user_type(user_type_oid)
 ;
 
-ALTER TABLE USER_TYPE_OPERATION ADD 
-    FOREIGN KEY (OPN_OID)
-    REFERENCES OPERATION(OPN_OID)
+alter table user_type_operation add 
+    foreign key (opn_oid)
+    references operation(opn_oid)
 ;
 
-ALTER TABLE ACCOUNT ADD 
-    FOREIGN KEY (OWNER_OID)
-    REFERENCES USER_PROFILE(USER_OID)
+alter table account add 
+    foreign key (owner_oid)
+    references user_profile(user_oid)
 ;
 
-ALTER TABLE INCOMING ADD 
-    FOREIGN KEY (OWNER_OID)
-    REFERENCES USER_PROFILE(USER_OID)
+alter table incoming add 
+    foreign key (owner_oid)
+    references user_profile(user_oid)
 ;
 
-ALTER TABLE ACCOUNT_INCOMING ADD 
-    FOREIGN KEY (ACNT_OID)
-    REFERENCES ACCOUNT(ACNT_OID)
+alter table account_incoming add 
+    foreign key (acnt_oid)
+    references account(acnt_oid)
 ;
 
-ALTER TABLE ACCOUNT_INCOMING ADD 
-    FOREIGN KEY (INCOMING_OID)
-    REFERENCES INCOMING(INCOMING_OID)
+alter table account_incoming add 
+    foreign key (incoming_oid)
+    references incoming(incoming_oid)
 ;
 
-ALTER TABLE CATEGORY ADD 
-    FOREIGN KEY (PARENT_OID)
-    REFERENCES CATEGORY(CATEGORY_OID)
+alter table category add 
+    foreign key (parent_oid)
+    references category(category_oid)
 ;
 
-ALTER TABLE CONSUMPTION_ITEM ADD 
-    FOREIGN KEY (OWNER_OID)
-    REFERENCES USER_PROFILE(USER_OID)
+alter table consumption_item add 
+    foreign key (owner_oid)
+    references user_profile(user_oid)
 ;
 
-ALTER TABLE CONSUMPTION_ITEM ADD 
-    FOREIGN KEY (CPN_OID)
-    REFERENCES CONSUMPTION(CPN_OID)
+alter table consumption_item add 
+    foreign key (cpn_oid)
+    references consumption(cpn_oid)
 ;
 
-ALTER TABLE CONSUMPTION_ITEM ADD 
-    FOREIGN KEY (CATEGORY_OID)
-    REFERENCES CATEGORY(CATEGORY_OID)
+alter table consumption_item add 
+    foreign key (category_oid)
+    references category(category_oid)
 ;
 
-ALTER TABLE ACCOUNT_CONSUMPTION ADD 
-    FOREIGN KEY (CPN_OID)
-    REFERENCES CONSUMPTION(CPN_OID)
+alter table account_consumption add 
+    foreign key (cpn_oid)
+    references consumption(cpn_oid)
 ;
 
-ALTER TABLE ACCOUNT_CONSUMPTION ADD 
-    FOREIGN KEY (ACNT_OID)
-    REFERENCES ACCOUNT(ACNT_OID)
+alter table account_consumption add 
+    foreign key (acnt_oid)
+    references account(acnt_oid)
 ;
 
-ALTER TABLE ACCOUNT_AUDIT ADD 
-    FOREIGN KEY (CPN_OID)
-    REFERENCES CONSUMPTION(CPN_OID)
+alter table account_audit add 
+    foreign key (cpn_oid)
+    references consumption(cpn_oid)
 ;
 
-ALTER TABLE ACCOUNT_AUDIT ADD 
-    FOREIGN KEY (INCOMING_OID)
-    REFERENCES INCOMING(INCOMING_OID)
+alter table account_audit add 
+    foreign key (incoming_oid)
+    references incoming(incoming_oid)
 ;
 
-ALTER TABLE ACCOUNT_AUDIT ADD 
-    FOREIGN KEY (ACNT_OID)
-    REFERENCES ACCOUNT(ACNT_OID)
+alter table account_audit add 
+    foreign key (acnt_oid)
+    references account(acnt_oid)
 ;
 
-ALTER TABLE ACCOUNT_AUDIT ADD 
-    FOREIGN KEY (REF_ACNT_OID)
-    REFERENCES ACCOUNT(ACNT_OID)
+alter table account_audit add 
+    foreign key (ref_acnt_oid)
+    references account(acnt_oid)
 ;

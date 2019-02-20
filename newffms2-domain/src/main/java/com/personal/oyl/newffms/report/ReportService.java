@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,19 +44,13 @@ public class ReportService {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
         List<User> users = userRepos.queryAllUser();
         
-        Map<String, BigDecimal> map = new HashMap<>();
-        if (null != list) {
-            for (Incoming item : list) {
-                String month = this.getMonth(item.getIncomingDate());
-                String key = item.getOwnerOid() + "-" + month;
-                BigDecimal amt = item.getAmount();
-                
-                if (map.containsKey(key)) {
-                    map.put(key, map.get(key).add(amt));
-                } else {
-                    map.put(key, amt);
-                }
-            }
+        Map<String, BigDecimal> map = null;
+        if (null == list) {
+            map = new HashMap<>();
+        } else {
+            map = list.stream().collect(
+                    Collectors.groupingBy((item) -> item.getOwnerOid() + "-" + this.getMonth(item.getIncomingDate()), 
+                            Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
         }
 
         HighChartResult rlt = new HighChartResult();
@@ -82,21 +78,21 @@ public class ReportService {
     public HighChartResult queryTotalIncomingByType(Date start, Date end) {
         List<Incoming> list = incomingRepos.queryIncomingsByDateRange(start, end);
         BigDecimal total = BigDecimal.ZERO;
-        Map<IncomingType, BigDecimal> typeAmt = IncomingType.initAmtMap();
-        
-        if (null != list) {
-            for (Incoming item : list) {
-                if (!item.getConfirmed()) {
-                    continue;
-                }
-
-                IncomingType key = item.getIncomingType();
-                BigDecimal amt = item.getAmount();
-                total = total.add(amt);
-                typeAmt.put(key, typeAmt.get(key).add(amt));
-            }
+        Map<IncomingType, BigDecimal> typeAmt = null;
+        if (null == list) {
+            typeAmt = IncomingType.initAmtMap();
+        } else {
+            typeAmt = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .collect(Collectors.groupingBy(Incoming::getIncomingType, 
+                            Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
+            
+            total = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .map(item -> item.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
-
+        
         HighChartResult rlt = new HighChartResult();
         rlt.setSeries(new ArrayList<HightChartSeries>());
 
@@ -110,7 +106,7 @@ public class ReportService {
         series.setName("总收入");
         series.setY(total);
         rlt.getSeries().get(0).getData().add(series);
-
+        
         for (Map.Entry<IncomingType, BigDecimal> entry : typeAmt.entrySet()) {
             series = new HightChartSeries();
             series.setName(entry.getKey().getDesc());
@@ -127,23 +123,20 @@ public class ReportService {
         List<User> users = userRepos.queryAllUser();
 
         BigDecimal total = BigDecimal.ZERO;
-        Map<BigDecimal, BigDecimal> userAmt = new HashMap<>();
-        if (null != list) {
-            for (Incoming item : list) {
-                if (!item.getConfirmed()) {
-                    continue;
-                }
-
-                BigDecimal key = item.getOwnerOid();
-                BigDecimal amt = item.getAmount();
-                total = total.add(amt);
-
-                if (userAmt.containsKey(key)) {
-                    userAmt.put(key, userAmt.get(key).add(amt));
-                } else {
-                    userAmt.put(key, amt);
-                }
-            }
+        
+        Map<BigDecimal, BigDecimal> userAmt = null;
+        if (null == list) {
+            userAmt = new HashMap<>();
+        } else {
+            userAmt = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .collect(Collectors.groupingBy(Incoming::getOwnerOid,
+                                    Collectors.reducing(BigDecimal.ZERO, Incoming::getAmount, BigDecimal::add)));
+            
+            total = list.stream()
+                    .filter(item -> item.getConfirmed())
+                    .map(item -> item.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
         HighChartResult rlt = new HighChartResult();
@@ -279,13 +272,14 @@ public class ReportService {
         List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = list.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
         List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         
         Map<BigDecimal, BigDecimal> parentCategoryAmtMap = new HashMap<BigDecimal, BigDecimal>();
         for (CategoryConsumptionVo item : list) {
             if (BigDecimal.valueOf(-1).equals(item.getUserOid())) {
-                BigDecimal key = item.getCategoryLevel() == 0 ? key = BigDecimal.valueOf(-1) : item.getParentOid();
+                BigDecimal key = item.getCategoryLevel() == 0 ? BigDecimal.valueOf(-1) : item.getParentOid();
                 if (parentCategoryAmtMap.containsKey(key)) {
                     BigDecimal oldSum = parentCategoryAmtMap.get(key);
                     oldSum = oldSum.add(item.getTotal());
@@ -334,7 +328,8 @@ public class ReportService {
             
             //处理drilldown
             if (!category.getLeaf()) {
-                if (categoryConsumptionsMap.get(category.getKey().getCategoryOid() + "_-1").getTotal().compareTo(BigDecimal.ZERO) == 0) {
+                if (categoryConsumptionsMap.get(category.getKey().getCategoryOid() + "_-1").getTotal()
+                        .compareTo(BigDecimal.ZERO) == 0) {
                     continue;
                 }
                 
@@ -345,14 +340,16 @@ public class ReportService {
                 drillDownSeries.setData(new ArrayList<HightChartSeries>());
                 
                 for (CategoryConsumptionVo item : list) {
-                    if (category.getKey().getCategoryOid().equals(item.getParentOid()) && BigDecimal.valueOf(-1).equals(item.getUserOid())) {
+                    if (category.getKey().getCategoryOid().equals(item.getParentOid())
+                            && BigDecimal.valueOf(-1).equals(item.getUserOid())) {
                         BigDecimal usedAmt = item.getTotal();
                         if (usedAmt.compareTo(BigDecimal.ZERO) == 0) {
                             //金额为0的不需要在pie图呈现。
                             continue;
                         }
                         
-                        BigDecimal totalAmt = parentCategoryAmtMap.get((item.getParentOid() == null ? BigDecimal.valueOf(-1) : item.getParentOid()));
+                        BigDecimal totalAmt = parentCategoryAmtMap
+                                .get((item.getParentOid() == null ? BigDecimal.valueOf(-1) : item.getParentOid()));
                         BigDecimal percent  = usedAmt.divide(totalAmt, 4, RoundingMode.HALF_UP);
                         
                         HightChartSeries innerSeries = new HightChartSeries();
@@ -377,7 +374,8 @@ public class ReportService {
         List<PersonalConsumptionVo> pVos = consumptionRepos.queryPersonalConsumption(start, end);
         List<CategoryConsumptionVo> list = this.initCategoryConsumption(excludedRootCategories);
         this.merge(list, pVos);
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(list);
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = list.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
         List<Category> allCategories = categoryRepos.allCategories(excludedRootCategories);
         List<User> allUsers = userRepos.queryAllUser();
 
@@ -435,7 +433,7 @@ public class ReportService {
          * innerSeries.setName(category.getCategoryDesc());
          * innerSeries.setY(category.getMonthlyBudget());
          * innerSeries.setDrilldown(category.getCategoryOid().toString());
-         * 
+         *
          * series.getData().add(innerSeries); } } seriesList.add(series); }
          */
 
@@ -451,7 +449,7 @@ public class ReportService {
              * series.setId(category.getCategoryOid().toString());
              * series.setName("预算"); series.setData(new
              * ArrayList<HightChartSeries>());
-             * 
+             *
              * for (Category inner : allCategories) { if
              * (category.getCategoryOid().equals(inner.getParentOid())) {
              * HightChartSeries innerSeries = new HightChartSeries();
@@ -460,7 +458,7 @@ public class ReportService {
              * innerSeries.setY(inner.getMonthlyBudget()); if
              * (!inner.getIsLeaf()) {
              * innerSeries.setDrilldown(inner.getCategoryOid().toString()); }
-             * 
+             *
              * series.getData().add(innerSeries); } } drilldownList.add(series);
              * }
              */
@@ -517,9 +515,11 @@ public class ReportService {
 
     private void merge(List<CategoryConsumptionVo> categoryConsumptionVos,
             List<PersonalConsumptionVo> personalConsumptionVos) {
-        Map<BigDecimal, Category> catMap = categoryRepos.allCategoriesById();
-        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = this.group(categoryConsumptionVos);
-
+        Map<BigDecimal, Category> catMap = categoryRepos.allCategories().stream().collect(
+                Collectors.toMap(cat -> cat.getKey().getCategoryOid(), Function.identity()));
+        Map<String, CategoryConsumptionVo> categoryConsumptionsMap = categoryConsumptionVos.stream().collect(
+                Collectors.toMap(item -> item.getCategoryOid() + "_" + item.getUserOid(), Function.identity()));
+        
         for (PersonalConsumptionVo personalConsumption : personalConsumptionVos) {
             BigDecimal key = personalConsumption.getCategoryOid();
 
@@ -539,18 +539,11 @@ public class ReportService {
         }
     }
 
-    private Map<String, CategoryConsumptionVo> group(List<CategoryConsumptionVo> param) {
-        Map<String, CategoryConsumptionVo> rlt = new HashMap<>();
-        for (CategoryConsumptionVo item : param) {
-            rlt.put(item.getCategoryOid() + "_" + item.getUserOid(), item);
-        }
-        return rlt;
-    }
-    
     private List<CategoryConsumptionVo> initCategoryConsumption(Set<BigDecimal> excludedRootCategories) {
         List<User> allUsers = userRepos.queryAllUser();
         List<Category> categoryList = categoryRepos.allCategories(excludedRootCategories);
         List<CategoryConsumptionVo> rlt = new ArrayList<>();
+        
         for (Category category : categoryList) {
             rlt.add(CategoryConsumptionVo.init(category));
             for (User user : allUsers) {

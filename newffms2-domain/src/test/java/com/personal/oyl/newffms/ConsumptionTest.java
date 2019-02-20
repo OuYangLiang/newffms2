@@ -61,21 +61,21 @@ public class ConsumptionTest extends TestCase {
 		// 创建账户
 		Account acnt1 = new Account();
 		acnt1.setAcntDesc("招商银行");
-		acnt1.setAcntType(AccountType.Bankcard);
+		acnt1.setAcntType(AccountType.bankcard);
 		acnt1.setBalance(BigDecimal.valueOf(150));
 		acnt1.setOwner(new UserKey(BigDecimal.ONE));
 		acntRepos.add(acnt1, "欧阳亮");
 		
 		Account acnt2 = new Account();
 		acnt2.setAcntDesc("招商银行");
-		acnt2.setAcntType(AccountType.Bankcard);
+		acnt2.setAcntType(AccountType.bankcard);
 		acnt2.setBalance(BigDecimal.valueOf(150));
 		acnt2.setOwner(new UserKey(BigDecimal.valueOf(2)));
 		acntRepos.add(acnt2, "喻敏");
 		
 		// 创建消费
 		Consumption bean = new Consumption();
-		bean.setCpnType(ConsumptionType.Online);
+		bean.setCpnType(ConsumptionType.online);
 		bean.setAmount(BigDecimal.valueOf(115.53));
 		bean.setCpnTime(new Date());
 		bean.setBatchNum(UUID.randomUUID().toString().replaceAll("-", "").toUpperCase());

@@ -28,7 +28,7 @@ import com.personal.oyl.newffms.consumption.domain.ConsumptionException.Consumpt
 public interface ConsumptionRepos {
     /**
      * 创建新的消费
-     * 
+     *
      * @param param 消费实体
      * @param operator 操作人
      * @throws ConsumptionTypeEmptyException
@@ -55,10 +55,10 @@ public interface ConsumptionRepos {
             ConsumptionItemCategoryEmptyException, ConsumptionPaymentsEmptyException,
             ConsumptionPaymentAmountEmptyException, ConsumptionPaymentAmountInvalidException,
             ConsumptionPaymentAccountEmptyException, ConsumptionAmountNotMatchException, NoOperatorException;
-	
+
     /**
      * 根据消费标识查询消费
-     * 
+     *
      * @param key 消费标识
      * @return 消费实体
      * @throws ConsumptionKeyEmptyException
@@ -67,7 +67,7 @@ public interface ConsumptionRepos {
 
     /**
      * 删除消费
-     * 
+     *
      * @param key 待删除消费标识
      * @throws ConsumptionKeyEmptyException
      * @throws ConsumptionNotExistException
@@ -79,7 +79,7 @@ public interface ConsumptionRepos {
     
     /**
      * 根据指定条件查询消费明细
-     * 
+     *
      * @param condition 查询条件
      * @return 消费明细
      */
@@ -87,18 +87,18 @@ public interface ConsumptionRepos {
     
     /**
      * 根据时间范围查询用户消费金额，包括类别明细
-     * 
+     *
      * @param start 起始时间
      * @param end 截止时间
      * @return 用户消费金额，包括类别明细
      */
-    public List<PersonalConsumptionVo> queryPersonalConsumption(Date start, Date end);
+    List<PersonalConsumptionVo> queryPersonalConsumption(Date start, Date end);
     
     
     /**
      * 查询当月消费总额
-     * 
+     *
      * @return 当月消费总额
      */
-    public BigDecimal queryMonthlyConsumptionTotal();
+    BigDecimal queryMonthlyConsumptionTotal();
 }

@@ -131,7 +131,8 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping("/view")
-    public String view(@RequestParam("acntOid") BigDecimal acntOid, Model model) throws AccountKeyEmptyException, UserKeyEmptyException {
+    public String view(@RequestParam("acntOid") BigDecimal acntOid, Model model)
+            throws AccountKeyEmptyException, UserKeyEmptyException {
         Account account = acntRepos.accountOfId(new AccountKey(acntOid));
         AccountDto form = new AccountDto(account);
 
@@ -165,7 +166,8 @@ public class AccountController extends BaseController {
             HttpSession session) throws UserKeyEmptyException, AccountKeyEmptyException {
         form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
         form.setTarget(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTarget().getAcntOid()))));
-        form.getTarget().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTarget().getOwner().getUserOid()))));
+        form.getTarget().setOwner(new UserDto(
+                userRepos.userOfId(new UserKey(form.getTarget().getOwner().getUserOid()))));
         
         if (result.hasErrors()) {
             model.addAttribute("validation", false);
@@ -184,7 +186,8 @@ public class AccountController extends BaseController {
         Account target = acntRepos.accountOfId(new AccountKey(form.getTarget().getAcntOid()));
 
         try {
-            source.getProxy().transfer(target, form.getPayment(), SessionUtil.getInstance().getLoginUser(session).getUserName());
+            source.getProxy().transfer(target, form.getPayment(),
+                    SessionUtil.getInstance().getLoginUser(session).getUserName());
         } catch (NewffmsDomainException e) {
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());
@@ -204,20 +207,21 @@ public class AccountController extends BaseController {
             @RequestParam(value = "offset", required = true) int offset,
             @RequestParam(value = "limit", required = true) int limit,
             @RequestParam(value = "sort", required = true) String sort,
-            @RequestParam(value = "order", required = true) String order, HttpSession session) throws AccountKeyEmptyException {
+            @RequestParam(value = "order", required = true) String order, HttpSession session)
+                    throws AccountKeyEmptyException {
 
         int sizePerPage = limit;
         int requestPage = offset / limit + 1;
-//        String sortField = sort;
-//        String sortDir = order;
 
-        Tuple<Integer, List<AccountAuditVo>> tuple = acntRepos.auditsOfAccount(new AccountKey(acntOid), requestPage, sizePerPage);
-        return new BootstrapTableJsonRlt(tuple.first, tuple.second);
+        Tuple<Integer, List<AccountAuditVo>> tuple =
+                acntRepos.auditsOfAccount(new AccountKey(acntOid), requestPage, sizePerPage);
+        return new BootstrapTableJsonRlt(tuple.getFirst(), tuple.getSecond());
     }
 
     @RequestMapping("/alaxGetAllAccountsByUser")
     @ResponseBody
-    public List<Map<String, Object>> alaxGetAllAccountsByUser(@RequestParam(value = "includeDisabled", required = true) boolean includeDisabled) {
+    public List<Map<String, Object>> alaxGetAllAccountsByUser(
+            @RequestParam(value = "includeDisabled", required = true) boolean includeDisabled) {
         
         List<Map<String, Object>> rlt = new LinkedList<>();
         List<User> users = userRepos.queryAllUser();
@@ -231,18 +235,18 @@ public class AccountController extends BaseController {
                     item.put("user", new UserDto(user));
                     item.put("accounts", acnts);
                     
-                    BigDecimal totalBal = BigDecimal.ZERO;
-                    BigDecimal totalDept= BigDecimal.ZERO;
+                    BigDecimal totalBal  = BigDecimal.ZERO;
+                    BigDecimal totalDept = BigDecimal.ZERO;
                     Integer numOfAccounts = 0;
 
                     if (null != accounts) {
                         numOfAccounts = accounts.size();
                         for (Account account : accounts) {
                             acnts.add(new AccountDto(account));
-                            if (AccountType.Creditcard.equals(account.getAcntType())) {
+                            if (AccountType.creditcard.equals(account.getAcntType())) {
                                 totalDept = totalDept.add(account.getDebt());
-                            } else if (!AccountType.MedicalInsurance.equals(account.getAcntType())
-                                    && !AccountType.Accumulation.equals(account.getAcntType())) {
+                            } else if (!AccountType.medicalinsurance.equals(account.getAcntType())
+                                    && !AccountType.accumulation.equals(account.getAcntType())) {
                                 totalBal = totalBal.add(account.getBalance());
                             }
                         }

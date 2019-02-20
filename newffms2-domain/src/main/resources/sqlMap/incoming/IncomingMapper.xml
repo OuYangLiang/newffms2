@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.incoming.store.mapper.IncomingMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.incoming.domain.Incoming">
-        <id column="INCOMING_OID" property="key.incomingOid" jdbcType="DECIMAL" />
-        <result column="INCOMING_DESC" property="incomingDesc" jdbcType="NVARCHAR" />
-        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
-        <result column="INCOMING_TYPE" property="incomingType" jdbcType="VARCHAR" />
-        <result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
-        <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
-        <result column="INCOMING_DATE" property="incomingDate" jdbcType="TIMESTAMP" />
-        <result column="BATCH_NUM" property="batchNum" jdbcType="VARCHAR" />
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
-        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
-	</resultMap>
+    <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.incoming.domain.Incoming">
+        <id column="incoming_oid" property="key.incomingOid" jdbcType="DECIMAL" />
+        <result column="incoming_desc" property="incomingDesc" jdbcType="NVARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="incoming_type" property="incomingType" jdbcType="VARCHAR" />
+        <result column="confirmed" property="confirmed" jdbcType="BIT" />
+        <result column="owner_oid" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="incoming_date" property="incomingDate" jdbcType="TIMESTAMP" />
+        <result column="batch_num" property="batchNum" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+        <result column="update_by" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="DECIMAL" />
+    </resultMap>
 
 
-	<sql id="Base_Column_List">
-        INCOMING_OID, INCOMING_DESC, AMOUNT, INCOMING_TYPE, CONFIRMED, OWNER_OID, INCOMING_DATE, BATCH_NUM, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-	</sql>
+    <sql id="Base_Column_List">
+        incoming_oid, incoming_desc, amount, incoming_type, confirmed, owner_oid, incoming_date, batch_num, create_time, update_time, create_by, update_by, seq_no
+    </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.incoming.domain.Incoming">
-        SELECT <include refid="Base_Column_List" />
-        FROM INCOMING
+        select <include refid="Base_Column_List" />
+        from incoming
         <where>
             <if test="key != null and key.incomingOid != null">
-                INCOMING_OID = #{key.incomingOid,jdbcType=DECIMAL}
+                incoming_oid = #{key.incomingOid,jdbcType=DECIMAL}
             </if>
             <if test="ownerOid != null">
-                AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                and owner_oid = #{ownerOid,jdbcType=DECIMAL}
             </if>
             <if test="incomingType != null">
-                AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+                and incoming_type = #{incomingType,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
     
     <delete id="delete" parameterType="com.personal.oyl.newffms.incoming.domain.IncomingKey" >
-        DELETE FROM INCOMING
+        delete from incoming
         <where>
             <if test="incomingOid != null">
-                INCOMING_OID = #{incomingOid,jdbcType=DECIMAL}
+                incoming_oid = #{incomingOid,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
 
     <insert id="insert" parameterType="com.personal.oyl.newffms.incoming.domain.Incoming" useGeneratedKeys="true" keyProperty="key.incomingOid">
-        INSERT INTO INCOMING(
-            INCOMING_DESC,
-            AMOUNT,
-            INCOMING_TYPE,
-            CONFIRMED,
-            OWNER_OID,
-            INCOMING_DATE,
-            BATCH_NUM,
-            CREATE_TIME,
-            CREATE_BY)
-        VALUES (
+        insert into incoming(
+            incoming_desc,
+            amount,
+            incoming_type,
+            confirmed,
+            owner_oid,
+            incoming_date,
+            batch_num,
+            create_time,
+            create_by)
+        values (
             #{incomingDesc,jdbcType=VARCHAR},
             #{amount,jdbcType=DECIMAL},
             #{incomingType,jdbcType=VARCHAR},
@@ -66,87 +66,88 @@
             #{ownerOid,jdbcType=DECIMAL},
             #{incomingDate,jdbcType=TIMESTAMP},
             #{batchNum,jdbcType=VARCHAR},
-            #{createTime,jdbcType=TIMESTAMP}, 
+            #{createTime,jdbcType=TIMESTAMP},
             #{createBy,jdbcType=NVARCHAR})
     </insert>
     
     <update id="updateStatus" parameterType="java.util.Map">
-        UPDATE INCOMING SET
-            CONFIRMED = #{confirmed,jdbcType=BIT},
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE INCOMING_OID = #{incomingOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update incoming set
+            confirmed = #{confirmed,jdbcType=BIT},
+            seq_no = seq_no + 1,
+            update_by = #{updateBy,jdbcType=NVARCHAR},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where incoming_oid = #{incomingOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
     
     <update id="updateInfo" parameterType="java.util.Map">
-        UPDATE INCOMING SET
-            INCOMING_DESC = #{incomingDesc,jdbcType=VARCHAR},
-            AMOUNT = #{amount, jdbcType=DECIMAL},
-            INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR},
-            OWNER_OID = #{ownerOid,jdbcType=DECIMAL},
-            INCOMING_DATE = #{incomingDate,jdbcType=TIMESTAMP},
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE INCOMING_OID = #{incomingOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update incoming set
+            incoming_desc = #{incomingDesc,jdbcType=VARCHAR},
+            amount = #{amount, jdbcType=DECIMAL},
+            incoming_type = #{incomingType,jdbcType=VARCHAR},
+            owner_oid = #{ownerOid,jdbcType=DECIMAL},
+            incoming_date = #{incomingDate,jdbcType=TIMESTAMP},
+            seq_no = seq_no + 1,
+            update_by = #{updateBy,jdbcType=NVARCHAR},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where incoming_oid = #{incomingOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
     
     <select id="getCountOfSummary" parameterType="java.util.Map" resultType="int">
-        SELECT COUNT(*)
-            FROM INCOMING
+        select count(*)
+            from incoming
         <where>
             <if test="ownerOid != null">
-                OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                owner_oid = #{ownerOid,jdbcType=DECIMAL}
             </if>
             <if test="incomingType != null">
-                AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+                and incoming_type = #{incomingType,jdbcType=VARCHAR}
             </if>
             <if test="confirmed != null">
-                AND CONFIRMED = #{confirmed,jdbcType=BIT}
+                and confirmed = #{confirmed,jdbcType=BIT}
             </if>
             <if test="incomingDesc != null">
-                AND INCOMING_DESC LIKE CONCAT('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
+                and incoming_desc like concat('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
             </if>
         </where>
     </select>
     
     <select id="getListOfSummary" parameterType="java.util.Map" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List" />
-            FROM INCOMING I
+        select <include refid="Base_Column_List" />
+            from incoming i
             <where>
                 <if test="ownerOid != null">
-                    AND OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                    and owner_oid = #{ownerOid,jdbcType=DECIMAL}
                 </if>
                 <if test="incomingType != null">
-                    AND INCOMING_TYPE = #{incomingType,jdbcType=VARCHAR}
+                    and incoming_type = #{incomingType,jdbcType=VARCHAR}
                 </if>
                 <if test="confirmed != null">
-                    AND CONFIRMED = #{confirmed,jdbcType=BIT}
+                    and confirmed = #{confirmed,jdbcType=BIT}
                 </if>
                 <if test="incomingDesc != null">
-                    AND INCOMING_DESC LIKE CONCAT('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
+                    and incoming_desc like concat('%',#{incomingDesc,jdbcType=NVARCHAR},'%')
                 </if>
             </where>
             <if test="sortField == null" >
-                ORDER BY INCOMING_DATE DESC
+                order by incoming_date desc
             </if>
             <if test="sortField != null" >
-                ORDER BY ${sortField} ${sortDir}
+                order by ${sortField} ${sortDir}
             </if>
-            LIMIT #{start}, #{sizePerPage}
+            limit #{start}, #{sizePerPage}
     </select>
     
     <select id="selectByDateRange" resultMap="BaseResultMap" parameterType="java.util.Map">
-        SELECT <include refid="Base_Column_List" />
-        FROM INCOMING
+        select <include refid="Base_Column_List" />
+        from incoming
         <where>
             <if test="from != null">
-              INCOMING_DATE >= #{from,jdbcType=TIMESTAMP}
+              incoming_date >= #{from,jdbcType=TIMESTAMP}
             </if>
             <if test="to != null">
-              AND INCOMING_DATE <![CDATA[<=]]> #{to,jdbcType=TIMESTAMP}
+              and incoming_date <![CDATA[<=]]> #{to,jdbcType=TIMESTAMP}
             </if>
         </where>
     </select>
 </mapper>
+

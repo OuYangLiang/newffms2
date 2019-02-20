@@ -211,7 +211,8 @@ public class Consumption implements ConsumptionOperation, Serializable {
         payments.add(payment);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void confirm(String operator) throws NoOperatorException, ConsumptionAlreadyConfirmedException,
             AccountBalanceInsufficiencyException, NewffmsSystemException {
@@ -270,7 +271,8 @@ public class Consumption implements ConsumptionOperation, Serializable {
         this.setConfirmed(true);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void unconfirm(String operator)
             throws NoOperatorException, NewffmsSystemException, ConsumptionNotConfirmedException {
@@ -310,7 +312,8 @@ public class Consumption implements ConsumptionOperation, Serializable {
         this.setConfirmed(false);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void updateAll(String operator)
             throws ConsumptionTypeEmptyException, ConsumptionBatchNumEmptyException, ConsumptionTimeEmptyException,

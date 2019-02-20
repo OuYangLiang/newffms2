@@ -99,12 +99,10 @@ public class IncomingController extends BaseController {
     
     @RequestMapping("search")
     @ResponseBody
-	public String search(@RequestParam("ownerOid") BigDecimal ownerOid,
-			@RequestParam("confirmed") Boolean confirmed,
-			@RequestParam("incomingType") IncomingType incomingType,
-			@RequestParam("incomingDesc") String incomingDesc,
-			HttpSession session) {
-    	//从页面接受查询参数，并放入session中。
+    public String search(@RequestParam("ownerOid") BigDecimal ownerOid, @RequestParam("confirmed") Boolean confirmed,
+            @RequestParam("incomingType") IncomingType incomingType, @RequestParam("incomingDesc") String incomingDesc,
+            HttpSession session) {
+        //从页面接受查询参数，并放入session中。
         IncomingCondition searchParam = new IncomingCondition();
         searchParam.setOwnerOid(ownerOid);
         searchParam.setConfirmed(confirmed);
@@ -127,13 +125,14 @@ public class IncomingController extends BaseController {
         int requestPage = offset / limit + 1;
         String sortField = colMapping.get(sort);
         String sortDir = order;
-    	
+
         //从session中取出查询对象并查询
         IncomingCondition searchParam = (IncomingCondition) session.getAttribute(SESSION_KEY_SEARCH_PARAM_INCOMING);
         searchParam.initPaginationParam(requestPage, sizePerPage, sortField, sortDir);
         session.setAttribute(SESSION_KEY_SEARCH_PARAM_INCOMING, searchParam);
         
-        Tuple<Integer, List<Incoming>> tuple = incomingRepos.queryIncomings(searchParam, searchParam.getPaginationParameter());
+        Tuple<Integer, List<Incoming>> tuple =
+                incomingRepos.queryIncomings(searchParam, searchParam.getPaginationParameter());
         List<User> userList = userRepos.queryAllUser();
         Map<BigDecimal, UserDto> group = new HashMap<>();
         if (null != userList) {
@@ -143,14 +142,14 @@ public class IncomingController extends BaseController {
         }
         
         List<IncomingDto> list = new LinkedList<>();
-        if (null != tuple.second) {
-            for (Incoming incoming : tuple.second) {
+        if (null != tuple.getSecond()) {
+            for (Incoming incoming : tuple.getSecond()) {
                 IncomingDto dto = new IncomingDto(incoming);
                 dto.setOwner(group.get(incoming.getOwnerOid()));
                 list.add(dto);
             }
         }
-        return new BootstrapTableJsonRlt(tuple.first, list);
+        return new BootstrapTableJsonRlt(tuple.getFirst(), list);
     }
 
     @RequestMapping("/initAdd")
@@ -183,8 +182,10 @@ public class IncomingController extends BaseController {
             HttpSession session) throws UserKeyEmptyException, AccountKeyEmptyException {
         if (result.hasErrors()) {
             // 页面回显
-            form.setTargetAccount(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
-            form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+            form.setTargetAccount(
+                    new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
+            form.getTargetAccount().setOwner(
+                    new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
 
             List<User> users = userRepos.queryAllUser();
             List<UserDto> userList = new LinkedList<>();
@@ -200,8 +201,10 @@ public class IncomingController extends BaseController {
         }
 
         form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
-        form.setTargetAccount(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
-        form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+        form.setTargetAccount(
+                new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
+        form.getTargetAccount().setOwner(
+                new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
 
         session.setAttribute("incomingForm", form);
         return "incoming/confirmAdd";
@@ -233,7 +236,8 @@ public class IncomingController extends BaseController {
 
         form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
         form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(incomingOid))));
-        form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+        form.getTargetAccount().setOwner(
+                new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
 
         model.addAttribute("incomingForm", form);
 
@@ -253,7 +257,8 @@ public class IncomingController extends BaseController {
             form = new IncomingDto(incomingRepos.incomingOfId(new IncomingKey(incomingOid)));
             form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
             form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(incomingOid))));
-            form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+            form.getTargetAccount().setOwner(
+                    new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
         }
 
         List<User> users = userRepos.queryAllUser();
@@ -270,12 +275,14 @@ public class IncomingController extends BaseController {
     }
 
     @RequestMapping("/confirmEdit")
-    public String confirmEdit(@Valid @ModelAttribute("incomingForm") IncomingDto form, BindingResult result, Model model,
-            HttpSession session) throws UserKeyEmptyException, AccountKeyEmptyException, IncomingKeyEmptyException {
+    public String confirmEdit(@Valid @ModelAttribute("incomingForm") IncomingDto form, BindingResult result,
+            Model model, HttpSession session)
+            throws UserKeyEmptyException, AccountKeyEmptyException, IncomingKeyEmptyException {
         if (result.hasErrors()) {
             // 页面回显
             form.setTargetAccount(new AccountDto(acntRepos.accountOfIncoming(new IncomingKey(form.getIncomingOid()))));
-            form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+            form.getTargetAccount().setOwner(
+                    new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
 
             List<User> users = userRepos.queryAllUser();
             List<UserDto> userList = new LinkedList<>();
@@ -291,18 +298,19 @@ public class IncomingController extends BaseController {
         }
 
         form.setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getOwner().getUserOid()))));
-        form.setTargetAccount(new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
-        form.getTargetAccount().setOwner(new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
+        form.setTargetAccount(
+                new AccountDto(acntRepos.accountOfId(new AccountKey(form.getTargetAccount().getAcntOid()))));
+        form.getTargetAccount().setOwner(
+                new UserDto(userRepos.userOfId(new UserKey(form.getTargetAccount().getOwner().getUserOid()))));
 
         session.setAttribute("incomingForm", form);
         return "incoming/confirmEdit";
     }
 
     @RequestMapping("/saveEdit")
-    public String saveEdit(Model model, HttpSession session) throws IncomingKeyEmptyException
-             {
+    public String saveEdit(Model model, HttpSession session) throws IncomingKeyEmptyException {
         IncomingDto form = (IncomingDto) session.getAttribute("incomingForm");
-        
+
         Incoming newObj = form.toIncoming();
         Incoming oldObj = incomingRepos.incomingOfId(newObj.getKey());
         newObj.setSeqNo(oldObj.getSeqNo());
@@ -312,7 +320,7 @@ public class IncomingController extends BaseController {
             model.addAttribute("validation", false);
             model.addAttribute("errCode", e.getErrorCode());
             model.addAttribute("errMsg", e.getMessage());
-            
+
             return "incoming/confirmEdit";
         }
 

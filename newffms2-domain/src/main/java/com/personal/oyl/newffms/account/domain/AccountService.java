@@ -8,7 +8,7 @@ import com.personal.oyl.newffms.common.NewffmsDomainException.NoOperatorExceptio
 public interface AccountService {
     /**
      * 根据流水号回滚账户操作
-     * 
+     *
      * @param batchNum 流水号
      * @param operator 操作人
      * @throws AccountKeyEmptyException

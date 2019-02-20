@@ -43,7 +43,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getKey().getUserOid()) == 0);
         assertEquals("欧阳亮", user.getUserName());
         assertEquals("老公", user.getUserAlias());
-        assertEquals(Gender.Male, user.getGender());
+        assertEquals(Gender.male, user.getGender());
         assertEquals("18652022500", user.getPhone());
         assertEquals("ouyanggod@gmail.com", user.getEmail());
         assertEquals("oyl.jpg", user.getIcon());
@@ -62,7 +62,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.valueOf(2).compareTo(user.getKey().getUserOid()) == 0);
         assertEquals("喻敏", user.getUserName());
         assertEquals("老婆", user.getUserAlias());
-        assertEquals(Gender.Female, user.getGender());
+        assertEquals(Gender.female, user.getGender());
         assertEquals("18652930160", user.getPhone());
         assertEquals("yumingirl@gmail.com", user.getEmail());
         assertEquals("ym.jpg", user.getIcon());
@@ -91,7 +91,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.ONE.compareTo(user.getKey().getUserOid()) == 0);
         assertEquals("欧阳亮", user.getUserName());
         assertEquals("老公", user.getUserAlias());
-        assertEquals(Gender.Male, user.getGender());
+        assertEquals(Gender.male, user.getGender());
         assertEquals("18652022500", user.getPhone());
         assertEquals("ouyanggod@gmail.com", user.getEmail());
         assertEquals("oyl.jpg", user.getIcon());
@@ -110,7 +110,7 @@ public class UserProfileTest extends TestCase {
         assertTrue(BigDecimal.valueOf(2).compareTo(user.getKey().getUserOid()) == 0);
         assertEquals("喻敏", user.getUserName());
         assertEquals("老婆", user.getUserAlias());
-        assertEquals(Gender.Female, user.getGender());
+        assertEquals(Gender.female, user.getGender());
         assertEquals("18652930160", user.getPhone());
         assertEquals("yumingirl@gmail.com", user.getEmail());
         assertEquals("ym.jpg", user.getIcon());
@@ -174,7 +174,7 @@ public class UserProfileTest extends TestCase {
         }
         
         assertNotNull(urls);
-        assertEquals(63, urls.size());
+        assertEquals(69, urls.size());
         assertTrue(urls.contains("/account/listOfItemSummary"));
         assertFalse(urls.contains("/module/listall"));
         

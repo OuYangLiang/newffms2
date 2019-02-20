@@ -1,96 +1,109 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.AccountAuditVo">
-		<id column="ADT_OID" property="adtOid" jdbcType="DECIMAL" />
-		<result column="ADT_DESC" property="adtDesc" jdbcType="NVARCHAR" />
-		<result column="ADT_TYPE" property="adtType" jdbcType="VARCHAR" />
-		<result column="ADT_TIME" property="adtTime" jdbcType="TIMESTAMP" />
-		<result column="BALANCE_AFTER" property="balanceAfter" jdbcType="DECIMAL" />
-		<result column="CHG_AMT" property="chgAmt" jdbcType="DECIMAL" />
-		<result column="ACNT_OID" property="acntOid" jdbcType="DECIMAL" />
-		<result column="BATCH_NUM" property="batchNum" jdbcType="NVARCHAR" />
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-	</resultMap>
+<mapper
+    namespace="com.personal.oyl.newffms.account.store.mapper.AccountAuditMapper">
+    <resultMap id="BaseResultMap"
+        type="com.personal.oyl.newffms.account.domain.AccountAuditVo">
+        <id column="adt_oid" property="adtOid" jdbcType="DECIMAL" />
+        <result column="adt_desc" property="adtDesc" jdbcType="NVARCHAR" />
+        <result column="adt_type" property="adtType" jdbcType="VARCHAR" />
+        <result column="adt_time" property="adtTime" jdbcType="TIMESTAMP" />
+        <result column="balance_after" property="balanceAfter" jdbcType="DECIMAL" />
+        <result column="chg_amt" property="chgAmt" jdbcType="DECIMAL" />
+        <result column="acnt_oid" property="acntOid" jdbcType="DECIMAL" />
+        <result column="batch_num" property="batchNum" jdbcType="NVARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+    </resultMap>
 
 
-	<sql id="Base_Column_List">
-        ADT_OID, ADT_DESC, ADT_TYPE, ADT_TIME, BALANCE_AFTER, CHG_AMT, ACNT_OID, BATCH_NUM, CREATE_TIME, CREATE_BY
-	</sql>
+    <sql id="Base_Column_List">
+        adt_oid, adt_desc, adt_type, adt_time, balance_after,
+        chg_amt, acnt_oid, batch_num, create_time, create_by
+    </sql>
 
 
-    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo">
-        SELECT <include refid="Base_Column_List" />
-        FROM ACCOUNT_AUDIT
+    <select id="select" resultMap="BaseResultMap"
+        parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo">
+        select
+        <include refid="Base_Column_List" />
+        from account_audit
         <where>
-			<if test="adtOid != null">
-				ADT_OID = #{key.adtOid,jdbcType=DECIMAL}
-			</if>
-			<if test="acntOid != null">
-                AND ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+            <if test="adtOid != null">
+                adt_oid = #{key.adtOid,jdbcType=DECIMAL}
             </if>
-			<if test="batchNum != null">
-                AND BATCH_NUM = #{batchNum,jdbcType=DECIMAL}
+            <if test="acntOid != null">
+                and acnt_oid = #{acntOid,jdbcType=DECIMAL}
+            </if>
+            <if test="batchNum != null">
+                and batch_num = #{batchNum,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
-    
+
     <update id="invalidate" parameterType="java.math.BigDecimal">
-        UPDATE ACCOUNT_AUDIT
-        SET ADT_TYPE = 'Rollback'
-        WHERE ADT_OID = #{adtOid,jdbcType=DECIMAL}
+        update account_audit
+        set adt_type = 'rollback'
+        where adt_oid =
+        #{adtOid,jdbcType=DECIMAL}
     </update>
 
-    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo" >
-        DELETE FROM ACCOUNT_AUDIT
+    <delete id="delete"
+        parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo">
+        delete from account_audit
         <where>
             <if test="adtOid != null">
-                ADT_OID = #{adtOid,jdbcType=DECIMAL}
+                adt_oid = #{adtOid,jdbcType=DECIMAL}
             </if>
             <if test="acntOid != null">
-                AND ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+                and acnt_oid = #{acntOid,jdbcType=DECIMAL}
             </if>
             <if test="batchNum != null">
-                AND BATCH_NUM = #{batchNum,jdbcType=DECIMAL}
+                and batch_num = #{batchNum,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
-    
-    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo" useGeneratedKeys="true" keyProperty="adtOid">
-        INSERT INTO ACCOUNT_AUDIT(
-            ADT_DESC,
-            ADT_TYPE,
-            ADT_TIME,
-            BALANCE_AFTER,
-            CHG_AMT,
-            ACNT_OID,
-            BATCH_NUM,
-            CREATE_TIME,
-            CREATE_BY)
-        VALUES (
-            #{adtDesc,jdbcType=NVARCHAR},
-            #{adtType,jdbcType=VARCHAR},
-            #{adtTime,jdbcType=TIMESTAMP},
-            #{balanceAfter,jdbcType=DECIMAL},
-            #{chgAmt,jdbcType=DECIMAL},
-            #{acntOid,jdbcType=DECIMAL},
-            #{batchNum,jdbcType=VARCHAR},
-            #{createTime,jdbcType=TIMESTAMP}, 
-            #{createBy,jdbcType=NVARCHAR})
+
+    <insert id="insert"
+        parameterType="com.personal.oyl.newffms.account.domain.AccountAuditVo"
+        useGeneratedKeys="true" keyProperty="adtOid">
+        insert into account_audit(
+        adt_desc,
+        adt_type,
+        adt_time,
+        balance_after,
+        chg_amt,
+        acnt_oid,
+        batch_num,
+        create_time,
+        create_by)
+        values (
+        #{adtDesc,jdbcType=NVARCHAR},
+        #{adtType,jdbcType=VARCHAR},
+        #{adtTime,jdbcType=TIMESTAMP},
+        #{balanceAfter,jdbcType=DECIMAL},
+        #{chgAmt,jdbcType=DECIMAL},
+        #{acntOid,jdbcType=DECIMAL},
+        #{batchNum,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createBy,jdbcType=NVARCHAR})
     </insert>
-    
-    <select id="getCountOfSummary" parameterType="com.personal.oyl.newffms.account.domain.AccountKey" resultType="int">
-        SELECT COUNT(*)
-            FROM ACCOUNT_AUDIT
-        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+
+    <select id="getCountOfSummary"
+        parameterType="com.personal.oyl.newffms.account.domain.AccountKey"
+        resultType="int">
+        select count(*)
+        from account_audit
+        where acnt_oid = #{acntOid,jdbcType=DECIMAL}
     </select>
-    
-    <select id="getListOfSummary" parameterType="java.util.Map" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List" />
-            FROM ACCOUNT_AUDIT
-        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL}
-        ORDER BY ADT_OID DESC
-        LIMIT #{start}, #{sizePerPage}
+
+    <select id="getListOfSummary" parameterType="java.util.Map"
+        resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from account_audit
+        where acnt_oid = #{acntOid,jdbcType=DECIMAL}
+        order by adt_oid desc
+        limit #{start}, #{sizePerPage}
     </select>
 </mapper>

@@ -9,7 +9,7 @@ import com.personal.oyl.newffms.common.PaginationParameter;
 public class ConsumptionCondition {
     private BigDecimal ownerOid;
     private BigDecimal categoryOid;
-    private String categoryDesc;//回显
+    private String categoryDesc; //回显
     private Boolean confirmed;
     private Date cpnTimeFrom;
     private Date cpnTimeTo;

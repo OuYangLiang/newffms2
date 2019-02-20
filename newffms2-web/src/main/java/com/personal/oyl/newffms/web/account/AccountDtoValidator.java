@@ -38,7 +38,7 @@ public class AccountDtoValidator implements Validator {
             errors.reject(null, "余额不足啊，亲。");
         }
 
-        if (AccountType.Creditcard.equals(acnt.getAcntType())) {
+        if (AccountType.creditcard.equals(acnt.getAcntType())) {
             if (null == acnt.getQuota()) {
                 errors.reject(null, "信用卡限定额度是多少，亲。");
             } else if (acnt.getQuota().compareTo(BigDecimal.ZERO) <= 0) {

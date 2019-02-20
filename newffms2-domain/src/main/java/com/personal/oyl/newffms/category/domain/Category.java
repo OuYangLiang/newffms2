@@ -164,7 +164,8 @@ public class Category implements CategoryOperation, Serializable {
         return list;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void changeCategoryDesc(String newDesc, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException {
@@ -197,7 +198,8 @@ public class Category implements CategoryOperation, Serializable {
         this.setUpdateBy(operator);
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public Category addChild(String desc, BigDecimal budget, String operator)
             throws CategoryDescEmptyException, CategoryDescTooLongException, NoOperatorException,
@@ -256,7 +258,8 @@ public class Category implements CategoryOperation, Serializable {
         return target;
     }
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void changeBudget(BigDecimal newBudget, String operator)
             throws CategoryNotLeafException, NoOperatorException, NewffmsSystemException {

@@ -17,7 +17,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         
         String ticketNo = String.valueOf(System.currentTimeMillis());
         
-        StringBuffer strBuffer = new StringBuffer(200);
+        StringBuffer strBuffer = new StringBuffer();
         strBuffer.append("Exception occured. [TICKET-" + ticketNo + "], ");
         
         log.error(strBuffer.toString(), ex);

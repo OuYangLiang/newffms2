@@ -1,106 +1,116 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.personal.oyl.newffms.account.store.mapper.AccountMapper">
-	<resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.Account">
-        <id column="ACNT_OID" property="key.acntOid" jdbcType="DECIMAL" />
-        <result column="ACNT_DESC" property="acntDesc" jdbcType="NVARCHAR" />
-        <result column="ACNT_TYPE" property="acntType" jdbcType="VARCHAR" />
-        <result column="BALANCE" property="balance" jdbcType="DECIMAL" />
-        <result column="QUOTA" property="quota" jdbcType="DECIMAL" />
-        <result column="DEBT" property="debt" jdbcType="DECIMAL" />
-        <result column="OWNER_OID" property="owner.userOid" jdbcType="DECIMAL" />
-        <result column="DISABLED" property="disabled" jdbcType="BIT" />
-        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
-        <result column="UPDATE_BY" property="updateBy" jdbcType="NVARCHAR" />
-        <result column="SEQ_NO" property="seqNo" jdbcType="DECIMAL" />
-	</resultMap>
+<mapper
+    namespace="com.personal.oyl.newffms.account.store.mapper.AccountMapper">
+    <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.account.domain.Account">
+        <id column="acnt_oid" property="key.acntOid" jdbcType="DECIMAL" />
+        <result column="acnt_desc" property="acntDesc" jdbcType="NVARCHAR" />
+        <result column="acnt_type" property="acntType" jdbcType="VARCHAR" />
+        <result column="balance" property="balance" jdbcType="DECIMAL" />
+        <result column="quota" property="quota" jdbcType="DECIMAL" />
+        <result column="debt" property="debt" jdbcType="DECIMAL" />
+        <result column="owner_oid" property="owner.userOid" jdbcType="DECIMAL" />
+        <result column="disabled" property="disabled" jdbcType="BIT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
+        <result column="update_by" property="updateBy" jdbcType="NVARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="DECIMAL" />
+    </resultMap>
 
 
-	<sql id="Base_Column_List">
-        ACNT_OID, ACNT_DESC, ACNT_TYPE, BALANCE, QUOTA, DEBT, OWNER_OID, DISABLED, CREATE_TIME, UPDATE_TIME, CREATE_BY, UPDATE_BY, SEQ_NO
-	</sql>
+    <sql id="Base_Column_List">
+        acnt_oid, acnt_desc, acnt_type, balance, quota, debt,
+        owner_oid, disabled, create_time, update_time, create_by,
+        update_by, seq_no
+    </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.account.domain.Account">
-        SELECT <include refid="Base_Column_List" />
-        FROM ACCOUNT
+    <select id="select" resultMap="BaseResultMap"
+        parameterType="com.personal.oyl.newffms.account.domain.Account">
+        select
+        <include refid="Base_Column_List" />
+        from account
         <where>
             <if test="key != null and key.acntOid != null">
-                ACNT_OID = #{key.acntOid,jdbcType=DECIMAL}
+                acnt_oid = #{key.acntOid,jdbcType=DECIMAL}
             </if>
             <if test="acntType != null">
-                AND ACNT_TYPE = #{acntType,jdbcType=VARCHAR}
+                and acnt_type = #{acntType,jdbcType=VARCHAR}
             </if>
             <if test="owner != null">
-                AND OWNER_OID = #{owner.userOid,jdbcType=DECIMAL}
+                and owner_oid = #{owner.userOid,jdbcType=DECIMAL}
             </if>
             <if test="disabled != null">
-                AND DISABLED = #{disabled,jdbcType=BIT}
+                and disabled = #{disabled,jdbcType=BIT}
             </if>
         </where>
     </select>
-    
-    <delete id="delete" parameterType="com.personal.oyl.newffms.account.domain.AccountKey" >
-        DELETE FROM ACCOUNT
+
+    <delete id="delete"
+        parameterType="com.personal.oyl.newffms.account.domain.AccountKey">
+        delete from account
         <where>
             <if test="acntOid != null">
-                ACNT_OID = #{acntOid,jdbcType=DECIMAL}
+                acnt_oid = #{acntOid,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
 
-    <insert id="insert" parameterType="com.personal.oyl.newffms.account.domain.Account" useGeneratedKeys="true" keyProperty="key.acntOid">
-        INSERT INTO ACCOUNT(
-            ACNT_DESC,
-            ACNT_TYPE,
-            BALANCE,
-            QUOTA, DEBT,
-            OWNER_OID,
-            DISABLED,
-            CREATE_TIME,
-            CREATE_BY)
-        VALUES (
-            #{acntDesc,jdbcType=NVARCHAR},
-            #{acntType,jdbcType=VARCHAR},
-            #{balance,jdbcType=DECIMAL},
-            #{quota,jdbcType=DECIMAL},
-            #{debt,jdbcType=DECIMAL},
-            #{owner.userOid,jdbcType=DECIMAL},
-            #{disabled,jdbcType=BIT},
-            #{createTime,jdbcType=TIMESTAMP}, 
-            #{createBy,jdbcType=NVARCHAR})
+    <insert id="insert"
+        parameterType="com.personal.oyl.newffms.account.domain.Account"
+        useGeneratedKeys="true" keyProperty="key.acntOid">
+        insert into account(
+        acnt_desc,
+        acnt_type,
+        balance,
+        quota, debt,
+        owner_oid,
+        disabled,
+        create_time,
+        create_by)
+        values (
+        #{acntDesc,jdbcType=NVARCHAR},
+        #{acntType,jdbcType=VARCHAR},
+        #{balance,jdbcType=DECIMAL},
+        #{quota,jdbcType=DECIMAL},
+        #{debt,jdbcType=DECIMAL},
+        #{owner.userOid,jdbcType=DECIMAL},
+        #{disabled,jdbcType=BIT},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{createBy,jdbcType=NVARCHAR})
     </insert>
-    
+
     <update id="changeAccountDesc" parameterType="java.util.Map">
-        UPDATE ACCOUNT SET
-            SEQ_NO = SEQ_NO + 1,
-            ACNT_DESC = #{acntDesc,jdbcType=NVARCHAR},
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = current_timestamp
-        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update account
+        set
+        seq_no = seq_no + 1,
+        acnt_desc = #{acntDesc,jdbcType=NVARCHAR},
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+        update_time = current_timestamp
+        where acnt_oid = #{acntOid,jdbcType=DECIMAL} and
+        seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
-    
+
     <update id="updateBalance" parameterType="java.util.Map">
-        UPDATE ACCOUNT SET
-            BALANCE = #{balance,jdbcType=DECIMAL},
-            <if test="debt != null">
-                DEBT = #{debt,jdbcType=DECIMAL},
-            </if>
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update account set
+        balance = #{balance,jdbcType=DECIMAL},
+        <if test="debt != null">
+            debt = #{debt,jdbcType=DECIMAL},
+        </if>
+        seq_no = seq_no + 1,
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where acnt_oid = #{acntOid,jdbcType=DECIMAL} AND seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
-    
+
     <update id="increseQuota" parameterType="java.util.Map">
-        UPDATE ACCOUNT SET
-            BALANCE = #{balance,jdbcType=DECIMAL},
-            QUOTA = #{quota,jdbcType=DECIMAL},
-            SEQ_NO = SEQ_NO + 1,
-            UPDATE_BY = #{updateBy,jdbcType=NVARCHAR},
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        WHERE ACNT_OID = #{acntOid,jdbcType=DECIMAL} AND SEQ_NO = #{seqNo,jdbcType=DECIMAL}
+        update account set
+        balance = #{balance,jdbcType=DECIMAL},
+        quota = #{quota,jdbcType=DECIMAL},
+        seq_no = seq_no + 1,
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where acnt_oid = #{acntOid,jdbcType=DECIMAL} and seq_no = #{seqNo,jdbcType=DECIMAL}
     </update>
-    
+
 </mapper>

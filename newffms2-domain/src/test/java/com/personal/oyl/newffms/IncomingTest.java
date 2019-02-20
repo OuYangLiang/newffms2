@@ -59,7 +59,7 @@ public class IncomingTest extends TestCase {
         bean.setIncomingDesc("desc");
         bean.setAmount(BigDecimal.valueOf(100));
         bean.setBatchNum(uuid);
-        bean.setIncomingType(IncomingType.Salary);
+        bean.setIncomingType(IncomingType.salary);
         bean.setOwnerOid(BigDecimal.ONE);
         bean.setConfirmed(false);
         bean.setIncomingDate(now);
@@ -84,7 +84,7 @@ public class IncomingTest extends TestCase {
         assertEquals("desc", bean.getIncomingDesc());
         assertTrue(BigDecimal.valueOf(100).compareTo(bean.getAmount()) == 0);
         assertEquals(uuid, bean.getBatchNum());
-        assertEquals(IncomingType.Salary, bean.getIncomingType());
+        assertEquals(IncomingType.salary, bean.getIncomingType());
         assertNotNull(bean.getIncomingDate().getTime());
         assertFalse(bean.getConfirmed());
         assertEquals("欧阳亮", bean.getCreateBy());
@@ -108,7 +108,7 @@ public class IncomingTest extends TestCase {
         // 创建账户
         Account acnt1 = new Account();
         acnt1.setAcntDesc("招商银行");
-        acnt1.setAcntType(AccountType.Bankcard);
+        acnt1.setAcntType(AccountType.bankcard);
         acnt1.setBalance(BigDecimal.valueOf(150));
         acnt1.setOwner(new UserKey(BigDecimal.ONE));
         acntRepos.add(acnt1, "欧阳亮");
@@ -117,7 +117,7 @@ public class IncomingTest extends TestCase {
         bean.setIncomingDesc("desc");
         bean.setAmount(BigDecimal.valueOf(100));
         bean.setBatchNum(uuid);
-        bean.setIncomingType(IncomingType.Salary);
+        bean.setIncomingType(IncomingType.salary);
         bean.setOwnerOid(BigDecimal.ONE);
         bean.setConfirmed(false);
         bean.setIncomingDate(now);
@@ -167,7 +167,7 @@ public class IncomingTest extends TestCase {
         bean.setIncomingDesc("desc");
         bean.setAmount(BigDecimal.valueOf(100));
         bean.setBatchNum(uuid);
-        bean.setIncomingType(IncomingType.Salary);
+        bean.setIncomingType(IncomingType.salary);
         bean.setOwnerOid(BigDecimal.ONE);
         bean.setConfirmed(false);
         bean.setIncomingDate(now);
@@ -179,7 +179,7 @@ public class IncomingTest extends TestCase {
 
         bean.setIncomingDesc("desc1");
         bean.setAmount(BigDecimal.valueOf(150));
-        bean.setIncomingType(IncomingType.Bonus);
+        bean.setIncomingType(IncomingType.bonus);
         bean.setOwnerOid(BigDecimal.TEN);
 
         bean.updateAll("XXX");
@@ -195,7 +195,7 @@ public class IncomingTest extends TestCase {
         assertEquals("desc1", bean.getIncomingDesc());
         assertTrue(BigDecimal.valueOf(150).compareTo(bean.getAmount()) == 0);
         assertEquals(uuid, bean.getBatchNum());
-        assertEquals(IncomingType.Bonus, bean.getIncomingType());
+        assertEquals(IncomingType.bonus, bean.getIncomingType());
         assertNotNull(bean.getIncomingDate().getTime());
         assertFalse(bean.getConfirmed());
         assertEquals("欧阳亮", bean.getCreateBy());

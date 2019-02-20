@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -16,7 +16,7 @@
     <bean id="appContext" class="com.personal.oyl.newffms.common.AppContext" />
     
     <import resource="classpath:application-context-aop.xml"/>
-	<import resource="classpath:application-context-mybatis.xml"/>
+    <import resource="classpath:application-context-mybatis.xml"/>
     <import resource="classpath:application-context-repos.xml"/>
     <import resource="classpath:application-context-service.xml"/>
 </beans>

@@ -21,7 +21,8 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private AccountAuditMapper auditMapper;
 
-    @Transactional(readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRED,
+            isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     @Override
     public void rollback(String batchNum, String operator) throws AccountKeyEmptyException,
             AccountBatchNumEmptyException, AccountBatchNumInvalidException, NoOperatorException {
@@ -44,7 +45,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         for (AccountAuditVo audit : audits) {
-            if (AccountAuditType.Rollback.equals(audit.getAdtType())) {
+            if (AccountAuditType.rollback.equals(audit.getAdtType())) {
                 continue;
             }
             Account acnt = repos.accountOfId(new AccountKey(audit.getAcntOid()));

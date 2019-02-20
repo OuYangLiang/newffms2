@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum AccountAuditType {
-    Add("增加"), Subtract("扣减"), Change("更新"), Trans_add("转账增加"), Trans_subtract("转账扣减"), Rollback("回滚");
+    add("增加"), subtract("扣减"), change("更新"), trans_add("转账增加"), trans_subtract("转账扣减"), rollback("回滚");
 
     private String desc;
 
-    private AccountAuditType(String desc) {
+    AccountAuditType(String desc) {
         this.desc = desc;
     }
 

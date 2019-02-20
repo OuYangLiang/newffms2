@@ -2,55 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.personal.oyl.newffms.consumption.store.mapper.ConsumptionItemMapper">
     <resultMap id="BaseResultMap" type="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo">
-		<id column="ITEM_OID" property="itemOid" jdbcType="DECIMAL" />
-		<result column="ITEM_DESC" property="itemDesc" jdbcType="NVARCHAR" />
-		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
-		<result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
-        <result column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
-        <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
-	</resultMap>
+        <id column="item_oid" property="itemOid" jdbcType="DECIMAL" />
+        <result column="item_desc" property="itemDesc" jdbcType="NVARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="owner_oid" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="cpn_oid" property="cpnOid" jdbcType="DECIMAL" />
+        <result column="category_oid" property="categoryOid" jdbcType="DECIMAL" />
+    </resultMap>
 
 
-	<sql id="Base_Column_List">
-        ITEM_OID, ITEM_DESC, AMOUNT, OWNER_OID, CPN_OID, CATEGORY_OID
-	</sql>
+    <sql id="Base_Column_List">
+        item_oid, item_desc, amount, owner_oid, cpn_oid, category_oid
+    </sql>
 
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo">
-        SELECT <include refid="Base_Column_List" />
-        FROM CONSUMPTION_ITEM
+        select <include refid="Base_Column_List" />
+        from consumption_item
         <where>
-			<if test="itemOid != null">
-				ITEM_OID = #{itemOid,jdbcType=DECIMAL}
-			</if>
+            <if test="itemOid != null">
+                item_oid = #{itemOid,jdbcType=DECIMAL}
+            </if>
             <if test="cpnOid != null">
-                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+                and cpn_oid = #{cpnOid,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
 
 
     <delete id="delete" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo" >
-        DELETE FROM CONSUMPTION_ITEM
+        delete from consumption_item
         <where>
             <if test="itemOid != null">
-                ITEM_OID = #{itemOid,jdbcType=DECIMAL}
+                item_oid = #{itemOid,jdbcType=DECIMAL}
             </if>
             <if test="cpnOid != null">
-                AND CPN_OID = #{cpnOid,jdbcType=DECIMAL}
+                and cpn_oid = #{cpnOid,jdbcType=DECIMAL}
             </if>
         </where>
     </delete>
     
     
     <insert id="insert" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionItemVo" useGeneratedKeys="true" keyProperty="itemOid">
-        INSERT INTO CONSUMPTION_ITEM(
-            ITEM_DESC,
-            AMOUNT,
-            OWNER_OID,
-            CPN_OID,
-            CATEGORY_OID)
-        VALUES (
+        insert into consumption_item(
+            item_desc,
+            amount,
+            owner_oid,
+            cpn_oid,
+            category_oid)
+        values (
             #{itemDesc,jdbcType=NVARCHAR},
             #{amount,jdbcType=DECIMAL},
             #{ownerOid,jdbcType=DECIMAL},
@@ -59,90 +59,91 @@
     </insert>
     
     <resultMap id="GridResultMap" type="com.personal.oyl.newffms.consumption.domain.ConsumptionItemPaginationVo">
-        <id column="ITEM_OID" property="itemOid" jdbcType="DECIMAL" />
-        <result column="ITEM_DESC" property="itemDesc" jdbcType="NVARCHAR" />
-        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
-        <result column="OWNER_OID" property="ownerOid" jdbcType="DECIMAL" />
-        <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
-        <result column="CPN_OID" property="cpnOid" jdbcType="DECIMAL" />
-        <result column="CPN_TYPE" property="cpnType" jdbcType="VARCHAR" />
-        <result column="CPN_TIME" property="cpnTime" jdbcType="TIMESTAMP" />
-        <result column="TOTAL" property="total" jdbcType="DECIMAL" />
-        <result column="BATCH_NUM" property="batchNum" jdbcType="VARCHAR" />
-        <result column="CONFIRMED" property="confirmed" jdbcType="BIT" />
-        <result column="CREATE_BY" property="createBy" jdbcType="NVARCHAR" />
+        <id column="item_oid" property="itemOid" jdbcType="DECIMAL" />
+        <result column="item_desc" property="itemDesc" jdbcType="NVARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="owner_oid" property="ownerOid" jdbcType="DECIMAL" />
+        <result column="category_oid" property="categoryOid" jdbcType="DECIMAL" />
+        <result column="cpn_oid" property="cpnOid" jdbcType="DECIMAL" />
+        <result column="cpn_type" property="cpnType" jdbcType="VARCHAR" />
+        <result column="cpn_time" property="cpnTime" jdbcType="TIMESTAMP" />
+        <result column="total" property="total" jdbcType="DECIMAL" />
+        <result column="batch_num" property="batchNum" jdbcType="VARCHAR" />
+        <result column="confirmed" property="confirmed" jdbcType="BIT" />
+        <result column="create_by" property="createBy" jdbcType="NVARCHAR" />
     </resultMap>
 
     <select id="getCountOfSummary" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionCondition" resultType="int">
-        SELECT COUNT(*)
-            FROM CONSUMPTION C, CONSUMPTION_ITEM I
-            WHERE C.CPN_OID = I.CPN_OID
+        select count(*)
+            from consumption c, consumption_item i
+            where c.cpn_oid = i.cpn_oid
             <if test="cpnTimeFrom != null">
-                AND C.CPN_TIME >= #{cpnTimeFrom,jdbcType=TIMESTAMP}
+                and c.cpn_time >= #{cpnTimeFrom,jdbcType=TIMESTAMP}
             </if>
             <if test="cpnTimeTo != null">
-                <![CDATA[ AND C.CPN_TIME <= #{cpnTimeTo,jdbcType=TIMESTAMP} ]]>
+                <![CDATA[ and c.cpn_time <= #{cpnTimeTo,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="confirmed != null">
-                AND C.CONFIRMED = #{confirmed,jdbcType=BIT}
+                and c.confirmed = #{confirmed,jdbcType=BIT}
             </if>
             <if test="itemDesc != null">
-                AND I.ITEM_DESC LIKE CONCAT('%',#{itemDesc,jdbcType=NVARCHAR},'%')
+                and i.item_desc like concat('%',#{itemDesc,jdbcType=NVARCHAR},'%')
             </if>
             <if test="ownerOid != null">
-                AND I.OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                and i.owner_oid = #{ownerOid,jdbcType=DECIMAL}
             </if>
             <if test="categoryOid != null">
-                AND I.CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL}
+                and i.category_oid = #{categoryOid,jdbcType=DECIMAL}
             </if>
     </select>
     
     <select id="getListOfSummary" parameterType="com.personal.oyl.newffms.consumption.domain.ConsumptionCondition" resultMap="GridResultMap">
-        SELECT I.ITEM_OID, I.ITEM_DESC, I.AMOUNT, I.OWNER_OID, I.CATEGORY_OID, C.CPN_OID, C.CPN_TYPE, C.CPN_TIME, C.AMOUNT AS TOTAL, C.BATCH_NUM, C.CONFIRMED, C.CONFIRMED, C.CREATE_BY
-            FROM CONSUMPTION C, CONSUMPTION_ITEM I
-            WHERE C.CPN_OID = I.CPN_OID
+        select i.item_oid, i.item_desc, i.amount, i.owner_oid, i.category_oid, c.cpn_oid, c.cpn_type, c.cpn_time, c.amount as total, c.batch_num, c.confirmed, c.confirmed, c.create_by
+            from consumption c, consumption_item i
+            where c.cpn_oid = i.cpn_oid
             <if test="cpnTimeFrom != null">
-                AND C.CPN_TIME >= #{cpnTimeFrom,jdbcType=TIMESTAMP}
+                and c.cpn_time >= #{cpnTimeFrom,jdbcType=TIMESTAMP}
             </if>
             <if test="cpnTimeTo != null">
-                <![CDATA[ AND C.CPN_TIME <= #{cpnTimeTo,jdbcType=TIMESTAMP} ]]>
+                <![CDATA[ and c.cpn_time <= #{cpnTimeTo,jdbcType=TIMESTAMP} ]]>
             </if>
             <if test="confirmed != null">
-                AND C.CONFIRMED = #{confirmed,jdbcType=BIT}
+                and c.confirmed = #{confirmed,jdbcType=BIT}
             </if>
             <if test="itemDesc != null">
-                AND I.ITEM_DESC LIKE CONCAT('%',#{itemDesc,jdbcType=NVARCHAR},'%')
+                and i.item_desc like concat('%',#{itemDesc,jdbcType=NVARCHAR},'%')
             </if>
             <if test="ownerOid != null">
-                AND I.OWNER_OID = #{ownerOid,jdbcType=DECIMAL}
+                and i.owner_oid = #{ownerOid,jdbcType=DECIMAL}
             </if>
             <if test="categoryOid != null">
-                AND I.CATEGORY_OID = #{categoryOid,jdbcType=DECIMAL}
+                and i.category_oid = #{categoryOid,jdbcType=DECIMAL}
             </if>
             <if test="sortField == null" >
-                ORDER BY C.CPN_TIME DESC
+                order by c.cpn_time desc
             </if>
             <if test="sortField != null" >
-                ORDER BY ${sortField} ${sortDir}
+                order by ${sortField} ${sortDir}
             </if>
-            LIMIT #{start}, #{sizePerPage}
+            limit #{start}, #{sizePerPage}
     </select>
 
-  <resultMap id="queryPersonalConsumptionResultMap" type="com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo">
-    <result column="OWNER_OID" property="userOid" jdbcType="DECIMAL" />
-    <result column="CATEGORY_OID" property="categoryOid" jdbcType="DECIMAL" />
-    <result column="TOTAL" property="total" jdbcType="DECIMAL" />
-  </resultMap>
-  <select id="queryPersonalConsumption" parameterType="java.util.Map" resultMap="queryPersonalConsumptionResultMap">
+    <resultMap id="queryPersonalConsumptionResultMap" type="com.personal.oyl.newffms.consumption.domain.PersonalConsumptionVo">
+        <result column="owner_oid" property="userOid" jdbcType="DECIMAL" />
+        <result column="category_oid" property="categoryOid" jdbcType="DECIMAL" />
+        <result column="total" property="total" jdbcType="DECIMAL" />
+    </resultMap>
+    <select id="queryPersonalConsumption" parameterType="java.util.Map" resultMap="queryPersonalConsumptionResultMap">
         <![CDATA[
-        SELECT OWNER_OID, CATEGORY_OID, SUM(I.AMOUNT) AS TOTAL
-        FROM CONSUMPTION_ITEM I, CONSUMPTION C
-        WHERE I.CPN_OID = C.CPN_OID
-        AND C.CONFIRMED = TRUE
-        AND C.CPN_TIME >= #{start,jdbcType=TIMESTAMP}
-        AND C.CPN_TIME <= #{end,jdbcType=TIMESTAMP}
-        GROUP BY OWNER_OID, CATEGORY_OID
+        select owner_oid, category_oid, sum(i.amount) as total
+        from consumption_item i, consumption c
+        where i.cpn_oid = c.cpn_oid
+        and c.confirmed = true
+        and c.cpn_time >= #{start,jdbcType=TIMESTAMP}
+        and c.cpn_time <= #{end,jdbcType=TIMESTAMP}
+        group by owner_oid, category_oid
         ]]>
-  </select>
+    </select>
     
 </mapper>
+

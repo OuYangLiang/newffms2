@@ -38,12 +38,12 @@ public class MyUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        List<GrantedAuthority> AUTHORITIES = new ArrayList<GrantedAuthority>();
-        AUTHORITIES.add(new SimpleGrantedAuthority("/accessDenied"));
-        AUTHORITIES.add(new SimpleGrantedAuthority("/consumption/monthlyConsumptionTotal"));
-        AUTHORITIES.add(new SimpleGrantedAuthority("/profile/initEdit"));
-        AUTHORITIES.add(new SimpleGrantedAuthority("/profile/confirmEdit"));
-        AUTHORITIES.add(new SimpleGrantedAuthority("/profile/saveEdit"));
+        List<GrantedAuthority> autuorities = new ArrayList<GrantedAuthority>();
+        autuorities.add(new SimpleGrantedAuthority("/accessDenied"));
+        autuorities.add(new SimpleGrantedAuthority("/consumption/monthlyConsumptionTotal"));
+        autuorities.add(new SimpleGrantedAuthority("/profile/initEdit"));
+        autuorities.add(new SimpleGrantedAuthority("/profile/confirmEdit"));
+        autuorities.add(new SimpleGrantedAuthority("/profile/saveEdit"));
 
         List<String> grantUrls = null;
         try {
@@ -54,11 +54,11 @@ public class MyUserDetailService implements UserDetailsService {
 
         if (null != grantUrls) {
             for (String url : grantUrls) {
-                AUTHORITIES.add(new SimpleGrantedAuthority(url));
+                autuorities.add(new SimpleGrantedAuthority(url));
             }
         }
 
-        return new User(username, user.getLoginPwd(), AUTHORITIES);
+        return new User(username, user.getLoginPwd(), autuorities);
     }
 
 }

@@ -10,7 +10,7 @@ public interface UserRepos {
 
     /**
      * 根据用户标识查询用户
-     * 
+     *
      * @param key 用户标识
      * @return 用户实体
      * @throws UserProfileKeyEmptyException
@@ -19,7 +19,7 @@ public interface UserRepos {
     
     /**
      * 根据登户id查询用户
-     * 
+     *
      * @param loginId 登户id
      * @return 用户实体
      * @throws UserLoginIdEmptyException
@@ -28,14 +28,14 @@ public interface UserRepos {
     
     /**
      * 查询所有用户
-     * 
+     *
      * @return 用户实体集合
      */
     List<User> queryAllUser();
     
     /**
      * 根据用户标识查询菜单
-     * 
+     *
      * @param key 用户标识
      * @return 菜单实体集合
      * @throws UserKeyEmptyException
@@ -44,7 +44,7 @@ public interface UserRepos {
     
     /**
      * 根据用户标识查询操作权限
-     * 
+     *
      * @param key 用户标识
      * @return 操作权限集合
      * @throws UserKeyEmptyException
